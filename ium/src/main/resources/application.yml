@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: ium
+
+  profiles:
+    active:
+      - local
