@@ -30,7 +30,9 @@ public class SecurityConfig {
             "/api/health/**",
             "/api/actuator/**",
             "/h2-console/**",
-            "/favicon.ico"
+            "/favicon.ico",
+            "/css/**",
+            "/js/**",
     };
 
     // 관리자 리스트 정의
