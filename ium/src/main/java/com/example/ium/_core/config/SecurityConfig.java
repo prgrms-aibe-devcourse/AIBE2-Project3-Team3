@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,15 @@ public class SecurityConfig {
         this.userDetailsService = userDetailsService;
     }
 
+    private static final String[] TEMPLATE_LIST = {
+            "/favicon.ico",
+            "/css/**",
+            "/js/**",
+            "/images/**",
+            "/signup",
+            "/login",
+    };
+
     // 화이트리스트 정의
     private static final String[] WHITE_LIST = {
             "/",
@@ -30,9 +40,6 @@ public class SecurityConfig {
             "/api/health/**",
             "/api/actuator/**",
             "/h2-console/**",
-            "/favicon.ico",
-            "/css/**",
-            "/js/**",
     };
 
     // 관리자 리스트 정의
@@ -53,7 +60,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(TEMPLATE_LIST).permitAll()
                         .requestMatchers(WHITE_LIST).permitAll()
                         .requestMatchers(ADMIN_LIST).hasRole("ADMIN")
                         .anyRequest().authenticated()
