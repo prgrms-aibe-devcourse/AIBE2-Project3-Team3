@@ -1,13 +1,14 @@
 package com.example.ium;
 
+import com.example.ium.member.domain.model.Email;
 import com.example.ium.member.domain.model.Member;
+import com.example.ium.member.domain.model.Password;
 import com.example.ium.member.domain.repository.MemberJPARepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
@@ -30,11 +31,13 @@ public class IumApplication {
     };
   }
 
-  private Member newMember(String username, String email, String password, PasswordEncoder passwordEncoder) {
+  private Member newMember(String username, String emailValue, String passwordValue, PasswordEncoder passwordEncoder) {
+    Email email = new Email(emailValue);
+    Password password = Password.encode(passwordValue, passwordEncoder);
     return Member.createMember(
             username,
             email,
-            passwordEncoder.encode("password")
+            password
     );
   }
 }

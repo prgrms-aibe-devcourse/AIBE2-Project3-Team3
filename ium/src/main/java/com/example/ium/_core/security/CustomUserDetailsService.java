@@ -25,8 +25,8 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND));
 
         return new User(
-                member.getEmail(),
-                member.getPassword(),
+                member.getEmail().getEmail(),
+                member.getPassword().getPassword(),
                 List.of(new SimpleGrantedAuthority(member.getRole().getKey()))
         );
     }
