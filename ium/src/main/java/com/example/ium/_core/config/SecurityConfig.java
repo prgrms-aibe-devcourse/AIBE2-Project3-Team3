@@ -71,7 +71,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 )
                 .formLogin(form -> form
-                        .loginPage("/member/login")
+                        .loginPage("/login")
                         .loginProcessingUrl("/authenticate")
                         .usernameParameter("user")
                         .passwordParameter("pwd")
