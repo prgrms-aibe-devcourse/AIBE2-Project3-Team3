@@ -32,7 +32,7 @@ public class IumApplication {
   }
 
   private Member newMember(String username, String emailValue, String passwordValue, PasswordEncoder passwordEncoder) {
-    Email email = new Email(emailValue);
+    Email email = Email.of(emailValue);
     Password password = Password.encode(passwordValue, passwordEncoder);
     return Member.createMember(
             username,
