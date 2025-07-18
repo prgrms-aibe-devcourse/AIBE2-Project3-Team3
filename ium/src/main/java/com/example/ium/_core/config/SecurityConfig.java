@@ -30,7 +30,12 @@ public class SecurityConfig {
             "/api/health/**",
             "/api/actuator/**",
             "/h2-console/**",
-            "/favicon.ico"
+            "/favicon.ico",
+            "/chat/**",
+            "/ws/**",
+            "/css/**",
+            "/js/**",
+            "/img/**"
     };
 
     // 관리자 리스트 정의
@@ -68,7 +73,7 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/"))
-                .httpBasic(Customizer.withDefaults());
+                .csrf(csrf -> csrf.disable());
         return http.build();
     }
 
@@ -83,4 +88,5 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+    
 }
