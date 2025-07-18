@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-IumApplication<ium>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.ium.IumApplication",
+            "projectName": "ium",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
