@@ -46,7 +46,7 @@ body {
     height: 40px;
     border: 2px solid black;
     border-radius: 50%;
-    background: url('/static/img/profile.png') no-repeat center/cover;
+    background: url('/img/profile.jpg') no-repeat center/cover;
 }
 
 #roomInfo a {
@@ -96,30 +96,72 @@ body {
 }
 
 /* 채팅 메세지 스타일 */
-.messageBox {
-    display: inline-block;
-    max-width: 60%;
-    padding: 10px;
-    background: white;
-    border-radius: 15px;
+#chat {
+    background: #d3d3d3;
+    padding: 20px;
+    min-height: 600px;
+    font-family: Arial, sans-serif;
+}
+
+.chatMessage {
+    display: flex;
+    margin-bottom: 30px;
+}
+
+.chatMessage.left {
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.chatMessage.right {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.messageInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.nickname {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.messageRow {
+    display: flex;
+    align-items: center;
+}
+
+.bubble {
+    background: #fff;
     border: 1px solid black;
+    border-radius: 15px;
+    padding: 15px 20px;
+    max-width: 300px;
     font-size: 16px;
-    position: relative;
+    word-break: break-word;
 }
 
-.message-left {
-    align-self: flex-start;
-    background: #ffffff;
-}
-
-.message-right {
-    align-self: flex-end;
-    background: #cce5ff;
-}
-
-/* 메세지 시간 표시 */
-.timestamp {
+.time {
     font-size: 12px;
-    color: #333;
-    margin-top: 5px;
+    color: black;
+    margin: 0 10px;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.chatMessage.left .bubble {
+    margin-right: 10px;
+}
+
+.chatMessage.right .bubble {
+    margin-left: 10px;
+}
+
+.notice {
+    text-align: center;
+    margin: 15px 0;
+    font-style: italic;
 }

@@ -42,7 +42,6 @@
 
   socket.onopen = function (e) {
     console.log('open server!');
-    console.log('result' + JSON.stringify([[${roomList}]]));
     enterRoom(socket);
   };
   socket.onclose=function(e){
@@ -54,8 +53,9 @@
   }
 
   //메세지 수신했을 때 이벤트.
-  socket.onmessage = function (e) {
-    let data = JSON.parse(e.data);
+  socket.onmessage = function (event) {
+    let data = JSON.parse(event.data);
+    console.log(data);
     let msgArea = document.querySelector('.msgArea');
     let newMsg = document.createElement('div');
 
@@ -63,12 +63,36 @@
       newMsg.className = "notice";
       newMsg.innerText = data.message;
     } else {
-      newMsg.className = (data.sender === username) ? "message-right" : "message-left";
-      newMsg.innerHTML = `<span class="sender">${data.sender}</span>: ${data.message}`;
+      if (data.sender === username) {
+        // 내 메시지
+        newMsg.className = "chatMessage right";
+        newMsg.innerHTML = `
+                <div class="messageInfo">
+                    <div class="nickname">${data.sender}</div>
+                    <div class="messageRow">
+                        <div class="time">${data.createdAt}</div>
+                        <div class="bubble">${data.message}</div>
+                    </div>
+                </div>`;
+      } else {
+        // 상대방 메시지
+        newMsg.className = "chatMessage left";
+        newMsg.innerHTML = `
+                <div class="messageInfo">
+                    <div class="nickname">${data.sender}</div>
+                    <div class="messageRow">
+                        <div class="bubble">${data.message}</div>
+                        <div class="time">${data.createdAt}</div>
+                    </div>
+                </div>`;
+      }
     }
+
     msgArea.append(newMsg);
     msgArea.scrollTop = msgArea.scrollHeight;
-  }
+  };
+
+
 
 
 
