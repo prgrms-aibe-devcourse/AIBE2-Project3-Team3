@@ -20,8 +20,8 @@ public class Member extends BaseTimeEntity {
 
     @Column(name = "username", nullable = false)
     private String username; // 사용자 이름
-    @Column(name = "email", nullable = false, unique = true)
-    private String email; // 이메일
+    @Embedded
+    private Email email; // 이메일
     @Column(name = "password", nullable = false)
     private String password; // 비밀번호
 
@@ -33,7 +33,7 @@ public class Member extends BaseTimeEntity {
     private Status status;
 
     @Builder
-    public Member(String username, String email, String password, Role role, Status status) {
+    private Member(String username, Email email, String password, Role role, Status status) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -44,7 +44,7 @@ public class Member extends BaseTimeEntity {
     public static Member createMember(String username, String email, String password) {
         return Member.builder()
                 .username(username)
-                .email(email)
+                .email(new Email(email))
                 .password(password)
                 .role(Role.USER)
                 .status(Status.ACTIVE)
