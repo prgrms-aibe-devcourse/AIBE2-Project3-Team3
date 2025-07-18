@@ -2,6 +2,7 @@ package com.example.ium._core.security;
 
 import com.example.ium._core.exception.ErrorCode;
 import com.example.ium._core.exception.IumApplicationException;
+import com.example.ium.member.domain.model.Email;
 import com.example.ium.member.domain.model.Member;
 import com.example.ium.member.domain.repository.MemberJPARepository;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +22,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) {
-        Member member = memberJPARepository.findByEmail(email)
+        Member member = memberJPARepository.findByEmail(Email.of(email))
                 .orElseThrow(() -> new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND));
 
         return new User(
-                member.getEmail().getEmail(),
-                member.getPassword().getPassword(),
+                member.getEmail().getValue(),
+                member.getPassword().getValue(),
                 List.of(new SimpleGrantedAuthority(member.getRole().getKey()))
         );
     }

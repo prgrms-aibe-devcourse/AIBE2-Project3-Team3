@@ -12,17 +12,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class Password {
 
     @Column(name = "password", nullable = false)
-    private String password;
+    private String value;
 
     protected Password() {}
 
-    private Password(String password) {
-        this.password = password;
+    private Password(String value) {
+        this.value = value;
     }
 
-    public static Password encode(String password, PasswordEncoder encoder) {
-        validatePassword(password);
-        return new Password(encoder.encode(password));
+    public static Password encode(String value, PasswordEncoder encoder) {
+        validatePassword(value);
+        return new Password(encoder.encode(value));
     }
 
     private static void validatePassword(String password) {
@@ -32,6 +32,6 @@ public class Password {
     }
 
     public boolean matches(String rawPassword, PasswordEncoder encoder) {
-        return encoder.matches(rawPassword, this.password);
+        return encoder.matches(rawPassword, this.value);
     }
 }

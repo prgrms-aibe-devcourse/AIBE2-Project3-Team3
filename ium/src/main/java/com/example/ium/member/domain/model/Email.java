@@ -11,17 +11,34 @@ import lombok.Getter;
 public class Email {
 
     @Column(name = "email", nullable = false, unique = true)
-    private String email;
+    private String value;
 
     protected Email() {}
-    public Email(String email) {
-        validateEmail(email);
-        this.email = email;
+
+    public Email(String value) {
+        validateEmail(value);
+        this.value = value;
     }
 
-    private static void validateEmail(String email) {
-        if (email == null || !email.matches("^[\\w.-]+@[\\w.-]+\\.\\w{2,}$")) {
+    public static Email of(String value) {
+        return new Email(value);
+    }
+
+    private static void validateEmail(String value) {
+        if (value == null || !value.matches("^[\\w.-]+@[\\w.-]+\\.\\w{2,}$")) {
             throw new IumApplicationException(ErrorCode.INVALID_REQUEST);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Email email)) return false;
+        return value.equals(email.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
     }
 }
