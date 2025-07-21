@@ -38,12 +38,14 @@ public class ExpertProfile extends BaseEntity {
     private Salary salary; // 희망 연봉
     @Embedded
     private NegoYn negoYn; // 협상 가능 여부
+    @Embedded
+    private CompletedRequestCount completedRequestCount;
 
     @Builder
     private ExpertProfile(Long memberId, Member member, boolean activated,
                                  String introduceMessage, String portfolioDescription,
                                  String school, String major,
-                                 CareerDate careerDate, Salary salary, NegoYn negoYn) {
+                                 CareerDate careerDate, Salary salary, NegoYn negoYn, CompletedRequestCount completedRequestCount) {
         this.memberId = memberId;
         this.member = member;
         this.activated = activated;
@@ -54,6 +56,7 @@ public class ExpertProfile extends BaseEntity {
         this.careerDate = careerDate;
         this.salary = salary;
         this.negoYn = negoYn;
+        this.completedRequestCount = completedRequestCount;
     }
 
     public static ExpertProfile createExpertProfile(Member member, boolean activated,
@@ -71,6 +74,7 @@ public class ExpertProfile extends BaseEntity {
                 .careerDate(CareerDate.of(careerStartDate))
                 .salary(Salary.of(salary))
                 .negoYn(NegoYn.of(negoYn))
+                .completedRequestCount(CompletedRequestCount.init())
                 .build();
     }
 
@@ -81,5 +85,10 @@ public class ExpertProfile extends BaseEntity {
     // 전문 프로필 비활성화 메소드
     public void deactivate() {
         this.activated = false;
+    }
+
+    // 의뢰 완료 카운트 증가 메소드
+    public void incrementCompletedRequestCount() {
+        this.completedRequestCount = this.completedRequestCount.increment();
     }
 }
