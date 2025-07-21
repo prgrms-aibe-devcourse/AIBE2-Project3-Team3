@@ -9,6 +9,8 @@ import com.example.ium.member.domain.model.expert.ExpertSpecialization;
 import com.example.ium.member.domain.repository.ExpertProfileJPARepository;
 import com.example.ium.member.domain.repository.ExpertSpecializationJPARepository;
 import com.example.ium.member.domain.repository.MemberJPARepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,9 @@ public class ExpertProfileService {
     private final MemberJPARepository memberJPARepository;
     private final ExpertSpecializationJPARepository expertSpecializationJPARepository;
     private final MemberMetaCommandService memberMetaCommandService;
+
+    @PersistenceContext
+    private EntityManager em;
 
     /**
      * 전문가 프로필을 생성합니다.
@@ -51,7 +56,7 @@ public class ExpertProfileService {
                 requestDto.getSalary(),
                 requestDto.isNegoYn()
         );
-        expertProfileJPARepository.save(newExpertProfile);
+        em.persist(newExpertProfile);
 
         // 전문가 프로필에 대한 전문 분야를 생성하고 저장합니다.
         List<ExpertSpecialization> expertSpecializations = createExpertSpecializations(requestDto, newExpertProfile);
