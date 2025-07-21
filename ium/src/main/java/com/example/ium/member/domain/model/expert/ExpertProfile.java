@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -62,7 +64,7 @@ public class ExpertProfile extends BaseEntity {
     public static ExpertProfile createExpertProfile(Member member,
                                                     String introduceMessage, String portfolioDescription,
                                                     String school, String major,
-                                                    String careerStartDate, int salary, boolean negoYn) {
+                                                    LocalDate careerStartDate, int salary, boolean negoYn) {
         return ExpertProfile.builder()
                 .memberId(member.getId())
                 .member(member)

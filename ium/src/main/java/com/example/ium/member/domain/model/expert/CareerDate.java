@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 
 @Getter
@@ -19,8 +20,8 @@ public class CareerDate {
         this.startDate = startDate;
     }
 
-    public static CareerDate of(String startDate) {
-        return new CareerDate(YearMonth.parse(startDate));
+    public static CareerDate of(LocalDate startDate) {
+        return new CareerDate(YearMonth.from(startDate));
     }
 
     public String getCareerPeriod() {
