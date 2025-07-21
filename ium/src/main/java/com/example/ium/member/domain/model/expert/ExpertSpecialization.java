@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "member_specialization_tb")
+@Table(name = "expert_specialization_tb")
 public class ExpertSpecialization {
 
     @EmbeddedId
@@ -20,20 +20,17 @@ public class ExpertSpecialization {
     @JoinColumn(name = "expert_profile_id")
     private ExpertProfile expertProfile; // 전문가 프로필
 
-    @Column(name = "specialization_id", nullable = false, insertable = false, updatable = false)
-    private Long specializationId; // 전문 분야 ID
-
     @Builder
-    private ExpertSpecialization(ExpertProfile expertProfile, Long specializationId) {
-        this.id = ExpertSpecializationId.of(expertProfile.getMemberId(), specializationId);
+    private ExpertSpecialization(ExpertSpecializationId id, ExpertProfile expertProfile) {
+        this.id = id;
         this.expertProfile = expertProfile;
-        this.specializationId = specializationId;
     }
 
     public static ExpertSpecialization createExpertSpecialization(ExpertProfile expertProfile, Long specializationId) {
+        ExpertSpecializationId id = ExpertSpecializationId.of(expertProfile.getMemberId(), specializationId);
         return ExpertSpecialization.builder()
+                .id(id)
                 .expertProfile(expertProfile)
-                .specializationId(specializationId)
                 .build();
     }
 }
