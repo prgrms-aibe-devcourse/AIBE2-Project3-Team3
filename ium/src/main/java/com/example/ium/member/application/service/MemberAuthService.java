@@ -2,7 +2,7 @@ package com.example.ium.member.application.service;
 
 import com.example.ium._core.exception.ErrorCode;
 import com.example.ium._core.exception.IumApplicationException;
-import com.example.ium.member.application.dto.request.SignUpRequestDto;
+import com.example.ium.member.application.dto.request.SignUpFormDto;
 import com.example.ium.member.domain.model.Email;
 import com.example.ium.member.domain.model.Member;
 import com.example.ium.member.domain.model.Password;
@@ -30,7 +30,7 @@ public class MemberAuthService {
      * 회원 엔티티 생성 후 저장
      */
     @Transactional
-    public void signUp(SignUpRequestDto requestDto) {
+    public void signUp(SignUpFormDto requestDto) {
 
         Email email = Email.of(requestDto.email());
         validateDuplicatedEmail(email);
