@@ -1,10 +1,10 @@
 package com.example.ium.member.domain.meta;
 
-import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.util.List;
@@ -15,24 +15,24 @@ import java.util.List;
 public class MemberMeta {
 
     @Id
-    private String id; // Member ID
+    private String email;
     private String username;
-    private boolean isExpert; // 전문가 여부
-    private Long expertProfileId; // 전문가 프로필 ID
-    private List<Long> specializationIds; // 전문 분야 ID 목록
+    private boolean isExpert;
+    private Long expertProfileId;
+    private List<Long> specializationIds;
 
     @Builder
-    private MemberMeta(String id, String username, boolean isExpert, Long expertProfileId, List<Long> specializationIds) {
-        this.id = id;
+    private MemberMeta(String email, String username, boolean isExpert, Long expertProfileId, List<Long> specializationIds) {
+        this.email = email;
         this.username = username;
         this.isExpert = isExpert;
         this.expertProfileId = expertProfileId;
         this.specializationIds = specializationIds;
     }
 
-    public static MemberMeta createMemberMeta(Long id, String username, boolean isExpert, Long expertProfileId, List<Long> specializationIds) {
+    public static MemberMeta createMemberMeta(String email, String username, boolean isExpert, Long expertProfileId, List<Long> specializationIds) {
         return MemberMeta.builder()
-                .id(String.valueOf(id))
+                .email(email)
                 .username(username)
                 .isExpert(isExpert)
                 .expertProfileId(expertProfileId)
