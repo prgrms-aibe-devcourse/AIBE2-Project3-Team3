@@ -22,7 +22,7 @@ public class MemberAuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-    /*
+    /**
      * 회원 가입
      * @param requestDto 회원 가입 요청 DTO
      * 이메일 중복 검사
@@ -42,7 +42,7 @@ public class MemberAuthService {
         memberJPARepository.save(member);
     }
 
-    /*
+    /**
      * 이메일 중복 검사
      *
      * @param email 회원 이메일
@@ -54,7 +54,7 @@ public class MemberAuthService {
     }
 
 
-    /*
+    /**
      * 이메일로 회원 조회
      *
      * @param email 회원 이메일
