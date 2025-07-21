@@ -37,8 +37,6 @@ public class ChatController {
     
     List<ChatRoom> roomList = chatService.findAllRoom();
     model.addAttribute("roomList",roomList);
-    System.out.println("result" + roomList);
-    
     model.addAttribute("selectedRoomId", room.getRoomId());
     
     return "chat/chatRoom";  //만든사람이 채팅방 1빠로 들어가게 됩니다

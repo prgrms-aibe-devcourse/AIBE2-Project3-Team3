@@ -33,12 +33,12 @@
 
 <script th:inline="javascript">
   let username = [[${username}]];
+  let socket = new WebSocket("ws://localhost:8080/ws/chat");
 
   function enterRoom(socket){
     var enterMsg={"type" : "ENTER","roomId":[[${room.roomId}]],"sender": [[${username}]],"message":""}; //sender는  글쓸때 수정하자.
     socket.send(JSON.stringify(enterMsg));
   }
-  let socket = new WebSocket("ws://localhost:8080/ws/chat");
 
   socket.onopen = function (e) {
     console.log('open server!');
@@ -92,10 +92,6 @@
     msgArea.scrollTop = msgArea.scrollHeight;
   };
 
-
-
-
-
   //메세지 보내기 버튼 눌렀을 떄..
   function sendMsg() {
     let inputVal = document.querySelector('.content');
@@ -109,7 +105,7 @@
     var quitMsg={"type" : "QUIT","roomId":[[${room.roomId}]] ,"sender":[[${username}]],"message":""};
     socket.send(JSON.stringify(quitMsg));
     socket.close();
-    location.href="/chat/chatList";
+    location.href="/";
   }
 
 </script>
