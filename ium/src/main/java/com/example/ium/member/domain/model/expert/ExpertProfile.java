@@ -59,14 +59,14 @@ public class ExpertProfile extends BaseEntity {
         this.completedRequestCount = completedRequestCount;
     }
 
-    public static ExpertProfile createExpertProfile(Member member, boolean activated,
+    public static ExpertProfile createExpertProfile(Member member,
                                                     String introduceMessage, String portfolioDescription,
                                                     String school, String major,
                                                     String careerStartDate, int salary, boolean negoYn) {
         return ExpertProfile.builder()
                 .memberId(member.getId())
                 .member(member)
-                .activated(activated)
+                .activated(true)
                 .introduceMessage(introduceMessage)
                 .portfolioDescription(portfolioDescription)
                 .school(school)
