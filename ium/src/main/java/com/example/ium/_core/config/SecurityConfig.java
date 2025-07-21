@@ -1,6 +1,7 @@
 package com.example.ium._core.config;
 
 import com.example.ium._core.security.CustomAuthenticationEntryPoint;
+import com.example.ium._core.security.CustomLoginSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,9 +18,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
+    private final CustomLoginSuccessHandler customLoginSuccessHandler;
 
-    public SecurityConfig(UserDetailsService userDetailsService) {
+    public SecurityConfig(UserDetailsService userDetailsService,
+                          CustomLoginSuccessHandler customLoginSuccessHandler) {
         this.userDetailsService = userDetailsService;
+        this.customLoginSuccessHandler = customLoginSuccessHandler;
     }
 
     private static final String[] TEMPLATE_LIST = {
@@ -75,7 +79,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/authenticate")
                         .usernameParameter("user")
                         .passwordParameter("pwd")
-                        .defaultSuccessUrl("/", true)
+                        .successHandler(customLoginSuccessHandler)
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/"))
