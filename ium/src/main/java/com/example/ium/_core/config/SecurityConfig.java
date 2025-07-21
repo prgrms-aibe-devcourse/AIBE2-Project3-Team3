@@ -9,7 +9,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -17,12 +16,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
     private final CustomLoginSuccessHandler customLoginSuccessHandler;
 
-    public SecurityConfig(UserDetailsService userDetailsService,
-                          CustomLoginSuccessHandler customLoginSuccessHandler) {
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(CustomLoginSuccessHandler customLoginSuccessHandler) {
         this.customLoginSuccessHandler = customLoginSuccessHandler;
     }
 
@@ -65,6 +61,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers
+                        .defaultsDisabled()
+                        .frameOptions(frame -> frame.sameOrigin())
+                )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(TEMPLATE_LIST).permitAll()
                         .requestMatchers(WHITE_LIST).permitAll()
