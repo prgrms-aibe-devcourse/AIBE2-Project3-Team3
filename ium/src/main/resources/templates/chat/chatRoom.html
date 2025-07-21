@@ -9,9 +9,9 @@
 <div class="container">
   <div id="roomInfo">
     <div class="room"
-         th:each="room : ${roomList}"
-         th:classappend="${room.roomId == selectedRoomId} ? ' selected' : ''">
-      <a th:href="@{chatRoom(roomId=${room.roomId})}" th:text="${room.name}"></a>
+         th:each="rooms : ${roomList}"
+         th:classappend="${rooms.id == selectedRoomId} ? ' selected' : ''">
+      <a th:href="@{chatRoom(roomId=${rooms.id})}" th:text="${rooms.roomName}"></a>
     </div>
   </div>
 
@@ -33,10 +33,11 @@
 
 <script th:inline="javascript">
   let username = [[${username}]];
+  let roomId = /*[[${room == null} ? '' : ${room.id}]]*/ '';
   let socket = new WebSocket("ws://localhost:8080/ws/chat");
 
   function enterRoom(socket){
-    var enterMsg={"type" : "ENTER","roomId":[[${room.roomId}]],"sender": [[${username}]],"message":""}; //sender는  글쓸때 수정하자.
+    var enterMsg={"type" : "ENTER","roomId": roomId,"sender": [[${username}]],"message":""}; //sender는  글쓸때 수정하자.
     socket.send(JSON.stringify(enterMsg));
   }
 
@@ -96,13 +97,13 @@
   function sendMsg() {
     let inputVal = document.querySelector('.content');
     let content = inputVal.value;
-    var talkMsg = {"type" : "TALK","roomId":[[${room.roomId}]] ,"sender":[[${username}]],"message":content};
+    var talkMsg = {"type" : "TALK","roomId": roomId ,"sender":[[${username}]],"message":content};
     socket.send(JSON.stringify(talkMsg));
     inputVal.value = '';
   }
 
   function quit(){
-    var quitMsg={"type" : "QUIT","roomId":[[${room.roomId}]] ,"sender":[[${username}]],"message":""};
+    var quitMsg={"type" : "QUIT","roomId": roomId ,"sender":[[${username}]],"message":""};
     socket.send(JSON.stringify(quitMsg));
     socket.close();
     location.href="/";
