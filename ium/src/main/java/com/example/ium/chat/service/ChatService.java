@@ -4,9 +4,12 @@ import com.example.ium._core.exception.ErrorCode;
 import com.example.ium._core.exception.IumApplicationException;
 import com.example.ium.chat.domain.model.ChatMember;
 import com.example.ium.chat.domain.model.ChatMemberId;
+import com.example.ium.chat.domain.model.ChatMessage;
 import com.example.ium.chat.domain.model.ChatRoom;
 import com.example.ium.chat.domain.repository.ChatMemberRepository;
+import com.example.ium.chat.domain.repository.ChatMessageRepository;
 import com.example.ium.chat.domain.repository.ChatRoomRepository;
+import com.example.ium.chat.dto.ChatMessageDto;
 import com.example.ium.member.domain.model.Email;
 import com.example.ium.member.domain.model.Member;
 import com.example.ium.member.domain.repository.MemberJPARepository;
@@ -15,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,6 +27,7 @@ public class ChatService {
   
   private final ChatRoomRepository chatRoomRepository;
   private final ChatMemberRepository chatMemberRepository;
+  private final ChatMessageRepository chatMessageRepository;
   private final MemberJPARepository memberJPARepository;
   
   public List<ChatRoom> findAllRoom(String email) {
@@ -51,5 +56,27 @@ public class ChatService {
               chatMemberRepository.save(new ChatMember(new ChatMemberId(newRoom, targetMember)));
               return newRoom;
             });
+  }
+  
+  public void createChatMessage(ChatMessageDto chatMessageDto) {
+    ChatRoom chatRoom = chatRoomRepository.findById(Long.valueOf(chatMessageDto.getRoomId()))
+            .orElseThrow(() -> new IumApplicationException(ErrorCode.CHAT_ROOM_NOT_FOUND));
+    
+    Member member = getMember(chatMessageDto.getSender());
+    
+    ChatMessage chatMessage = ChatMessage.builder()
+            .chatRoom(chatRoom)
+            .content(chatMessageDto.getMessage())
+            .member(member)
+            .build();
+    
+    chatMessageRepository.save(chatMessage);
+  }
+  
+  public List<ChatMessageDto> getChatMessage(ChatRoom room) {
+    return chatMessageRepository.findByChatRoomIdOrderByRegTimeAsc(room.getId())
+            .stream()
+            .map(ChatMessageDto::of)
+            .collect(Collectors.toList());
   }
 }

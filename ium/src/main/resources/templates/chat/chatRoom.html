@@ -34,7 +34,50 @@
 <script th:inline="javascript">
   let username = [[${username}]];
   let roomId = /*[[${room == null} ? '' : ${room.id}]]*/ '';
+  let messageList = /*[[${messageList}]]*/ [];
   let socket = new WebSocket("ws://localhost:8080/ws/chat");
+
+  function renderInitialMessages(messages) {
+    let msgArea = document.querySelector('.msgArea');
+
+    messages.forEach(message => {
+      const newMsg = document.createElement('li');
+
+      if (message.sender === username) {
+        // 내 메시지
+        newMsg.className = "chatMessage right";
+        newMsg.innerHTML = `
+                    <div class="messageInfo">
+                        <div class="nickname">${message.sender}</div>
+                        <div class="messageRow">
+                            <div class="time">${message.createdAt}</div>
+                            <div class="bubble">${message.message}</div>
+                        </div>
+                    </div>
+                `;
+      } else {
+        // 상대방 메시지
+        newMsg.className = "chatMessage left";
+        newMsg.innerHTML = `
+                    <div class="messageInfo">
+                        <div class="nickname">${message.sender}</div>
+                        <div class="messageRow">
+                            <div class="bubble">${message.message}</div>
+                            <div class="time">${message.createdAt}</div>
+                        </div>
+                    </div>
+                `;
+      }
+
+      msgArea.appendChild(newMsg);
+    });
+
+    // 최신 메시지로 자동 스크롤
+    msgArea.scrollTop = msgArea.scrollHeight;
+  }
+
+  // 초기 메시지 렌더링 실행
+  renderInitialMessages(messageList);
 
   function enterRoom(socket){
     var enterMsg={"type" : "ENTER","roomId": roomId,"sender": [[${username}]],"message":""}; //sender는  글쓸때 수정하자.
