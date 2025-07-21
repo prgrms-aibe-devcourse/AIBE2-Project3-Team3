@@ -4,6 +4,8 @@ import com.example.ium.member.domain.model.Email;
 import com.example.ium.member.domain.model.Member;
 import com.example.ium.member.domain.model.Password;
 import com.example.ium.member.domain.repository.MemberJPARepository;
+import com.example.ium.specialization.domain.model.Specialization;
+import com.example.ium.specialization.domain.repository.SpecializationJPARepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,10 +25,19 @@ public class IumApplication {
   @Profile("local")
   @Bean
   CommandLineRunner localServerStart(MemberJPARepository memberJPARepository,
+                                     SpecializationJPARepository specializationJPARepository,
                                      PasswordEncoder passwordEncoder) {
     return args -> {
       memberJPARepository.saveAll(Arrays.asList(
               newMember("USERNAME1", "user1@test.com", "test1", passwordEncoder)
+      ));
+      specializationJPARepository.saveAll(Arrays.asList(
+                newSpecialization("JAVA"),
+                newSpecialization("SPRING"),
+                newSpecialization("JAVASCRIPT"),
+                newSpecialization("REACT"),
+                newSpecialization("ANGULAR"),
+                newSpecialization("PYTHON")
       ));
     };
   }
@@ -39,5 +50,9 @@ public class IumApplication {
             email,
             password
     );
+  }
+
+  private Specialization newSpecialization(String name) {
+    return Specialization.createSpecialization(name);
   }
 }
