@@ -1,6 +1,7 @@
-package com.example.ium.member.domain.model;
+package com.example.ium.member.domain.model.expert;
 
 import com.example.ium._core.entity.BaseEntity;
+import com.example.ium.member.domain.model.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

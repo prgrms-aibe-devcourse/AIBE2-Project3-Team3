@@ -1,4 +1,4 @@
-package com.example.ium.member.domain.model;
+package com.example.ium.member.domain.model.expert;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
