@@ -35,7 +35,7 @@ public class RecommendController {
      * 선택한 분야로 대화형 추천 페이지 이동
      */
     @GetMapping("/chat")
-    public String recommendChat(@RequestParam String category, Model model, Principal principal) {
+    public String recommendChat(@RequestParam(name = "category", required = false, defaultValue = "design") String category, Model model, Principal principal) {
         model.addAttribute("category", category);
         model.addAttribute("categoryName", getCategoryName(category));
         
