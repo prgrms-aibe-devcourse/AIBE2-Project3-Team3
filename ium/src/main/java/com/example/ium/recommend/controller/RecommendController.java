@@ -79,9 +79,10 @@ public class RecommendController {
     private String getCategoryName(String category) {
         return switch (category) {
             case "design" -> "디자인";
-            case "marketing" -> "마케팅";
-            case "programming" -> "IT·프로그래밍";
-            case "video" -> "영상·사진·음향";
+            case "programming" -> "프로그래밍";
+            case "video" -> "영상편집";
+            case "legal" -> "세무/법무/노무";
+            case "translation" -> "번역/통역";
             default -> "기타";
         };
     }
@@ -94,9 +95,10 @@ public class RecommendController {
         // 간단한 키워드 기반 응답 (실제로는 AI API 사용)
         return switch (category) {
             case "design" -> generateDesignSuggestion(userMessage);
-            case "marketing" -> generateMarketingSuggestion(userMessage);
             case "programming" -> generateProgrammingSuggestion(userMessage);
             case "video" -> generateVideoSuggestion(userMessage);
+            case "legal" -> generateLegalSuggestion(userMessage);
+            case "translation" -> generateTranslationSuggestion(userMessage);
             default -> "죄송합니다. 해당 분야에 대한 추천을 준비 중입니다.";
         };
     }
@@ -121,23 +123,49 @@ public class RecommendController {
         }
     }
 
-    private String generateMarketingSuggestion(String message) {
-        if (message.contains("SNS") || message.contains("소셜미디어")) {
-            return "SNS 마케팅에 관심이 있으시는군요! 다음 서비스들을 추천드립니다:\n\n" +
-                   "• 인스타그램 계정 운영 및 콘텐츠 제작 (월 80만원~)\n" +
-                   "• 페이스북/인스타 광고 운영 (월 50만원~)\n" +
-                   "• 브랜드 콘텐츠 기획 및 제작 (건당 30만원~)\n\n" +
-                   "어떤 플랫폼을 주로 활용하고 싶으신가요?";
-        } else if (message.contains("광고") || message.contains("퍼포먼스")) {
-            return "온라인 광고 운영에 관심이 있으시는군요! 이런 서비스는 어떠세요?\n\n" +
-                   "• 구글/네이버 검색광고 운영 (월 60만원~)\n" +
-                   "• 페이스북/인스타 광고 대행 (월 50만원~)\n" +
-                   "• 광고 성과 분석 및 최적화 (월 40만원~)\n\n" +
-                   "예산 규모나 목표가 있으시면 알려주세요!";
+    private String generateLegalSuggestion(String message) {
+        if (message.contains("세무") || message.contains("세금")) {
+            return "세무 업무에 관심이 있으시는군요! 다음 서비스들을 추천드립니다:\n\n" +
+                   "• 법인 세무 대행 (월 50만원~)\n" +
+                   "• 개인사업자 세무 상담 (건당 20만원~)\n" +
+                   "• 상속세 신고 대행 (100만원~)\n\n" +
+                   "어떤 세무 업무가 가장 시급하신지 알려주세요!";
+        } else if (message.contains("법무") || message.contains("계약")) {
+            return "법무 서비스에 관심이 있으시는군요! 이런 서비스는 어떠세요?\n\n" +
+                   "• 계약서 검토 및 작성 (50만원~)\n" +
+                   "• 법률 자문 및 컸설팅 (건당 30만원~)\n" +
+                   "• 소송 대리 및 법정 대리 (200만원~)\n\n" +
+                   "구체적으로 어떤 법률 문제가 있으신지 말씀해주세요!";
+        } else if (message.contains("노무") || message.contains("근로")) {
+            return "노무 및 근로 관련 서비스를 찾고 계시는군요! 다음 서비스들을 추천드립니다:\n\n" +
+                   "• 근로계약서 작성 및 검토 (30만원~)\n" +
+                   "• 근로자 규정 수립 대행 (50만원~)\n" +
+                   "• 사회보험 상담 및 대행 (월 40만원~)\n\n" +
+                   "회사 규모나 구체적인 요구사항이 있으시면 알려주세요!";
         } else {
-            return "마케팅 분야에 관심이 있으시는군요! 어떤 마케팅 서비스가 필요하신지 알려주세요.\n\n" +
-                   "예를 들어:\n• SNS 마케팅\n• 온라인 광고 운영\n• 콘텐츠 마케팅\n• 브랜드 마케팅\n\n" +
-                   "어떤 분야가 가장 시급하신가요?";
+            return "세무/법무/노무 분야에 관심이 있으시는군요! 어떤 서비스가 필요하신지 알려주세요.\n\n" +
+                   "예를 들어:\n• 세무 상담 및 대행\n• 계약서 검토 및 법률 자문\n• 노무 관리 및 근로 상담\n• 비즈니스 전반적인 법률 지원\n\n" +
+                   "어떤 분야가 가장 시급하신지 말씀해주세요!";
+        }
+    }
+
+    private String generateTranslationSuggestion(String message) {
+        if (message.contains("영어") || message.contains("영한") || message.contains("한영")) {
+            return "영어 번역 서비스를 찾고 계시는군요! 다음 서비스들을 추천드립니다:\n\n" +
+                   "• 비즈니스 문서 영한 번역 (페이지당 2만원~)\n" +
+                   "• 학술 논문 및 연구 자료 번역 (페이지당 3만원~)\n" +
+                   "• 마케팅 자료 및 웹사이트 번역 (50만원~)\n\n" +
+                   "어떤 종류의 문서를 번역하고 싶으신지 알려주세요!";
+        } else if (message.contains("통역") || message.contains("회의")) {
+            return "통역 서비스에 관심이 있으시는군요! 이런 서비스는 어떠세요?\n\n" +
+                   "• 비즈니스 회의 동시통역 (시간당 15만원~)\n" +
+                   "• 전시회 및 이벤트 통역 (일당 30만원~)\n" +
+                   "• 기술 세미나 전문 통역 (시간당 20만원~)\n\n" +
+                   "어떤 언어와 어떤 종류의 통역이 필요하신지 말씀해주세요!";
+        } else {
+            return "번역/통역 분야에 관심이 있으시는군요! 어떤 서비스가 필요하신지 알려주세요.\n\n" +
+                   "예를 들어:\n• 문서 번역 (영어, 중국어, 일본어 등)\n• 회의 및 이벤트 통역\n• 웹사이트 및 앱 현지화\n• 전문 분야 번역\n\n" +
+                   "어떤 언어와 어떤 분야의 번역이 필요하신가요?";
         }
     }
 

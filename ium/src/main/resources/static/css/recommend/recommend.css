@@ -150,10 +150,17 @@ body {
 /* Category Grid */
 .category-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     gap: 20px;
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
+}
+
+/* 첫 번째 줄: 디자인, 프로그래밍, 영상편집 (3개) */
+/* 두 번째 줄: 세무/법무/노무, 번역/통역 (2개, 오른쪽 빈 공간) */
+.category-grid .category-card {
+    /* 기본적으로 자동 배치 */
 }
 
 .category-card {
@@ -383,7 +390,14 @@ body {
     
     .category-grid {
         grid-template-columns: 1fr;
+        grid-template-rows: auto;
         gap: 15px;
+        max-width: 400px;
+    }
+    
+    /* 모바일에서는 모든 카드가 1열로 자동 배치 */
+    .category-grid .category-card {
+        /* 모바일에서는 기본 자동 배치 */
     }
     
     .main-title,
