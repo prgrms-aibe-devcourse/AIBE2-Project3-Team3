@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = {"com.example.ium.member", "com.example.ium.chat", "com.example.ium.workrequest"})
 public class GlobalControllerAdvice {
   @ExceptionHandler(IumApplicationException.class)
   public ResponseEntity<?> applicationHandler(IumApplicationException e) {

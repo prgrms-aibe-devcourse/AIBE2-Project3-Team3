@@ -8,13 +8,7 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <div class="logo">ium</div>
-        <div class="user-menu">
-            <div class="chat-icon">💬</div>
-            <div class="user-icon">👤</div>
-        </div>
-    </header>
+    <div th:replace="header :: header"></div>
 
     <!-- Main Content -->
     <main class="main-content">
@@ -150,10 +144,9 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2024 이음터(ium). All rights reserved.</p>
-    </footer>
+    <div th:replace="footer :: footer"></div>
 
     <script th:src="@{/js/index.js}"></script>
+    <script th:src="@{/js/header.js}"></script>
 </body>
 </html>

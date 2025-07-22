@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이음터 - AI 매칭</title>
+    <link rel="stylesheet" th:href="@{/css/recommend/recommend.css}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo" onclick="location.href='/'">ium</div>
+        <div class="user-menu">
+            <div class="chat-icon">💬</div>
+            <div class="user-icon">👤</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-container">
+            <div class="intro-text">
+                <p class="subtitle">이음터 AI 추천분야가 더 확장되었어요</p>
+            </div>
+            
+            <div class="title-section">
+                <span class="sparkle-icon">✨</span>
+                <h1 class="main-title">어떤 분야의 서비스를 추천해 드릴까요?</h1>
+            </div>
+
+            <div class="category-grid">
+                <div class="category-card" onclick="selectCategory('design')">
+                    <span class="category-text">디자인</span>
+                </div>
+                
+                <div class="category-card" onclick="selectCategory('programming')">
+                    <span class="category-text">프로그래밍</span>
+                </div>
+                
+                <div class="category-card" onclick="selectCategory('video')">
+                    <span class="category-text">영상편집</span>
+                </div>
+                
+                <div class="category-card" onclick="selectCategory('legal')">
+                    <span class="category-text">세무/법무/노무</span>
+                </div>
+                
+                <div class="category-card" onclick="selectCategory('translation')">
+                    <span class="category-text">번역/통역</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 이음터(ium). All rights reserved.</p>
+    </footer>
+
+    <script th:src="@{/js/recommend.js}"></script>
+</body>
+</html>
