@@ -29,15 +29,16 @@ public class IumApplication {
                                      PasswordEncoder passwordEncoder) {
     return args -> {
       memberJPARepository.saveAll(Arrays.asList(
-              newMember("USERNAME1", "user1@test.com", "test1", passwordEncoder)
+              newMember("USERNAME1", "user1@test.com", "test1", passwordEncoder),
+              newMember("USERNAME2", "user2@test.com", "test1", passwordEncoder),
+              newMember("ADMIN", "admin@test.com", "test1", passwordEncoder)
       ));
       specializationJPARepository.saveAll(Arrays.asList(
-                newSpecialization("JAVA"),
-                newSpecialization("SPRING"),
-                newSpecialization("JAVASCRIPT"),
-                newSpecialization("REACT"),
-                newSpecialization("ANGULAR"),
-                newSpecialization("PYTHON")
+                newSpecialization("디자인"),
+                newSpecialization("프로그래밍"),
+                newSpecialization("영상편집"),
+                newSpecialization("세무/회계"),
+                newSpecialization("번역/통역")
       ));
     };
   }

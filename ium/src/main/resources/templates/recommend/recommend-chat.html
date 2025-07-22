@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이음터 - AI 매칭</title>
+    <link rel="stylesheet" th:href="@{/css/recommend/recommend.css}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="/" class="back-btn">←</a>
+        <div class="logo" onclick="location.href='/'">ium</div>
+        <div class="user-menu">
+            <div class="chat-icon">💬</div>
+            <div class="user-icon">👤</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="chat-container">
+            <div class="intro-text">
+                <p class="subtitle">이음터 AI 추천분야가 더 확장되었어요</p>
+            </div>
+            
+            <div class="title-section">
+                <span class="sparkle-icon">✨</span>
+                <span class="category-label">이음터 AI가</span>
+                <div class="category-tag" th:text="${categoryName}">디자인</div>
+                <span class="service-text">서비스를 추천해드릴게요</span>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chatMessages">
+                <div class="ai-message">
+                    <div class="message-content">
+                        <span th:text="${categoryName}">디자인</span> 분야에서 어떤 서비스를 찾고 계신가요? 구체적인 요청사항을 알려주시면 더 정확한 추천을 드릴 수 있어요!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-section">
+                <div class="suggestions-section">
+                    <p class="suggestions-title">이렇게 입력해 보세요</p>
+                    <div class="suggestions-divider"></div>
+                    <div class="suggestions-list" id="suggestionsList">
+                        <!-- 카테고리별 추천 질문들이 여기에 표시됩니다 -->
+                    </div>
+                </div>
+                
+                <div class="input-container">
+                    <textarea 
+                        id="messageInput" 
+                        class="message-input" 
+                        placeholder="구체적인 조건을 같이 적으면 더 좋은 답변을 받을 수 있어요."
+                        maxlength="500"
+                        rows="1"></textarea>
+                    <div class="input-footer">
+                        <span class="char-count" id="charCount">0/50</span>
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                            <span class="sparkle">✨</span>
+                            <span>추천 받기</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 이음터(ium). All rights reserved.</p>
+    </footer>
+
+    <script th:inline="javascript">
+        const CATEGORY = [[${category}]];
+        const CATEGORY_NAME = [[${categoryName}]];
+    </script>
+    <script th:src="@{/js/recommend.js}"></script>
+</body>
+</html>

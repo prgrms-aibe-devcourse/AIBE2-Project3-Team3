@@ -13,6 +13,8 @@ public enum ErrorCode {
   DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
   EXPERT_PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, "전문가 프로필을 찾을 수 없습니다."),
   EXPERT_PROFILE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 전문가 프로필이 존재합니다."),
+  CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "채팅방을 찾을 수 없습니다."),
+  MONEY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 머니를 찾을 수 없습니다."),
   ;
   
   private HttpStatus status;
