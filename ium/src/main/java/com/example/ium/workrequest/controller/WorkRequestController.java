@@ -11,7 +11,7 @@ import java.util.List;
 @Controller
 public class WorkRequestController {
 
-    @GetMapping("/")
+    @GetMapping("/workrequest")
     public String showWorkRequest(Model model) {
 
         WorkRequestDto workRequest = new WorkRequestDto(
@@ -32,6 +32,6 @@ public class WorkRequestController {
         model.addAttribute("request", workRequest);
         model.addAttribute("aiExperts", experts);
 
-        return "workrequest";
+        return "request/workrequest";
     }
 }
