@@ -67,6 +67,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers
+                        .defaultsDisabled()
+                        .frameOptions(frame -> frame.sameOrigin())
+                )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(TEMPLATE_LIST).permitAll()
                         .requestMatchers(WHITE_LIST).permitAll()
@@ -85,7 +89,7 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/"))
-                .csrf(csrf -> csrf.disable());
+                .httpBasic(Customizer.withDefaults());
         return http.build();
     }
 
