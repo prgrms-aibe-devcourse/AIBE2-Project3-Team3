@@ -31,6 +31,7 @@ public class WorkRequestController {
 
         model.addAttribute("request", workRequest);
         model.addAttribute("aiExperts", experts);
+        model.addAttribute("targetUser", "admin@test.com"); // TODO service 단 연결후에 작업
 
         return "request/workrequest";
     }

@@ -26,7 +26,9 @@ public class IumApplication {
                                      PasswordEncoder passwordEncoder) {
     return args -> {
       memberJPARepository.saveAll(Arrays.asList(
-              newMember("USERNAME1", "user1@test.com", "test1", passwordEncoder)
+              newMember("USERNAME1", "user1@test.com", "test1", passwordEncoder),
+              newMember("USERNAME2", "user2@test.com", "test1", passwordEncoder),
+              newMember("ADMIN", "admin@test.com", "test1", passwordEncoder)
       ));
     };
   }
