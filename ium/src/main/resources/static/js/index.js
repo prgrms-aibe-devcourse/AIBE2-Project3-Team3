@@ -29,7 +29,7 @@ function redirectToRequestForm() {
 
 // AI 매칭 버튼 클릭
 function redirectToAIMatching() {
-    window.location.href = '/ai-matching';
+    window.location.href = '/recommend';
 }
 
 // 검색 기능
@@ -59,4 +59,29 @@ document.addEventListener('click', function(e) {
         const requestId = card.dataset.requestId || '1';
         window.location.href = `/request/${requestId}`;
     }
+});
+
+// 채팅방 이동
+function getRandomString(length) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
+document.querySelector('.chat-icon').addEventListener('click', function() {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/chat/createRoom';
+
+    const nameInput = document.createElement('input');
+    nameInput.type = 'hidden';
+    nameInput.name = 'name';
+    nameInput.value = getRandomString(10);
+    form.appendChild(nameInput);
+
+    document.body.appendChild(form);
+    form.submit();
 });

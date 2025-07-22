@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" th:href="@{/css/chat/chatRoom.css}">
+</head>
+<body>
+<div class="container">
+  <div id="roomInfo">
+    <div class="room"
+         th:each="room : ${roomList}"
+         th:classappend="${room.roomId == selectedRoomId} ? ' selected' : ''">
+      <a th:href="@{chatRoom(roomId=${room.roomId})}" th:text="${room.name}"></a>
+    </div>
+  </div>
+
+
+  <div id="messageContent">
+    <div class="inputBox">
+      <input type="text" placeholder="보낼 메세지를 입력하세요." class="content">
+      <button type="button" value="전송" class="sendBtn" onclick="sendMsg()">전송</button>
+      <button type="button" value="방나가기" class="quit" onclick="quit()">방 나가기 </button>
+    </div>
+
+    <div>
+      <span>메세지</span>
+      <div class="msgArea"></div>
+    </div>
+  </div>
+</div>
+</body>
+
+<script th:inline="javascript">
+  let username = [[${username}]];
+  let socket = new WebSocket("ws://localhost:8080/ws/chat");
+
+  function enterRoom(socket){
+    var enterMsg={"type" : "ENTER","roomId":[[${room.roomId}]],"sender": [[${username}]],"message":""}; //sender는  글쓸때 수정하자.
+    socket.send(JSON.stringify(enterMsg));
+  }
+
+  socket.onopen = function (e) {
+    console.log('open server!');
+    enterRoom(socket);
+  };
+  socket.onclose=function(e){
+    console.log('disconnet');
+  }
+
+  socket.onerror = function (e){
+    console.log(e);
+  }
+
+  //메세지 수신했을 때 이벤트.
+  socket.onmessage = function (event) {
+    let data = JSON.parse(event.data);
+    console.log(data);
+    let msgArea = document.querySelector('.msgArea');
+    let newMsg = document.createElement('div');
+
+    if (data.type === "ENTER" || data.type === "QUIT") {
+      newMsg.className = "notice";
+      newMsg.innerText = data.message;
+    } else {
+      if (data.sender === username) {
+        // 내 메시지
+        newMsg.className = "chatMessage right";
+        newMsg.innerHTML = `
+                <div class="messageInfo">
+                    <div class="nickname">${data.sender}</div>
+                    <div class="messageRow">
+                        <div class="time">${data.createdAt}</div>
+                        <div class="bubble">${data.message}</div>
+                    </div>
+                </div>`;
+      } else {
+        // 상대방 메시지
+        newMsg.className = "chatMessage left";
+        newMsg.innerHTML = `
+                <div class="messageInfo">
+                    <div class="nickname">${data.sender}</div>
+                    <div class="messageRow">
+                        <div class="bubble">${data.message}</div>
+                        <div class="time">${data.createdAt}</div>
+                    </div>
+                </div>`;
+      }
+    }
+
+    msgArea.append(newMsg);
+    msgArea.scrollTop = msgArea.scrollHeight;
+  };
+
+  //메세지 보내기 버튼 눌렀을 떄..
+  function sendMsg() {
+    let inputVal = document.querySelector('.content');
+    let content = inputVal.value;
+    var talkMsg = {"type" : "TALK","roomId":[[${room.roomId}]] ,"sender":[[${username}]],"message":content};
+    socket.send(JSON.stringify(talkMsg));
+    inputVal.value = '';
+  }
+
+  function quit(){
+    var quitMsg={"type" : "QUIT","roomId":[[${room.roomId}]] ,"sender":[[${username}]],"message":""};
+    socket.send(JSON.stringify(quitMsg));
+    socket.close();
+    location.href="/";
+  }
+
+</script>
+
+</html>
