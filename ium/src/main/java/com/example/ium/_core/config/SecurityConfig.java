@@ -42,6 +42,7 @@ public class SecurityConfig {
             "/h2-console/**",
             "/chat/**",
             "/ws/**",
+            "/recommend/**",
             "/css/**",
             "/js/**",
             "/img/**"

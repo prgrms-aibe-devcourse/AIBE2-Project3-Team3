@@ -29,7 +29,7 @@ function redirectToRequestForm() {
 
 // AI 매칭 버튼 클릭
 function redirectToAIMatching() {
-    window.location.href = '/ai-matching';
+    window.location.href = '/recommend';
 }
 
 // 검색 기능
