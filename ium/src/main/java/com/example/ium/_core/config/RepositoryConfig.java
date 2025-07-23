@@ -11,6 +11,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
         "com.example.ium.chat.domain.jpa.repository",
         "com.example.ium.member.domain.repository",
         "com.example.ium.money.domain.repository",
+        "com.example.ium.workrequest.repository",
         "com.example.ium.member.domain.repository",
         "com.example.ium.specialization.domain.repository"
 })
