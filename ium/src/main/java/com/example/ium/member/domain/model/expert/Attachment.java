@@ -21,7 +21,7 @@ public class Attachment {
 
     @Column(name = "file_name", nullable = false)
     private String fileName;
-    @Column(name = "file_url", nullable = false)
+    @Column(name = "file_url", nullable = false, columnDefinition = "TEXT")
     private String fileUrl;
 
     @Builder
