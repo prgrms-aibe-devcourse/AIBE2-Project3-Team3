@@ -5,31 +5,30 @@ import jakarta.persistence.Embeddable;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
+import java.time.Period;
 
 @Getter
 @Embeddable
 public class CareerDate {
 
     @Column(name = "career_start_date", nullable = false)
-    private YearMonth startDate;
+    private LocalDate startDate;
 
     protected CareerDate() {}
 
-    private CareerDate(YearMonth startDate) {
+    private CareerDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
     public static CareerDate of(LocalDate startDate) {
-        return new CareerDate(YearMonth.from(startDate));
+        return new CareerDate(startDate);
     }
 
     public String getCareerPeriod() {
-        YearMonth now = YearMonth.now();
-        int totalMonths = (now.getYear() - startDate.getYear()) * 12 + (now.getMonthValue() - startDate.getMonthValue());
-
-        int years = totalMonths / 12;
-        int months = totalMonths % 12;
+        LocalDate now = LocalDate.now();
+        Period period = Period.between(startDate, now);
+        int years = period.getYears();
+        int months = period.getMonths();
 
         if (years == 0) {
             return months + "개월";
@@ -38,8 +37,9 @@ public class CareerDate {
     }
 
     public boolean isJunior() {
-        YearMonth now = YearMonth.now();
-        int totalMonths = (now.getYear() - startDate.getYear()) * 12 + (now.getMonthValue() - startDate.getMonthValue());
+        LocalDate now = LocalDate.now();
+        Period period = Period.between(startDate, now);
+        int totalMonths = period.getYears() * 12 + period.getMonths();
         return totalMonths < 12;
     }
 }
