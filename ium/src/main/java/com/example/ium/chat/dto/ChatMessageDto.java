@@ -1,5 +1,8 @@
 package com.example.ium.chat.dto;
 
+import com.example.ium.chat.domain.model.ChatMessage;
+import com.example.ium.chat.domain.model.ChatMessageDoc;
+import com.example.ium.member.domain.repository.MemberJPARepository;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +25,7 @@ public class ChatMessageDto {
   private String createdAt;
   
   
-  public static ChatMessageDto of(com.example.ium.chat.domain.model.ChatMessage chatMessage) {
+  public static ChatMessageDto of(ChatMessage chatMessage) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
     
     return ChatMessageDto.builder()

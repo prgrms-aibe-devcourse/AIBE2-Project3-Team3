@@ -45,7 +45,7 @@ public class ChatController {
     model.addAttribute("roomList",roomList);
     model.addAttribute("selectedRoomId", room.getId());
     
-    List<ChatMessageDto> chatMessageList = chatService.getChatMessage(room);
+    List<ChatMessageDto> chatMessageList = chatService.getChatMessageDoc(room);
     model.addAttribute("messageList", chatMessageList);
     
     return "chat/chatRoom";  //만든사람이 채팅방 1빠로 들어가게 됩니다
@@ -63,7 +63,7 @@ public class ChatController {
     model.addAttribute("selectedRoomId", roomId);
     model.addAttribute("username", principal.getName());
     
-    List<ChatMessageDto> chatMessageList = chatService.getChatMessage(room);
+    List<ChatMessageDto> chatMessageList = chatService.getChatMessageDoc(room);
     model.addAttribute("messageList", chatMessageList);
     return "chat/chatRoom";
   }

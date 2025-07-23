@@ -2,7 +2,7 @@ package com.example.ium.member.application.service;
 
 import com.example.ium._core.exception.ErrorCode;
 import com.example.ium._core.exception.IumApplicationException;
-import com.example.ium.member.application.dto.request.SignUpRequestDto;
+import com.example.ium.member.application.dto.request.SignUpFormDto;
 import com.example.ium.member.domain.model.Email;
 import com.example.ium.member.domain.model.Member;
 import com.example.ium.member.domain.model.Password;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class MemberAuthService {
@@ -23,7 +22,7 @@ public class MemberAuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-    /*
+    /**
      * 회원 가입
      * @param requestDto 회원 가입 요청 DTO
      * 이메일 중복 검사
@@ -31,7 +30,7 @@ public class MemberAuthService {
      * 회원 엔티티 생성 후 저장
      */
     @Transactional
-    public void signUp(SignUpRequestDto requestDto) {
+    public void signUp(SignUpFormDto requestDto) {
 
         Email email = Email.of(requestDto.email());
         validateDuplicatedEmail(email);
@@ -43,7 +42,7 @@ public class MemberAuthService {
         memberJPARepository.save(member);
     }
 
-    /*
+    /**
      * 이메일 중복 검사
      *
      * @param email 회원 이메일
@@ -55,7 +54,7 @@ public class MemberAuthService {
     }
 
 
-    /*
+    /**
      * 이메일로 회원 조회
      *
      * @param email 회원 이메일

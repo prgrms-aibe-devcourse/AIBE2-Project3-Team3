@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>전문가 프로필</title>
+</head>
+<body>
+
+<h1>전문가 프로필</h1>
+
+<div>
+    <p><strong>자기소개:</strong> <span th:text="${expertProfile.introduceMessage}"></span></p>
+    <p><strong>포트폴리오 설명:</strong> <span th:text="${expertProfile.portfolioDescription}"></span></p>
+    <p><strong>학교:</strong> <span th:text="${expertProfile.school}"></span></p>
+    <p><strong>전공:</strong> <span th:text="${expertProfile.major}"></span></p>
+    <p><strong>경력 시작일:</strong> <span th:text="${expertProfile.startCareerDate}"></span></p>
+    <p><strong>희망 연봉:</strong> <span th:text="${expertProfile.salary}"></span>만원</p>
+    <p><strong>연봉 협상 가능 여부:</strong> <span th:text="${expertProfile.negoYn == 'Y' ? '가능' : '불가능'}"></span></p>
+    <p><strong>완료된 의뢰 수:</strong> <span th:text="${expertProfile.completedRequestCount}"></span></p>
+    <p><strong>전문 분야:</strong></p>
+    <ul>
+        <li th:each="spec : ${expertProfile.specializations}"
+            th:text="${spec.name}"></li>
+    </ul>
+</div>
+
+</body>
+</html>

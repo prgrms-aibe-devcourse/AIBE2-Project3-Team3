@@ -1,30 +1,26 @@
 package com.example.ium._core.exception;
 
-import com.example.ium._core.dto.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
-@RestControllerAdvice(basePackages = {"com.example.ium.member", "com.example.ium.chat", "com.example.ium.workrequest"})
+@ControllerAdvice(basePackages = {"com.example.ium.member", "com.example.ium.chat", "com.example.ium.workrequest"})
 public class GlobalControllerAdvice {
   @ExceptionHandler(IumApplicationException.class)
-  public ResponseEntity<?> applicationHandler(IumApplicationException e) {
+  public String handleIumException(IumApplicationException e, Model model) {
+    model.addAttribute("errorMessage", e.getMessage());
     log.error("Error occurs {}", e.toString());
     
-    return ResponseEntity
-            .status(e.getErrorCode().getStatus())
-            .body(Response.error(e.getErrorCode().name()));
+    return "common/error";
   }
   
   @ExceptionHandler(RuntimeException.class)
-  public ResponseEntity<?> applicationHandler(RuntimeException e) {
+  public String applicationHandler(RuntimeException e, Model model) {
+    model.addAttribute("errorMessage", "서버 오류가 발생했습니다.");
     log.error("Error occurs {}", e.toString());
-    
-    return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(Response.error(ErrorCode.INTERNAL_SERVER_ERROR.name()));
+
+    return "common/error";
   }
 }

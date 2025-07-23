@@ -1,6 +1,6 @@
 package com.example.ium.member.application.controller;
 
-import com.example.ium.member.application.dto.request.SignUpRequestDto;
+import com.example.ium.member.application.dto.request.SignUpFormDto;
 import com.example.ium.member.application.service.MemberAuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class MemberAuthController {
      * @return 로그인 페이지 경로
      */
     @PostMapping("/signup")
-    public String signUp(@Valid @ModelAttribute SignUpRequestDto requestDto, BindingResult bindingResult) {
+    public String signUp(@Valid @ModelAttribute SignUpFormDto requestDto, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             log.error("회원 가입 요청에서 오류 발생: {}", bindingResult.getAllErrors());
