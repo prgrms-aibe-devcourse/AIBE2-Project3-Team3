@@ -29,6 +29,7 @@ public class SecurityConfig {
             "/images/**",
             "/signup",
             "/login",
+            "/workrequest.css"
     };
 
     // 화이트리스트 정의
@@ -104,5 +105,4 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-    
 }
