@@ -7,13 +7,8 @@ spring:
     username: sa
     password:
   data:
-    moongodb:
-      host: mongo
-      port: 27017
-      database: spring_chat
-      username: root
-      password: example
-      authentication-database: admin
+    mongodb:
+      uri: mongodb://root:example@localhost:27017/chat_spring?authSource=admin
 
   h2:
     console:
