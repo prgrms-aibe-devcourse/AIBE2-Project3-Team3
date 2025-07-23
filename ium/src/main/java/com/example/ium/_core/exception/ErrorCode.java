@@ -13,6 +13,7 @@ public enum ErrorCode {
   DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
   CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "채팅방을 찾을 수 없습니다."),
   MONEY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 머니를 찾을 수 없습니다."),
+  WORK_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 의뢰를 찾을 수 없습니다."),
   ;
   
   private HttpStatus status;

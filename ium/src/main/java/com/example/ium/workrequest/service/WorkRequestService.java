@@ -1,9 +1,11 @@
 package com.example.ium.workrequest.service;
 
-import com.example.ium.workrequest.WorkRequestEntity;
+import com.example.ium.workrequest.entity.WorkRequestEntity;
 import com.example.ium.workrequest.repository.WorkRequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.example.ium._core.exception.IumApplicationException;
+import com.example.ium._core.exception.ErrorCode;
 
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class WorkRequestService {
     // 하나
     public WorkRequestEntity getRequest(Long id) {
         return workRequestRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("요청을 찾을 수 없습니다. id = " + id));
+                .orElseThrow(() -> new IumApplicationException(ErrorCode.WORK_REQUEST_NOT_FOUND));
     }
     // 새 요청
     public WorkRequestEntity saveRequest(WorkRequestEntity workRequest) {
