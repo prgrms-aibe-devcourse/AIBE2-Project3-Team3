@@ -12,7 +12,9 @@ public record ExpertProfileViewDto(
         int salary,
         String negoYn,
         int completedRequestCount,
-        List<SpecializationSummary> specializations
+        List<SpecializationSummary> specializations,
+        List<AttachmentInfo> attachments
 ) {
     public record SpecializationSummary(Long id, String name) {}
+    public record AttachmentInfo(String fileName, String fileUrl) {}
 }

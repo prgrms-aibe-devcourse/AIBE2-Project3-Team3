@@ -97,6 +97,9 @@ public class ExpertProfileService {
                 specializationJPARepository.findAllById(specializationIds).stream()
                         .map(s -> new ExpertProfileViewDto.SpecializationSummary(s.getId(), s.getSpecializationName().getValue()))
                         .toList();
+        List<ExpertProfileViewDto.AttachmentInfo> attachmentInfos = expertProfile.getAttachments().stream()
+                .map(attachment -> new ExpertProfileViewDto.AttachmentInfo(attachment.getFileName(), attachment.getFileUrl()))
+                .toList();
         return new ExpertProfileViewDto(
                 expertProfile.getIntroduceMessage(),
                 expertProfile.getPortfolioDescription(),
@@ -106,7 +109,8 @@ public class ExpertProfileService {
                 expertProfile.getSalary().getValue(),
                 expertProfile.getNegoYn().getValue(),
                 expertProfile.getCompletedRequestCount().getValue(),
-                specializationSummaries
+                specializationSummaries,
+                attachmentInfos
         );
     }
 
@@ -174,7 +178,7 @@ public class ExpertProfileService {
      * @return 전문가 프로필
      */
     private ExpertProfile findExpertProfile(Long memberId) {
-        return expertProfileJPARepository.findById(memberId)
+        return expertProfileJPARepository.findByIdByEagerLoading(memberId)
                 .orElseThrow(() -> new IumApplicationException(ErrorCode.EXPERT_PROFILE_NOT_FOUND));
     }
 
