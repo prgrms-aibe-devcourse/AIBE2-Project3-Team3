@@ -1,4 +1,4 @@
-package com.example.ium.chat.config;
+package com.example.ium._core.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
