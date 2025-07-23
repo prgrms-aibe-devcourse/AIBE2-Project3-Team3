@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableJpaRepositories(basePackages = {
         "com.example.ium.chat.domain.jpa.repository",
         "com.example.ium.member.domain.repository",
-        "com.example.ium.money.domain.repository"})
+        "com.example.ium.money.domain.repository",
+        "com.example.ium.specialization.domain.repository"})
 public class RepositoryConfig {
 }
