@@ -4,8 +4,14 @@
   <meta charset="UTF-8">
   <title>Title</title>
   <link rel="stylesheet" th:href="@{/css/chat/chatRoom.css}">
+  <link rel="stylesheet" th:href="@{/css/header.css}">
+  <link rel="stylesheet" th:href="@{/css/footer.css}">
 </head>
 <body>
+
+<!-- Header -->
+<div th:replace="header :: header"></div>
+
 <div class="container">
   <div id="roomInfo">
     <div class="room"
@@ -29,6 +35,11 @@
     </div>
   </div>
 </div>
+
+<!-- Footer -->
+<div th:replace="footer :: footer"></div>
+
+<script th:src="@{/js/header.js}"></script>
 </body>
 
 <script th:inline="javascript">

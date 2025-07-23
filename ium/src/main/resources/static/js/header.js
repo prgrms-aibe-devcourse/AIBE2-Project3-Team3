@@ -22,6 +22,12 @@ document.querySelector('.chat-icon').addEventListener('click', function() {
     nameInput.value = getRandomString(10);
     form.appendChild(nameInput);
 
+    const targetUserInput = document.createElement('input');
+    targetUserInput.type = 'hidden';
+    targetUserInput.name = 'targetUser';
+    targetUserInput.value = "admin@test.com"; // admin 과 대화창 열기
+    form.appendChild(targetUserInput);
+
     document.body.appendChild(form);
     form.submit();
 });
