@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/AIBE2-Project3-Team3.iml" filepath="$PROJECT_DIR$/.idea/AIBE2-Project3-Team3.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.example.ium.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.example.ium.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ium.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ium.main.iml" />
     </modules>
   </component>
 </project>
