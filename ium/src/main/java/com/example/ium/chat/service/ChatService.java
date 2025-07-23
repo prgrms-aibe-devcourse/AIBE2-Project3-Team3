@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -104,12 +105,13 @@ public class ChatService {
       Member member = memberJPARepository.findById(chatMessageDoc.getMemberId())
               .orElseThrow(() -> new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND));
       
+      LocalDateTime regTime = chatMessageDoc.getRegTime();
       ChatMessageDto dto = ChatMessageDto.builder()
               .type(ChatMessageDto.MessageType.TALK)
               .roomId(String.valueOf(chatMessageDoc.getRoomId()))
               .sender(member.getEmail().getValue())
               .message(chatMessageDoc.getContent())
-              .createdAt(chatMessageDoc.getRegTime().format(formatter))
+              .createdAt(regTime == null ? "" : regTime.format(formatter))
               .build();
       
       result.add(dto);
