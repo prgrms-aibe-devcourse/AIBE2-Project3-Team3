@@ -7,7 +7,6 @@ import com.example.ium.member.domain.model.Member;
 import com.example.ium.member.domain.repository.MemberJPARepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         Member member = memberJPARepository.findByEmail(Email.of(email))
                 .orElseThrow(() -> new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND));
 
-        return new User(
+        return new CustomUserDetails(
+                member.getId(),
                 member.getEmail().getValue(),
                 member.getPassword().getValue(),
                 List.of(new SimpleGrantedAuthority(member.getRole().getKey()))

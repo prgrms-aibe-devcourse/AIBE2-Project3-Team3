@@ -6,6 +6,9 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+  data:
+    mongodb:
+      uri: mongodb://root:example@localhost:27017/chat_spring?authSource=admin
 
   h2:
     console:

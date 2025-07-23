@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>일반 회원 프로필</title>
+</head>
+<body>
+<h1>일반 회원 프로필</h1>
+
+<div>
+    <label>회원 ID:</label>
+    <span th:text="${memberProfile.memberId}"></span>
+</div>
+
+<div>
+    <label>이메일:</label>
+    <span th:text="${memberProfile.email}"></span>
+</div>
+
+</body>
+</html>
