@@ -41,6 +41,12 @@ public class SecurityConfig {
             "/api/health/**",
             "/api/actuator/**",
             "/h2-console/**",
+            "/chat/**",
+            "/ws/**",
+            "/recommend/**",
+            "/css/**",
+            "/js/**",
+            "/img/**"
     };
 
     // 관리자 리스트 정의
@@ -62,6 +68,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers
+                        .defaultsDisabled()
+                        .frameOptions(frame -> frame.sameOrigin())
+                )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/workrequest/**").permitAll()
                         .requestMatchers(TEMPLATE_LIST).permitAll()
@@ -96,5 +106,5 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
+    
 }

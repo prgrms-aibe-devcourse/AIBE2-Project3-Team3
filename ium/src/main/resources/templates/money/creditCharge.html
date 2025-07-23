@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>충전하기</title>
+  <link rel="stylesheet" th:href="@{/css/money/creditCharge.css}">
+  <link rel="stylesheet" th:href="@{/css/header.css}">
+  <link rel="stylesheet" th:href="@{/css/footer.css}">
+</head>
+<body>
+<!-- Header -->
+<div th:replace="header :: header"></div>
+
+<div class="container">
+
+  <h2>충전하시겠습니까?</h2>
+
+  <div class="amount-section">
+    <p>금액</p>
+    <div class="amount-options">
+      <div class="amount-box" data-credit="1000">1,000크래딧<br>+ 100포인트</div>
+      <div class="amount-box" data-credit="5000">5,000크래딧<br>+ 500포인트</div>
+      <div class="amount-box" data-credit="10000">10,000크래딧<br>+ 1,000포인트</div>
+      <div class="amount-box" data-credit="30000">30,000크래딧<br>+ 3,000포인트</div>
+    </div>
+  </div>
+
+  <div class="button-group">
+    <button class="confirm-btn">확인</button>
+    <button class="cancel-btn">취소</button>
+  </div>
+</div>
+
+<!-- Footer -->
+<div th:replace="footer :: footer"></div>
+
+<script th:src="@{/js/header.js}"></script>
+<script th:src="@{/js/money/creditCharge.js}"></script>
+</body>
+</html>

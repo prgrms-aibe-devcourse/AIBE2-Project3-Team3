@@ -35,6 +35,7 @@ public class WorkRequestController {
                 new ExpertDto("전문가3", "통역/번역 전문가", 50000, "소소핑", "image3.jpg")
         );
         model.addAttribute("aiExperts", experts);
+        model.addAttribute("targetUser", "admin@test.com"); // TODO service 단 연결후에 작업
 
         return "request/workrequest";
     }
