@@ -32,3 +32,7 @@ spring:
 kakaopay:
   cId: ${KAKAOPAY_CID}
   secretKey: ${KAKAOPAY_SECRET_KEY}
+
+server:
+  tomcat:
+    max-part-count: -1
