@@ -1,5 +1,6 @@
 package com.example.ium.workrequest;
 
+import com.example.ium._core.entity.BaseEntity;
 import com.example.ium._core.entity.BaseTimeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "WorkRequest")
-public class WorkRequestEntity extends BaseTimeEntity {
+public class WorkRequestEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +37,6 @@ public class WorkRequestEntity extends BaseTimeEntity {
 
     private int price;
 
-    private String createdBy;
     private String fileUrl;
     private String fileName;
 
