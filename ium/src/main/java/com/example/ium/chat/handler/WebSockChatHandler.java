@@ -58,7 +58,7 @@ public class WebSockChatHandler extends TextWebSocketHandler {
       sendToEachSocket(sessions,new TextMessage(objectMapper.writeValueAsString(chatMessageDto)) );
     } else {
       chatMessageDto.setCreatedAt(LocalDateTime.now().format(formatter));
-      chatService.createChatMessage(chatMessageDto);
+      chatService.createChatMessageDoc(chatMessageDto);
       sendToEachSocket(sessions, new TextMessage(objectMapper.writeValueAsString(chatMessageDto))); //입장,퇴장 아닐 때는 클라이언트로부터 온 메세지 그대로 전달.
     }
   }
