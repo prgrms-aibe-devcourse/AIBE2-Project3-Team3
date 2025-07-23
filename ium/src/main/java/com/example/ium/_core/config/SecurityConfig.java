@@ -29,6 +29,7 @@ public class SecurityConfig {
             "/images/**",
             "/signup",
             "/login",
+            "/workrequest.css"
     };
 
     // 화이트리스트 정의
@@ -62,6 +63,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/workrequest/**").permitAll()
                         .requestMatchers(TEMPLATE_LIST).permitAll()
                         .requestMatchers(WHITE_LIST).permitAll()
                         .requestMatchers(ADMIN_LIST).hasRole("ADMIN")
@@ -94,4 +96,5 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
 }
