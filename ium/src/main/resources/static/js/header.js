@@ -9,8 +9,6 @@ function getRandomString(length) {
 }
 
 document.querySelector('.chat-icon').addEventListener('click', function() {
-    console.log("clicked");
-    alert("clicked");
 
     const form = document.createElement('form');
     form.method = 'POST';
