@@ -1,7 +1,6 @@
-package com.example.ium.workrequest;
+package com.example.ium.workrequest.entity;
 
 import com.example.ium._core.entity.BaseEntity;
-import com.example.ium._core.entity.BaseTimeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

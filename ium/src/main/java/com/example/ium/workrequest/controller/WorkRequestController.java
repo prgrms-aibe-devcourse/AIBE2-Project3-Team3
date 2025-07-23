@@ -1,7 +1,7 @@
 package com.example.ium.workrequest.controller;
 
 import com.example.ium.workrequest.dto.ExpertDto;
-import com.example.ium.workrequest.WorkRequestEntity;
+import com.example.ium.workrequest.entity.WorkRequestEntity;
 import com.example.ium.workrequest.service.WorkRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
