@@ -8,7 +8,6 @@ import com.example.ium.member.domain.model.Member;
 import com.example.ium.member.domain.model.expert.ExpertProfile;
 import com.example.ium.member.domain.model.expert.ExpertSpecialization;
 import com.example.ium.member.domain.repository.ExpertProfileJPARepository;
-import com.example.ium.member.domain.repository.ExpertSpecializationJPARepository;
 import com.example.ium.member.domain.repository.MemberJPARepository;
 import com.example.ium.specialization.domain.repository.SpecializationJPARepository;
 import jakarta.persistence.EntityManager;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,7 +27,6 @@ public class ExpertProfileService {
 
     private final ExpertProfileJPARepository expertProfileJPARepository;
     private final MemberJPARepository memberJPARepository;
-    private final ExpertSpecializationJPARepository expertSpecializationJPARepository;
     private final MemberMetaCommandService memberMetaCommandService;
     private final SpecializationJPARepository specializationJPARepository;
 
@@ -166,5 +165,18 @@ public class ExpertProfileService {
     private ExpertProfile findExpertProfile(Long memberId) {
         return expertProfileJPARepository.findById(memberId)
                 .orElseThrow(() -> new IumApplicationException(ErrorCode.EXPERT_PROFILE_NOT_FOUND));
+    }
+
+    /**
+     * 전문가 프로필이 활성화되어 있는지 확인합니다.
+     *
+     * @param memberId 전문가 프로필의 멤버 ID
+     * @return 전문가 프로필 활성화 상태
+     */
+    public boolean isExpertProfileActivated(Long memberId) {
+        Optional<Boolean> cachedActivationStatus = memberMetaCommandService.getExpertProfileActivationStatus(memberId);
+        return cachedActivationStatus.orElseGet(() -> expertProfileJPARepository.findById(memberId)
+                .map(ExpertProfile::isActivated)
+                .orElse(false));
     }
 }

@@ -43,13 +43,7 @@ public class ExpertProfileController {
     public String createExpertProfile(@ModelAttribute ExpertProfileFormDto requestDto, @AuthenticationPrincipal CustomUserDetails memberDetails) {
         Long memberId = memberDetails.getMemberId();
         expertProfileService.createExpertProfile(requestDto, memberId);
-        return "redirect:/profile/" + memberId;
-    }
-
-    @GetMapping("/{memberId}")
-    public String getExpertProfile(@PathVariable("memberId") Long memberId, Model model) {
-        model.addAttribute("expertProfile", expertProfileService.getExpertProfile(memberId));
-        return "member/view-expert-profile"; // 전문가 프로필 조회 페이지 경로
+        return "redirect:/profiles/" + memberId;
     }
 
     /**
