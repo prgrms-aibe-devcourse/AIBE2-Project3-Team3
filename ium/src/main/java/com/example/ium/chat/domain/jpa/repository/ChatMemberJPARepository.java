@@ -1,4 +1,4 @@
-package com.example.ium.chat.domain.repository;
+package com.example.ium.chat.domain.jpa.repository;
 
 import com.example.ium.chat.domain.model.ChatMember;
 import com.example.ium.chat.domain.model.ChatMemberId;
@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface ChatMemberRepository extends JpaRepository<ChatMember, ChatMemberId> {
+public interface ChatMemberJPARepository extends JpaRepository<ChatMember, ChatMemberId> {
   @Query("select distinct cm.id.chatRoom from ChatMember cm where cm.id.member.id = :memberId")
   List<ChatRoom> findChatRoomsByMember(@Param("memberId") Long memberId);
   
