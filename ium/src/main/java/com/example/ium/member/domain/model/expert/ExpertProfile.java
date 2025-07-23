@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -22,6 +24,8 @@ public class ExpertProfile extends BaseEntity {
     @OneToOne
     @MapsId
     private Member member; // 회원 정보
+    @OneToMany(mappedBy = "expertProfile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ExpertSpecialization> expertSpecialization = new ArrayList<>(); // 전문가 전문 분야
 
     private boolean activated; // 활성화 여부
 
@@ -78,6 +82,11 @@ public class ExpertProfile extends BaseEntity {
                 .negoYn(NegoYn.of(negoYn))
                 .completedRequestCount(CompletedRequestCount.init())
                 .build();
+    }
+
+    public void addExpertSpecialization(ExpertSpecialization expertSpecialization) {
+        this.expertSpecialization.add(expertSpecialization);
+        expertSpecialization.setExpertProfile(this);
     }
 
     // 전문 프로필 활성화 메소드

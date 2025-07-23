@@ -3,6 +3,7 @@ package com.example.ium.member.application.service;
 import com.example.ium._core.exception.ErrorCode;
 import com.example.ium._core.exception.IumApplicationException;
 import com.example.ium.member.application.dto.request.ExpertProfileFormDto;
+import com.example.ium.member.application.dto.response.ExpertProfileViewDto;
 import com.example.ium.member.domain.model.Member;
 import com.example.ium.member.domain.model.expert.ExpertProfile;
 import com.example.ium.member.domain.model.expert.ExpertSpecialization;
@@ -56,14 +57,28 @@ public class ExpertProfileService {
                 requestDto.getSalary(),
                 requestDto.isNegoYn()
         );
-        em.persist(newExpertProfile);
 
         // 전문가 프로필에 대한 전문 분야를 생성하고 저장합니다.
         List<ExpertSpecialization> expertSpecializations = createExpertSpecializations(requestDto, newExpertProfile);
-        expertSpecializationJPARepository.saveAll(expertSpecializations);
+        for (ExpertSpecialization specialization : expertSpecializations) {
+            newExpertProfile.addExpertSpecialization(specialization);
+        }
+
+        em.persist(newExpertProfile);
 
         // 전문가 프로필 생성 후 멤버 메타 캐시 업데이트
         memberMetaCommandService.cacheMemberMeta(member.getEmail().getValue());
+    }
+
+    /**
+     * 전문가 프로필을 조회합니다.
+     *
+     * @param memberId 전문가 프로필의 멤버 ID
+     * @return 전문가 프로필 DTO
+     */
+    public ExpertProfileViewDto getExpertProfile(Long memberId) {
+        ExpertProfile expertProfile = findExpertProfile(memberId);
+        return null;
     }
 
     /**
@@ -73,8 +88,7 @@ public class ExpertProfileService {
      */
     @Transactional
     public void activateExpertProfile(Long memberId) {
-        ExpertProfile expertProfile = expertProfileJPARepository.findById(memberId)
-                .orElseThrow(() -> new IumApplicationException(ErrorCode.EXPERT_PROFILE_NOT_FOUND));
+        ExpertProfile expertProfile = findExpertProfile(memberId);
         expertProfile.activate();
     }
 
@@ -85,8 +99,7 @@ public class ExpertProfileService {
      */
     @Transactional
     public void deactivateProfile(Long memberId) {
-        ExpertProfile expertProfile = expertProfileJPARepository.findById(memberId)
-                .orElseThrow(() -> new IumApplicationException(ErrorCode.EXPERT_PROFILE_NOT_FOUND));
+        ExpertProfile expertProfile = findExpertProfile(memberId);
         expertProfile.deactivate();
     }
 
@@ -123,5 +136,16 @@ public class ExpertProfileService {
         return requestDto.getSpecializationIds().stream()
                 .map(specializationId -> ExpertSpecialization.createExpertSpecialization(expertProfile, specializationId))
                 .toList();
+    }
+
+    /**
+     * 전문가 프로필을 멤버 ID로 조회합니다.
+     *
+     * @param memberId 전문가 프로필의 멤버 ID
+     * @return 전문가 프로필
+     */
+    private ExpertProfile findExpertProfile(Long memberId) {
+        return expertProfileJPARepository.findById(memberId)
+                .orElseThrow(() -> new IumApplicationException(ErrorCode.EXPERT_PROFILE_NOT_FOUND));
     }
 }

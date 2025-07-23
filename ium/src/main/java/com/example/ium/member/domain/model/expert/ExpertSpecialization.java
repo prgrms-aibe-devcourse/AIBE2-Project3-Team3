@@ -1,10 +1,7 @@
 package com.example.ium.member.domain.model.expert;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Entity
@@ -15,6 +12,7 @@ public class ExpertSpecialization {
     @EmbeddedId
     private ExpertSpecializationId id;
 
+    @Setter
     @MapsId("expertProfileId")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "expert_profile_id")
@@ -33,4 +31,5 @@ public class ExpertSpecialization {
                 .expertProfile(expertProfile)
                 .build();
     }
+
 }
