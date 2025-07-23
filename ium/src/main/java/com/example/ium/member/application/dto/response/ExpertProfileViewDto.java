@@ -1,0 +1,18 @@
+package com.example.ium.member.application.dto.response;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public record ExpertProfileViewDto(
+        String introduceMessage,
+        String portfolioDescription,
+        String school,
+        String major,
+        LocalDate startCareerDate,
+        int salary,
+        String negoYn,
+        int completedRequestCount,
+        List<SpecializationSummary> specializations
+) {
+    public record SpecializationSummary(Long id, String name) {}
+}

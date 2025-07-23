@@ -10,6 +10,7 @@ import com.example.ium.member.domain.model.expert.ExpertSpecialization;
 import com.example.ium.member.domain.repository.ExpertProfileJPARepository;
 import com.example.ium.member.domain.repository.ExpertSpecializationJPARepository;
 import com.example.ium.member.domain.repository.MemberJPARepository;
+import com.example.ium.specialization.domain.repository.SpecializationJPARepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class ExpertProfileService {
     private final MemberJPARepository memberJPARepository;
     private final ExpertSpecializationJPARepository expertSpecializationJPARepository;
     private final MemberMetaCommandService memberMetaCommandService;
+    private final SpecializationJPARepository specializationJPARepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -46,7 +48,7 @@ public class ExpertProfileService {
         // 멤버 ID로 멤버를 조회합니다.
         Member member = getMember(memberId);
 
-        // 전문가 프로필을 생성하고 저장합니다.
+        // 전문가 프로필을 생성합니다.
         ExpertProfile newExpertProfile = ExpertProfile.createExpertProfile(
                 member,
                 requestDto.getIntroduceMessage(),
@@ -58,7 +60,7 @@ public class ExpertProfileService {
                 requestDto.isNegoYn()
         );
 
-        // 전문가 프로필에 대한 전문 분야를 생성하고 저장합니다.
+        // 전문가 프로필에 대한 전문 분야를 생성합니다.
         List<ExpertSpecialization> expertSpecializations = createExpertSpecializations(requestDto, newExpertProfile);
         for (ExpertSpecialization specialization : expertSpecializations) {
             newExpertProfile.addExpertSpecialization(specialization);
@@ -78,7 +80,24 @@ public class ExpertProfileService {
      */
     public ExpertProfileViewDto getExpertProfile(Long memberId) {
         ExpertProfile expertProfile = findExpertProfile(memberId);
-        return null;
+        List<Long> specializationIds = expertProfile.getExpertSpecialization().stream()
+                .map(specialization -> specialization.getId().getSpecializationId())
+                .toList();
+        List<ExpertProfileViewDto.SpecializationSummary> specializationSummaries =
+                specializationJPARepository.findAllById(specializationIds).stream()
+                        .map(s -> new ExpertProfileViewDto.SpecializationSummary(s.getId(), s.getSpecializationName().getValue()))
+                        .toList();
+        return new ExpertProfileViewDto(
+                expertProfile.getIntroduceMessage(),
+                expertProfile.getPortfolioDescription(),
+                expertProfile.getSchool(),
+                expertProfile.getMajor(),
+                expertProfile.getCareerDate().getStartDate(),
+                expertProfile.getSalary().getValue(),
+                expertProfile.getNegoYn().getValue(),
+                expertProfile.getCompletedRequestCount().getValue(),
+                specializationSummaries
+        );
     }
 
     /**

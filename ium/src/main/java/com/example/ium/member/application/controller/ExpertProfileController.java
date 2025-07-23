@@ -24,8 +24,8 @@ public class ExpertProfileController {
     private final SpecializationService specializationService;
 
     /**
-     * 전문가 프로필 페이지로 이동
-     * @return 전문가 프로필 페이지 경로
+     * 전문가 프로필 작성 페이지로 이동
+     * @return 전문가 프로필 작성 페이지 경로
      */
     @GetMapping("/form-data")
     public String createExpertProfile(Model model) {
@@ -44,6 +44,12 @@ public class ExpertProfileController {
         Long memberId = memberDetails.getMemberId();
         expertProfileService.createExpertProfile(requestDto, memberId);
         return "redirect:/profile/" + memberId;
+    }
+
+    @GetMapping("/{memberId}")
+    public String getExpertProfile(@PathVariable("memberId") Long memberId, Model model) {
+        model.addAttribute("expertProfile", expertProfileService.getExpertProfile(memberId));
+        return "member/view-expert-profile"; // 전문가 프로필 조회 페이지 경로
     }
 
     /**
