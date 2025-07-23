@@ -8,9 +8,8 @@ services:
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_DATABASE: chat_spring
+      MONGO_INITDB_DATABASE: spring_chat
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
     volumes:
       - ./data/mongodb:/data/db
-    command: mongod --noauth
