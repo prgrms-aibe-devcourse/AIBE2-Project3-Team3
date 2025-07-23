@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record SignUpRequestDto(
+public record SignUpFormDto(
         @NotBlank(message = "사용자 이름은 필수입니다.")
         @Size(min = 2, max = 15, message = "사용자 이름은 2자 이상 15자 이하이어야 합니다.")
         String username,
