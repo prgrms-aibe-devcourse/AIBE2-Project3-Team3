@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,4 +24,5 @@ public class ExpertProfileFormDto {
     private boolean negoYn;
 
     private List<Long> specializationIds; // 전문 분야 ID 목록
+    private List<MultipartFile> attachments; // 첨부 파일 목록
 }

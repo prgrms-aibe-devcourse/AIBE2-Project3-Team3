@@ -5,10 +5,12 @@ import com.example.ium._core.exception.IumApplicationException;
 import com.example.ium.member.application.dto.request.ExpertProfileFormDto;
 import com.example.ium.member.application.dto.response.ExpertProfileViewDto;
 import com.example.ium.member.domain.model.Member;
+import com.example.ium.member.domain.model.expert.Attachment;
 import com.example.ium.member.domain.model.expert.ExpertProfile;
 import com.example.ium.member.domain.model.expert.ExpertSpecialization;
 import com.example.ium.member.domain.repository.ExpertProfileJPARepository;
 import com.example.ium.member.domain.repository.MemberJPARepository;
+import com.example.ium.member.domain.service.AttachmentService;
 import com.example.ium.specialization.domain.repository.SpecializationJPARepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -25,9 +27,11 @@ import java.util.Optional;
 @Service
 public class ExpertProfileService {
 
+    private final MemberMetaCommandService memberMetaCommandService;
+    private final AttachmentService attachmentService;
+
     private final ExpertProfileJPARepository expertProfileJPARepository;
     private final MemberJPARepository memberJPARepository;
-    private final MemberMetaCommandService memberMetaCommandService;
     private final SpecializationJPARepository specializationJPARepository;
 
     @PersistenceContext
@@ -63,6 +67,13 @@ public class ExpertProfileService {
         List<ExpertSpecialization> expertSpecializations = createExpertSpecializations(requestDto, newExpertProfile);
         for (ExpertSpecialization specialization : expertSpecializations) {
             newExpertProfile.addExpertSpecialization(specialization);
+        }
+
+        if (requestDto.getAttachments() != null) {
+            List<Attachment> attachments = attachmentService.saveAttachments(requestDto.getAttachments(), newExpertProfile);
+            for (Attachment attachment : attachments) {
+                newExpertProfile.addAttachment(attachment);
+            }
         }
 
         em.persist(newExpertProfile);

@@ -17,7 +17,7 @@ import java.io.InputStream;
 public class FireBaseConfig {
 
     // Resource 타입으로 변경하여 클래스패스에서 리소스를 로드
-    @Value("${FIREBASE.KEY}")
+    @Value("${firebase.key}")
     private Resource firebaseKeyResource;
 
     @PostConstruct
