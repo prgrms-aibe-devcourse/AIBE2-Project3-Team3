@@ -24,8 +24,11 @@ public class ExpertProfile extends BaseEntity {
     @OneToOne
     @MapsId
     private Member member; // 회원 정보
+
     @OneToMany(mappedBy = "expertProfile", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<ExpertSpecialization> expertSpecialization = new ArrayList<>(); // 전문가 전문 분야
+    @OneToMany(mappedBy = "expertProfile", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    private List<Attachment> attachments = new ArrayList<>(); // 첨부 파일
 
     private boolean activated; // 활성화 여부
 
@@ -87,6 +90,11 @@ public class ExpertProfile extends BaseEntity {
     public void addExpertSpecialization(ExpertSpecialization expertSpecialization) {
         this.expertSpecialization.add(expertSpecialization);
         expertSpecialization.setExpertProfile(this);
+    }
+
+    public void addAttachment(Attachment attachment) {
+        this.attachments.add(attachment);
+        attachment.setExpertProfile(this);
     }
 
     // 전문 프로필 활성화 메소드
