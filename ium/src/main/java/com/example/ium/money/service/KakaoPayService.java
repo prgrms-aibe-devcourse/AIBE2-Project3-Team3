@@ -2,11 +2,11 @@ package com.example.ium.money.service;
 
 import com.example.ium._core.exception.ErrorCode;
 import com.example.ium._core.exception.IumApplicationException;
-import com.example.ium.money.KakaoPayProperties;
 import com.example.ium.money.domain.model.Money;
 import com.example.ium.money.domain.repository.MoneyRepository;
 import com.example.ium.money.dto.KakaoPayApproveDto;
 import com.example.ium.money.dto.KakaoPayReadyDto;
+import com.example.ium.money.properties.KakaoPayProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
