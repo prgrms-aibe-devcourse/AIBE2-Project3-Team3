@@ -1,6 +1,10 @@
 spring:
   application:
     name: ium
+  config:
+    import:
+      - optional:file:.env[.properties]
+      - classpath:config/application-firebase.yml
 
   profiles:
     active:
