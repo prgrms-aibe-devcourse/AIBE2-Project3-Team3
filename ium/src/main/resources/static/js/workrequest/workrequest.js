@@ -8,8 +8,8 @@ function getRandomString(length) {
     return result;
 }
 
-document.querySelector('.chat-icon').addEventListener('click', function() {
-    let targetUser = document.querySelector('.chat-icon').dataset.targetUser;
+document.querySelector('.work-request-chat-icon').addEventListener('click', function () {
+    let targetUser = document.querySelector('.work-request-chat-icon').dataset.targetUser;
 
     const form = document.createElement('form');
     form.method = 'POST';
@@ -24,7 +24,7 @@ document.querySelector('.chat-icon').addEventListener('click', function() {
     const targetUserInput = document.createElement('input');
     targetUserInput.type = 'hidden';
     targetUserInput.name = 'targetUser';
-    targetUserInput.value = targetUser; // admin user email
+    targetUserInput.value = targetUser;
     form.appendChild(targetUserInput);
 
     document.body.appendChild(form);

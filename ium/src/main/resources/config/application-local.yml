@@ -8,7 +8,7 @@ spring:
     password:
   data:
     mongodb:
-      uri: mongodb://root:example@localhost:27017/chat_spring?authSource=admin
+      uri: mongodb://root:example@localhost:27017/spring_chat?authSource=admin
 
   h2:
     console:
