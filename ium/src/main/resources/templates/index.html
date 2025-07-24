@@ -21,7 +21,7 @@
             
             <div class="search-and-buttons">
                 <div class="search-container">
-                    <input type="text" class="search-input" placeholder="원하는 서비스를 검색해보세요">
+                    <input type="text" class="search-input" placeholder="원하는 서비스를 검색해보세요" th:value="${currentSearch}">
                     <button class="search-button">🔍</button>
                 </div>
                 
@@ -35,19 +35,22 @@
         <!-- Category Section -->
         <section class="category-section">
             <div class="category-buttons">
-                <button class="category-btn" data-category="design" onclick="filterByCategory('design')">
+                <button class="category-btn" th:classappend="${currentCategory == 'all'} ? 'active' : ''" data-category="all" onclick="filterByCategory('all')">
+                    전체
+                </button>
+                <button class="category-btn" th:classappend="${currentCategory == 'design'} ? 'active' : ''" data-category="design" onclick="filterByCategory('design')">
                     디자인
                 </button>
-                <button class="category-btn" data-category="programming" onclick="filterByCategory('programming')">
+                <button class="category-btn" th:classappend="${currentCategory == 'programming'} ? 'active' : ''" data-category="programming" onclick="filterByCategory('programming')">
                     프로그래밍
                 </button>
-                <button class="category-btn" data-category="video" onclick="filterByCategory('video')">
+                <button class="category-btn" th:classappend="${currentCategory == 'video'} ? 'active' : ''" data-category="video" onclick="filterByCategory('video')">
                     영상편집
                 </button>
-                <button class="category-btn" data-category="legal" onclick="filterByCategory('legal')">
+                <button class="category-btn" th:classappend="${currentCategory == 'legal'} ? 'active' : ''" data-category="legal" onclick="filterByCategory('legal')">
                     세무/<br>법무/<br>노무
                 </button>
-                <button class="category-btn" data-category="translation" onclick="filterByCategory('translation')">
+                <button class="category-btn" th:classappend="${currentCategory == 'translation'} ? 'active' : ''" data-category="translation" onclick="filterByCategory('translation')">
                     번역/<br>통역
                 </button>
             </div>
@@ -58,88 +61,34 @@
             <h2 class="section-title">의뢰 목록</h2>
 
             <div class="request-grid" id="requestGrid">
-                <div class="request-card" data-category="design" data-budget="500000">
+                <div class="request-card" th:each="request : ${workRequests}" 
+                     th:data-request-id="${request.id}"
+                     th:data-category="${request.category}"
+                     th:data-budget="${request.price}"
+                     th:onclick="'window.location.href=\'/request/\' + ' + ${request.id}">
                     <div class="request-image">
-                        <img src="https://via.placeholder.com/150x100/E6F6DC/000000?text=디자인" alt="의뢰 이미지">
+                        <img th:src="${request.fileUrl != null ? request.fileUrl : 'https://via.placeholder.com/150x100/E6F6DC/000000?text=' + (request.category != null ? request.category : '의뢰')}" 
+                             th:alt="${request.title}" 
+                             onerror="this.src='https://via.placeholder.com/150x100/E6F6DC/000000?text=의뢰'">
                     </div>
                     <div class="request-content">
-                        <h3 class="request-title">로고 디자인 및 브랜딩 패키지 제작</h3>
-                        <p class="request-description">스타트업을 위한 로고 디자인과 전체적인 브랜딩 가이드라인을 제작해주실 분을 찾습니다.</p>
+                        <h3 class="request-title" th:text="${request.title}">제목</h3>
+                        <p class="request-description" th:text="${#strings.abbreviate(request.content, 100)}">설명</p>
                         <div class="request-footer">
-                            <span class="request-price">500,000원~</span>
-                            <span class="request-author">디자인스튜디오</span>
+                            <span class="request-price" th:text="${#numbers.formatDecimal(request.price, 0, 'COMMA', 0, 'POINT')} + '원~'">가격</span>
+                            <span class="request-author" th:text="${request.createdBy != null ? request.createdBy : '익명'}">작성자</span>
+                        </div>
+                        <!-- AD 포인트가 높은 경우 뱃지 표시 -->
+                        <div th:if="${request.adPoint > 500}" class="ad-badge">
+                            <span class="ad-text">AD</span>
                         </div>
                     </div>
                 </div>
                 
-                <div class="request-card" data-category="programming" data-budget="1000000">
-                    <div class="request-image">
-                        <img src="https://via.placeholder.com/150x100/C4E4DF/000000?text=개발" alt="의뢰 이미지">
-                    </div>
-                    <div class="request-content">
-                        <h3 class="request-title">웹사이트 개발 및 유지보수</h3>
-                        <p class="request-description">React와 Node.js를 활용한 반응형 웹사이트 개발 프로젝트입니다.</p>
-                        <div class="request-footer">
-                            <span class="request-price">1,000,000원~</span>
-                            <span class="request-author">테크스타트업</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="request-card" data-category="video" data-budget="300000">
-                    <div class="request-image">
-                        <img src="https://via.placeholder.com/150x100/D3ECD9/000000?text=영상" alt="의뢰 이미지">
-                    </div>
-                    <div class="request-content">
-                        <h3 class="request-title">제품 홍보 영상 편집</h3>
-                        <p class="request-description">3분 내외의 제품 소개 영상 편집 및 모션그래픽 작업을 의뢰합니다.</p>
-                        <div class="request-footer">
-                            <span class="request-price">300,000원~</span>
-                            <span class="request-author">마케팅에이전시</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="request-card" data-category="legal" data-budget="750000">
-                    <div class="request-image">
-                        <img src="https://via.placeholder.com/150x100/AAD2DA/000000?text=법무" alt="의뢰 이미지">
-                    </div>
-                    <div class="request-content">
-                        <h3 class="request-title">계약서 검토 및 법무 자문</h3>
-                        <p class="request-description">사업 파트너십 계약서 검토와 관련 법무 자문이 필요합니다.</p>
-                        <div class="request-footer">
-                            <span class="request-price">750,000원~</span>
-                            <span class="request-author">법무법인</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="request-card" data-category="translation" data-budget="400000">
-                    <div class="request-image">
-                        <img src="https://via.placeholder.com/150x100/FFFFE1/000000?text=번역" alt="의뢰 이미지">
-                    </div>
-                    <div class="request-content">
-                        <h3 class="request-title">기술 문서 영한 번역</h3>
-                        <p class="request-description">IT 기술 관련 문서 50페이지 분량의 영어를 한국어로 번역해주실 분을 찾습니다.</p>
-                        <div class="request-footer">
-                            <span class="request-price">400,000원~</span>
-                            <span class="request-author">번역전문가</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="request-card" data-category="design" data-budget="600000">
-                    <div class="request-image">
-                        <img src="https://via.placeholder.com/150x100/E6F6DC/000000?text=UI/UX" alt="의뢰 이미지">
-                    </div>
-                    <div class="request-content">
-                        <h3 class="request-title">모바일 앱 UI/UX 디자인</h3>
-                        <p class="request-description">iOS/Android 앱의 전체적인 UI/UX 디자인과 프로토타입 제작을 의뢰합니다.</p>
-                        <div class="request-footer">
-                            <span class="request-price">600,000원~</span>
-                            <span class="request-author">앱개발회사</span>
-                        </div>
-                    </div>
+                <!-- 의뢰가 없는 경우 -->
+                <div th:if="${#lists.isEmpty(workRequests)}" class="no-requests">
+                    <p>현재 조건에 맞는 의뢰가 없습니다.</p>
+                    <button class="action-btn primary" onclick="filterByCategory('all')">전체 보기</button>
                 </div>
             </div>
         </section>
@@ -150,5 +99,10 @@
 
     <script th:src="@{/js/index.js}"></script>
     <script th:src="@{/js/header.js}"></script>
+    <script th:inline="javascript">
+        // 서버에서 전달된 현재 카테고리와 검색어
+        var currentCategory = /*[[${currentCategory}]]*/ 'all';
+        var currentSearch = /*[[${currentSearch}]]*/ '';
+    </script>
 </body>
 </html>
