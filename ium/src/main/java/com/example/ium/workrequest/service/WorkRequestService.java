@@ -45,4 +45,7 @@ public class WorkRequestService {
         workRequest.setFileName(file.getOriginalFilename());
         workRequestRepository.save(workRequest);
     }
+    public List<WorkRequestEntity> findAllRequests() {
+        return workRequestRepository.findAll(); // JPA 기본 메서드
+    }
 }

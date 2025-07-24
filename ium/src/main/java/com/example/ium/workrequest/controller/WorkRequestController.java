@@ -19,14 +19,9 @@ public class WorkRequestController {
 
     @GetMapping("/workrequest")
     public String showWorkRequest(Model model) {
+        List<WorkRequestEntity> allRequests = workRequestService.findAllRequests();
         WorkRequestEntity workRequest = workRequestService.getLatestRequest();
-        if (workRequest == null) {
-            // 데이터 없으면 null 처리
-            workRequest = new WorkRequestEntity();
-            workRequest.setTitle("아직 등록된 의뢰가 없습니다");
-        }
-
-        model.addAttribute("request", workRequest);
+        model.addAttribute("requests", allRequests);
 
         // 아직 DB에 없는 aiExperts 는 더미 데이터로
         List<ExpertDto> experts = List.of(
@@ -34,6 +29,7 @@ public class WorkRequestController {
                 new ExpertDto("전문가2", "통역/번역 전문가", 50000, "소소핑", "image2.jpg"),
                 new ExpertDto("전문가3", "통역/번역 전문가", 50000, "소소핑", "image3.jpg")
         );
+        model.addAttribute("request", workRequest);
         model.addAttribute("aiExperts", experts);
         model.addAttribute("targetUser", workRequest.getCreatedBy());
 

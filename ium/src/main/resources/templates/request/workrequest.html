@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>의뢰 상세 페이지</title>
-    <link rel="stylesheet" th:href="@{/css/workrequest.css}">
+    <link rel="stylesheet" th:href="@{css/workrequest/workrequest.css}">
 </head>
 <body>
 
@@ -46,7 +46,9 @@
         <h2>AI 추천</h2>
         <div class="experts">
             <div class="expert-card" th:each="expert : ${aiExperts}">
-                <img th:src="${expert.image}" alt="전문가 이미지">
+                <a th:href="@{'/expert/' + ${expert.name}}">
+                    <img th:src="@{/images/{img}(img=${expert.image})}" alt="전문가 이미지">
+                </a>
                 <p th:text="${expert.name}">전문가 이름</p>
                 <p th:text="${expert.category}">카테고리</p>
                 <p th:text="'₩' + ${expert.price}">가격</p>
