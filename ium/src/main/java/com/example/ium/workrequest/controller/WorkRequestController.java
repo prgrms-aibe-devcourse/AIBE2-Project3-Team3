@@ -6,9 +6,9 @@ import com.example.ium.workrequest.service.WorkRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -35,7 +35,7 @@ public class WorkRequestController {
                 new ExpertDto("전문가3", "통역/번역 전문가", 50000, "소소핑", "image3.jpg")
         );
         model.addAttribute("aiExperts", experts);
-        model.addAttribute("targetUser", workRequest.getCreatedBy()); // TODO service 단 연결후에 작업
+        model.addAttribute("targetUser", workRequest.getCreatedBy());
 
         return "request/workrequest";
     }
@@ -50,13 +50,16 @@ public class WorkRequestController {
         return "redirect:/workrequest";
     }
     
-    @GetMapping("/workrequest/resultUpload")
-    public String showResultUploadPage() {
+    @GetMapping("/workrequest/{id}/resultUpload")
+    public String showResultUploadPage(Model model, @PathVariable("id") Long workRequestId) {
+        model.addAttribute("workRequestId",workRequestId);
         return "/request/resultUpload";
     }
     
     @PostMapping("/workrequest/resultUpload")
-    public String uploadResult() {
-        return "redirect:/workrequest";
+    public String uploadResult(@RequestParam("file") MultipartFile file,
+                               @RequestParam("workRequestId") Long workRequestId) {
+        workRequestService.uploadFile(file, workRequestId);
+        return "redirect:/workrequest"; // TODO pathvariable 수정
     }
 }
