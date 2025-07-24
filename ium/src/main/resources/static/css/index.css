@@ -111,33 +111,38 @@ body {
     background-color: #C4E4DF;
 }
 
-/* Category Buttons */
+/* Category Buttons - 한 줄 배치를 위한 수정 */
 .category-section {
     margin-bottom: 40px;
 }
 
 .category-buttons {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
     margin-bottom: 30px;
+    flex-wrap: nowrap; /* 줄바꿈 방지 */
 }
 
 .category-btn {
     background-color: #E6F6DC;
     color: #000000;
     border: none;
-    padding: 20px 15px;
+    padding: 15px 12px;
     border-radius: 10px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
     text-align: center;
-    min-height: 80px;
+    min-height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex: 1;
+    max-width: 180px;
+    min-width: 120px;
+    line-height: 1.2;
 }
 
 .category-btn:hover {
@@ -316,7 +321,17 @@ body {
     }
     
     .category-buttons {
+        display: grid;
         grid-template-columns: repeat(2, 1fr);
+        flex-wrap: wrap;
+    }
+    
+    .category-btn {
+        min-width: auto;
+        max-width: none;
+        padding: 20px 15px;
+        min-height: 80px;
+        font-size: 14px;
     }
     
     .request-grid {
