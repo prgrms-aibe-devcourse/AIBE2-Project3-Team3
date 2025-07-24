@@ -25,8 +25,7 @@ public class MemberProfileController {
         model.addAttribute("memberProfile", memberProfileService.getMemberProfile(memberId));
 
         if (expertProfileService.isExpertProfileActivated(memberId)) {
-            model.addAttribute("expertProfile", expertProfileService.getExpertProfile(memberId));
-            return "member/expert-profile";
+            return "redirect:/expert-profiles/" + memberId;
         }
 
         return "member/profile";

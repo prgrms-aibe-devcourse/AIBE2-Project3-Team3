@@ -47,6 +47,21 @@ public class ExpertProfileController {
     }
 
     /**
+     * 전문가 프로필 조회
+     * @param memberId 전문가 프로필의 멤버 ID
+     * @param model 모델 객체
+     * @return 전문가 프로필 페이지 경로
+     */
+    @GetMapping("/{memberId}")
+    public String getExpertProfile(@PathVariable Long memberId, Model model) {
+        if (!expertProfileService.isExpertProfileActivated(memberId)) {
+            return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
+        }
+        model.addAttribute("expertProfile", expertProfileService.getExpertProfile(memberId));
+        return "member/expert-profile"; // 전문가 프로필 페이지 경로
+    }
+
+    /**
      * 전문가 프로필 활성화
      * @param memberId 전문가 프로필의 멤버 ID
      */
@@ -56,7 +71,7 @@ public class ExpertProfileController {
             return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
         }
         expertProfileService.activateExpertProfile(memberId);
-        return "redirect:/profiles/" + memberId; // 프로필 페이지로 리다이렉트
+        return "redirect:/expert-profiles/" + memberId;
     }
 
     /**
