@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -54,8 +55,9 @@ public class WorkRequestController {
     
     @PostMapping("/workrequest/resultUpload")
     public String uploadResult(@RequestParam("file") MultipartFile file,
-                               @RequestParam("workRequestId") Long workRequestId) {
-        workRequestService.uploadFile(file, workRequestId);
+                               @RequestParam("workRequestId") Long workRequestId,
+                               Principal principal) {
+        workRequestService.uploadFile(file, workRequestId, principal.getName());
         return "redirect:/workrequest"; // TODO pathvariable 수정
     }
 }
