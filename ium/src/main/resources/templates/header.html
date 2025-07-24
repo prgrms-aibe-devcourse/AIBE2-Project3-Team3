@@ -1,12 +1,18 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
 <header class="header" th:fragment="header">
   <div class="logo">ium</div>
+
   <div class="user-menu">
     <div class="chat-icon">💬</div>
-    <div class="user-icon">👤</div>
+
+    <div class="user-dropdown" th:if="${#authentication.principal != null}">
+      <div class="user-icon" onclick="toggleDropdown()">👤</div>
+
+      <div class="dropdown-menu" id="userDropdown">
+        <a th:href="@{/profile}">프로필</a>
+        <form th:action="@{/logout}" method="post">
+          <button type="submit">로그아웃</button>
+        </form>
+      </div>
+    </div>
   </div>
 </header>
-</body>
-</html>
