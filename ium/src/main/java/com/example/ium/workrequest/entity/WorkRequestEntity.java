@@ -15,7 +15,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "WorkRequest")
+@Table(name = "WorkRequest_tb")
 public class WorkRequestEntity extends BaseEntity {
 
     @Id
