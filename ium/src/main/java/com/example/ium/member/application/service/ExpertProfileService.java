@@ -101,6 +101,7 @@ public class ExpertProfileService {
                 .map(attachment -> new ExpertProfileViewDto.AttachmentInfo(attachment.getFileName(), attachment.getFileUrl(), attachment.getFileType()))
                 .toList();
         return new ExpertProfileViewDto(
+                expertProfile.getMemberId(),
                 expertProfile.getIntroduceMessage(),
                 expertProfile.getPortfolioDescription(),
                 expertProfile.getSchool(),

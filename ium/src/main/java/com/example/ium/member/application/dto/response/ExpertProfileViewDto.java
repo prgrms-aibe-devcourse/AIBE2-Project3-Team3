@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record ExpertProfileViewDto(
+        Long memberId,
         String introduceMessage,
         String portfolioDescription,
         String school,

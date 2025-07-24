@@ -3,6 +3,7 @@ package com.example.ium.member.application.controller;
 import com.example.ium._core.security.CustomUserDetails;
 import com.example.ium.member.application.dto.request.ExpertProfileFormDto;
 import com.example.ium.member.application.service.ExpertProfileService;
+import com.example.ium.money.service.MoneyService;
 import com.example.ium.specialization.application.dto.response.SpecializationDto;
 import com.example.ium.specialization.application.service.SpecializationService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class ExpertProfileController {
 
     private final ExpertProfileService expertProfileService;
     private final SpecializationService specializationService;
+    private final MoneyService moneyService;
 
     /**
      * 전문가 프로필 작성 페이지로 이동
@@ -47,21 +49,6 @@ public class ExpertProfileController {
     }
 
     /**
-     * 전문가 프로필 조회
-     * @param memberId 전문가 프로필의 멤버 ID
-     * @param model 모델 객체
-     * @return 전문가 프로필 페이지 경로
-     */
-    @GetMapping("/{memberId}")
-    public String getExpertProfile(@PathVariable Long memberId, Model model) {
-        if (!expertProfileService.isExpertProfileActivated(memberId)) {
-            return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
-        }
-        model.addAttribute("expertProfile", expertProfileService.getExpertProfile(memberId));
-        return "member/expert-profile"; // 전문가 프로필 페이지 경로
-    }
-
-    /**
      * 전문가 프로필 활성화
      * @param memberId 전문가 프로필의 멤버 ID
      */
@@ -82,5 +69,22 @@ public class ExpertProfileController {
     public String deactivateExpertProfile(@PathVariable("memberId") Long memberId) {
         expertProfileService.deactivateProfile(memberId);
         return "redirect:/profiles/" + memberId; // 프로필 페이지로 리다이렉트
+    }
+
+    /**
+     * 전문가 프로필 조회
+     * @param memberId 전문가 프로필의 멤버 ID
+     * @param model 모델 객체
+     * @return 전문가 프로필 페이지 경로
+     */
+    @GetMapping("/{memberId}")
+    public String getExpertProfile(@PathVariable Long memberId, Model model) {
+
+        if (!expertProfileService.isExpertProfileActivated(memberId)) {
+            return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
+        }
+        model.addAttribute("expertProfile", expertProfileService.getExpertProfile(memberId));
+        model.addAttribute("moneyInfo", moneyService.getMoneyInfo(memberId));
+        return "member/expert-profile"; // 전문가 프로필 페이지 경로
     }
 }
