@@ -1,9 +1,5 @@
 package com.example.ium._core.data;
 
-import com.example.ium.chat.domain.jpa.repository.ChatMemberJPARepository;
-import com.example.ium.chat.domain.jpa.repository.ChatMessageJPARepository;
-import com.example.ium.chat.domain.jpa.repository.ChatRoomJPARepository;
-import com.example.ium.chat.domain.model.*;
 import com.example.ium.member.domain.model.*;
 import com.example.ium.member.domain.model.expert.*;
 import com.example.ium.member.domain.repository.*;
@@ -23,8 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -37,9 +35,6 @@ public class DummyDataInitializer {
     private final ExpertProfileJPARepository expertProfileRepository;
     private final ExpertSpecializationJPARepository expertSpecializationRepository;
     private final SpecializationJPARepository specializationRepository;
-    private final ChatRoomJPARepository chatRoomRepository;
-    private final ChatMessageJPARepository chatMessageRepository;
-    private final ChatMemberJPARepository chatMemberRepository;
     private final MoneyRepository moneyRepository;
     private final WorkRequestRepository workRequestRepository;
     private final PasswordEncoder passwordEncoder;
@@ -59,32 +54,24 @@ public class DummyDataInitializer {
         
         log.info("더미 데이터 초기화를 시작합니다...");
         
-        try {
-            // 1. 전문 분야 생성
-            List<Specialization> specializations = createSpecializations();
-            
-            // 2. 회원 생성
-            List<Member> members = createMembers();
-            
-            // 3. 전문가 프로필 생성
-            List<ExpertProfile> expertProfiles = createExpertProfiles(members, specializations);
-            
-            // 4. 작업 의뢰 생성
-            List<WorkRequestEntity> workRequests = createWorkRequests(members, expertProfiles);
-            
-            // 5. 채팅방 및 메시지 생성
-            createChatRoomsAndMessages(members);
-            
-            // 6. 포인트/크레딧 생성 (더 다양하게)
-            createMoneyData(members);
-            
-            log.info("더미 데이터 초기화가 완료되었습니다!");
-            log.info("생성된 데이터: 회원 {}, 전문가 {}, 의뢰 {}, 전문분야 {}", 
-                    members.size(), expertProfiles.size(), workRequests.size(), specializations.size());
-            
-        } catch (Exception e) {
-            log.error("더미 데이터 초기화 중 오류 발생: ", e);
-        }
+        // 1. 전문 분야 생성
+        List<Specialization> specializations = createSpecializations();
+        
+        // 2. 회원 생성
+        List<Member> members = createMembers();
+        
+        // 3. 전문가 프로필 생성
+        List<ExpertProfile> expertProfiles = createExpertProfiles(members, specializations);
+        
+        // 4. 작업 의뢰 생성
+        List<WorkRequestEntity> workRequests = createWorkRequests(members, expertProfiles);
+        
+        // 5. 포인트/크레딧 생성
+        createMoneyData(members);
+        
+        log.info("더미 데이터 초기화가 완료되었습니다!");
+        log.info("생성된 데이터: 회원 {}, 전문가 {}, 의뢰 {}, 전문분야 {}", 
+                members.size(), expertProfiles.size(), workRequests.size(), specializations.size());
     }
     
     // 1. 전문 분야 생성 (더 많이)
@@ -168,43 +155,77 @@ public class DummyDataInitializer {
     private List<ExpertProfile> createExpertProfiles(List<Member> members, List<Specialization> specializations) {
         List<ExpertProfile> expertProfiles = new ArrayList<>();
         
-        // 처음 15명을 전문가로 설정
-        for (int i = 0; i < Math.min(15, members.size()); i++) {
+        // 기존 전문가 프로필이 있는지 확인
+        List<ExpertProfile> existingProfiles = expertProfileRepository.findAll();
+        log.info("기존 전문가 프로필 수: {}", existingProfiles.size());
+        
+        // 기존 전문가 프로필의 member ID 수집 (간단한 방법 사용)
+        Set<Long> existingMemberIds = new HashSet<>();
+        for (ExpertProfile profile : existingProfiles) {
+            existingMemberIds.add(profile.getMember().getId());
+        }
+        
+        // 처음 15명을 전문가로 설정 (기존 프로필이 없는 경우만)
+        int profileCount = 0;
+        for (int i = 0; i < Math.min(15, members.size()) && profileCount < 15; i++) {
             Member member = members.get(i);
             
-            ExpertProfile expertProfile = ExpertProfile.createExpertProfile(
-                member,
-                getIntroMessage(i),
-                getPortfolioDescription(i),
-                getSchool(i),
-                getMajor(i),
-                LocalDate.now().minusYears(1 + random.nextInt(8)), // 1-8년 경력
-                300000 + (i * 50000) + random.nextInt(200000), // 30만원~200만원 희망 연봉
-                random.nextBoolean() // 협상 가능 여부 랜덤
-            );
+            // 이미 전문가 프로필이 있는 회원은 건너뛰기
+            if (existingMemberIds.contains(member.getId())) {
+                log.info("회원 {}은 이미 전문가 프로필이 있어 건너뜁니다.", member.getUsername());
+                continue;
+            }
             
-            expertProfile = expertProfileRepository.save(expertProfile);
-            
-            // 전문 분야 매핑 (각 전문가마다 1-4개의 전문분야)
-            int specCount = 1 + random.nextInt(4);
-            for (int j = 0; j < specCount; j++) {
-                int specIndex = (i * 3 + j) % specializations.size();
-                ExpertSpecialization expertSpecialization = ExpertSpecialization.createExpertSpecialization(
-                    expertProfile, 
-                    specializations.get(specIndex).getId()
+            try {
+                ExpertProfile expertProfile = ExpertProfile.createExpertProfile(
+                    member,
+                    getIntroMessage(i),
+                    getPortfolioDescription(i),
+                    getSchool(i),
+                    getMajor(i),
+                    LocalDate.now().minusYears(1 + random.nextInt(8)), // 1-8년 경력
+                    300000 + (i * 50000) + random.nextInt(200000), // 30만원~200만원 희망 연봉
+                    random.nextBoolean() // 협상 가능 여부 랜덤
                 );
-                expertProfile.addExpertSpecialization(expertSpecialization);
-                expertSpecializationRepository.save(expertSpecialization);
+                
+                // 의뢰 완료 경험 시뮬레이션 (저장하기 전에 설정)
+                int completedCount = random.nextInt(5);
+                for (int k = 0; k < completedCount; k++) {
+                    expertProfile.incrementCompletedRequestCount();
+                }
+                
+                // 전문가 프로필 저장
+                expertProfile = expertProfileRepository.save(expertProfile);
+                log.info("전문가 프로필 생성 완료: {}", member.getUsername());
+                
+                // 전문 분야 매핑 (각 전문가마다 1-4개의 전문분야)
+                int specCount = 1 + random.nextInt(4);
+                for (int j = 0; j < specCount; j++) {
+                    try {
+                        int specIndex = (i * 3 + j) % specializations.size();
+                        ExpertSpecialization expertSpecialization = ExpertSpecialization.createExpertSpecialization(
+                            expertProfile, 
+                            specializations.get(specIndex).getId()
+                        );
+                        expertProfile.addExpertSpecialization(expertSpecialization);
+                        expertSpecializationRepository.save(expertSpecialization);
+                    } catch (Exception e) {
+                        log.warn("전문 분야 매핑 중 오류 발생: {}", e.getMessage());
+                    }
+                }
+                
+                expertProfiles.add(expertProfile);
+                profileCount++;
+                
+            } catch (Exception e) {
+                log.error("전문가 프로필 생성 중 오류 발생 (회원: {}): {}", member.getUsername(), e.getMessage());
+                // 오류가 발생해도 계속 진행
+                continue;
             }
-            
-            // 일부 전문가는 의뢰 완료 경험 시뮬레이션
-            for (int k = 0; k < random.nextInt(5); k++) {
-                expertProfile.incrementCompletedRequestCount();
-            }
-            expertProfileRepository.save(expertProfile);
-            
-            expertProfiles.add(expertProfile);
         }
+        
+        // 기존 프로필도 반환 목록에 추가 (작업 의뢰 생성 시 사용하기 위해)
+        expertProfiles.addAll(existingProfiles);
         
         return expertProfiles;
     }
@@ -307,69 +328,7 @@ public class DummyDataInitializer {
         return workRequests;
     }
     
-    // 5. 채팅방 및 메시지 생성 (더 많이, 현실적으로)
-    private void createChatRoomsAndMessages(List<Member> members) {
-        // 채팅방 생성 (10개)
-        for (int i = 0; i < 10; i++) {
-            ChatRoom chatRoom = ChatRoom.builder()
-                .roomName("채팅방_" + (i + 1))
-                .build();
-            chatRoom = chatRoomRepository.save(chatRoom);
-            
-            // 채팅방 멤버 추가 (2-3명)
-            int memberCount = 2 + random.nextInt(2);
-            List<Member> chatMembers = new ArrayList<>();
-            
-            for (int j = 0; j < memberCount; j++) {
-                Member member = members.get((i + j) % members.size());
-                if (!chatMembers.contains(member)) {
-                    chatMembers.add(member);
-                    ChatMember chatMember = new ChatMember(
-                        new ChatMemberId(chatRoom, member)
-                    );
-                    chatMemberRepository.save(chatMember);
-                }
-            }
-            
-            // 채팅 메시지 생성 (3-15개)
-            String[][] messageTemplates = {
-                {
-                    "안녕하세요! 의뢰 건으로 연락드립니다.",
-                    "네, 안녕하세요. 어떤 작업을 원하시나요?",
-                    "로고 디자인을 부탁드리고 싶습니다.",
-                    "가능합니다. 예산과 일정은 어떻게 되시나요?",
-                    "예산은 50만원 정도이고, 2주 안에 완성해주시면 됩니다.",
-                    "네, 가능합니다. 작업 시작하겠습니다!"
-                },
-                {
-                    "프로젝트 진행 상황은 어떤가요?",
-                    "현재 80% 정도 완료되었습니다.",
-                    "언제쯤 완성될까요?",
-                    "내일까지는 완성해서 보내드리겠습니다.",
-                    "네, 감사합니다!"
-                },
-                {
-                    "수정사항이 있어서 연락드립니다.",
-                    "어떤 부분을 수정하시길 원하시나요?",
-                    "색상을 좀 더 밝게 해주세요.",
-                    "네, 알겠습니다. 수정해서 다시 보내드리겠습니다."
-                }
-            };
-            
-            String[] messages = messageTemplates[i % messageTemplates.length];
-            
-            for (int j = 0; j < messages.length; j++) {
-                ChatMessage message = ChatMessage.builder()
-                    .chatRoom(chatRoom)
-                    .member(chatMembers.get(j % chatMembers.size()))
-                    .content(messages[j])
-                    .build();
-                chatMessageRepository.save(message);
-            }
-        }
-    }
-    
-    // 6. 포인트/크레딧 생성 (더 다양하고 현실적으로)
+    // 5. 포인트/크레딧 생성 (더 다양하고 현실적으로)
     private void createMoneyData(List<Member> members) {
         for (Member member : members) {
             // 크레딧 충전 내역 (1-5회)
