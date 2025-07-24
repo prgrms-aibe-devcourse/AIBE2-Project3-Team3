@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>의뢰 상세 페이지</title>
-    <link rel="stylesheet" th:href="@{/workrequest.css}">
+    <link rel="stylesheet" th:href="@{css/workrequest/workrequest.css}">
 </head>
 <body>
 
@@ -14,7 +14,7 @@
     <div class="menu">
         <button><img src="/images/chat.png" alt="말풍선"></button>
         <button><img src="/images/info.png" alt="내정보"></button>
-        <button><img src="/images/menu.png" alt="메뉴바"></button>
+        <button><img src="/images/menu.png" alt="메뉴"></button>
     </div>
 </header>
 
@@ -26,7 +26,7 @@
             <div class="title" th:text="${request.title}">제목</div>
             <div class="content">
                 <span th:text="'₩' + ${request.price}">가격</span> /
-                <span th:text="${request.name}">이름</span>
+                <span th:text="${request.createdBy}">이름</span>
                 <br>
                 <span th:text="${request.status}">상태</span>
             </div>
@@ -39,14 +39,16 @@
     </section>
 
     <section class="description">
-        <p th:text="${request.description}">설명</p>
+        <p th:text="${request.content}">설명</p>
     </section>
 
     <section class="ai-recommend">
         <h2>AI 추천</h2>
         <div class="experts">
             <div class="expert-card" th:each="expert : ${aiExperts}">
-                <img th:src="${expert.image}" alt="전문가 이미지">
+                <a th:href="@{'/expert/' + ${expert.name}}">
+                    <img th:src="@{/images/{img}(img=${expert.image})}" alt="전문가 이미지">
+                </a>
                 <p th:text="${expert.name}">전문가 이름</p>
                 <p th:text="${expert.category}">카테고리</p>
                 <p th:text="'₩' + ${expert.price}">가격</p>

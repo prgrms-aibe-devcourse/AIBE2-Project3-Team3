@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>의뢰 작성</title>
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+</head>
+<body>
+
+<!-- Header -->
+<div th:replace="header :: header"></div>
+
+<h1>의뢰 작성</h1>
+
+<form th:action="@{/workrequest/registration}" method="post">
+    <div>
+        <span>구분</span>
+        <label>
+            <input type="radio" name="type" value="FORMAL" checked /> 의뢰
+        </label>
+        <label>
+            <input type="radio" name="type" value="INFORMAL" /> 재능기부
+        </label>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="category">카테고리</label>
+        <select id="category" name="category">
+            <option value="null">선택</option>
+            <option value="디자인">디자인</option>
+            <option value="프로그래밍">프로그래밍</option>
+            <option value="영상 편집">영상 편집</option>
+            <option value="세무/법무/노무">세무/법무/노무</option>
+            <option value="통역/번역">통역/번역</option>
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="title">제목</label>
+        <input type="text" id="title" name="title" placeholder="제목">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="content">내용</label>
+        <br>
+        <textarea id="content" name="content" placeholder="내용 입력"></textarea>
+    </div>
+
+    <br>
+    <div>
+    <label for="price">금액</label>
+        <input type="number" id="price" name="price" value="price" step="1000" min="1000"> point(원)
+    </div>
+
+    <br>
+
+    <div>
+        <label for="image">이미지</label>
+        <input type="file" id="image" name="image" accept="image/*">
+    </div>
+
+    <br>
+
+    <div>
+    <button type="submit">확인</button>
+    <button type="button" onclick="history.back()">취소</button>
+    </div>
+</form>
+
+<!-- Footer -->
+<div th:replace="footer :: footer"></div>
+
+<script th:src="@{/js/header.js}"></script>
+</body>
+</html>
