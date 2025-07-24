@@ -31,8 +31,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 )
 public class GlobalControllerAdvice {
   @ExceptionHandler(IumApplicationException.class)
-  public ResponseEntity<?> handleIumException(IumApplicationException e, Model model) {
-    model.addAttribute("errorMessage", e.getMessage());
+  public ResponseEntity<?> handleIumException(IumApplicationException e) {
     log.error("Error occurs {}", e.toString());
 
     return ResponseEntity
@@ -41,8 +40,7 @@ public class GlobalControllerAdvice {
   }
   
   @ExceptionHandler(RuntimeException.class)
-  public ResponseEntity<?> applicationHandler(RuntimeException e, Model model) {
-    model.addAttribute("errorMessage", "서버 오류가 발생했습니다.");
+  public ResponseEntity<?> applicationHandler(RuntimeException e) {
     log.error("Error occurs {}", e.toString());
 
     return ResponseEntity
