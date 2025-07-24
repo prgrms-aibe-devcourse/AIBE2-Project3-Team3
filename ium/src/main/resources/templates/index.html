@@ -65,7 +65,7 @@
                      th:data-request-id="${request.id}"
                      th:data-category="${request.category}"
                      th:data-budget="${request.price}"
-                     th:onclick="'window.location.href=\'/request/\' + ' + ${request.id}">
+                     th:onclick="'window.location.href=\'/workrequest/\' + ' + ${request.id}">
                     <div class="request-image">
                         <img th:src="${request.fileUrl != null ? request.fileUrl : 'https://via.placeholder.com/150x100/E6F6DC/000000?text=' + (request.category != null ? request.category : '의뢰')}" 
                              th:alt="${request.title}" 
