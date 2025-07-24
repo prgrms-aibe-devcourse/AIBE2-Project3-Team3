@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -26,7 +28,7 @@ public class ExpertProfile extends BaseEntity {
     private Member member; // 회원 정보
 
     @OneToMany(mappedBy = "expertProfile", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-    private List<ExpertSpecialization> expertSpecialization = new ArrayList<>(); // 전문가 전문 분야
+    private Set<ExpertSpecialization> expertSpecialization = new HashSet<>(); // 전문가 전문 분야
     @OneToMany(mappedBy = "expertProfile", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Attachment> attachments = new ArrayList<>(); // 첨부 파일
 

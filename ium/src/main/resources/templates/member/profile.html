@@ -17,5 +17,10 @@
     <span th:text="${memberProfile.email}"></span>
 </div>
 
+<form th:action="@{|/expert-profiles/${memberProfile.memberId}/activate|}" method="post">
+    <input type="hidden" name="_method" value="patch"/>
+    <button type="submit">전문가 프로필 활성화</button>
+</form>
+
 </body>
 </html>

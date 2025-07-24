@@ -8,26 +8,26 @@
 <h1>전문가 프로필 작성</h1>
 
 <form th:action="@{/expert-profiles}" th:object="${expertProfileForm}" method="post" enctype="multipart/form-data">
-    <label>자기소개:</label><br>
-    <textarea th:field="*{introduceMessage}" rows="4" cols="50"></textarea><br><br>
+    <label for="introduceMessage">자기소개:</label><br>
+    <textarea th:field="*{introduceMessage}" id="introduceMessage" rows="4" cols="50"></textarea><br><br>
 
-    <label>포트폴리오 설명:</label><br>
-    <textarea th:field="*{portfolioDescription}" rows="4" cols="50"></textarea><br><br>
+    <label for="portfolioDescription">포트폴리오 설명:</label><br>
+    <textarea th:field="*{portfolioDescription}" id="portfolioDescription" rows="4" cols="50"></textarea><br><br>
 
-    <label>학교:</label><br>
-    <input type="text" th:field="*{school}"/><br><br>
+    <label for="school">학교:</label><br>
+    <input type="text" th:field="*{school}" id="school"/><br><br>
 
-    <label>전공:</label><br>
-    <input type="text" th:field="*{major}"/><br><br>
+    <label for="major">전공:</label><br>
+    <input type="text" th:field="*{major}" id="major"/><br><br>
 
-    <label>경력 시작일:</label><br>
-    <input type="date" th:field="*{startCareerDate}"/><br><br>
+    <label for="startCareerDate">경력 시작일:</label><br>
+    <input type="date" th:field="*{startCareerDate}" id="startCareerDate"/><br><br>
 
-    <label>희망 연봉:</label><br>
-    <input type="number" th:field="*{salary}"/><br><br>
+    <label for="salary">희망 연봉:</label><br>
+    <input type="number" th:field="*{salary}" id="salary"/><br><br>
 
-    <label>연봉 협상 가능 여부:</label><br>
-    <input type="checkbox" th:field="*{negoYn}"/><br><br>
+    <label for="negoYn">연봉 협상 가능 여부:</label><br>
+    <input type="checkbox" th:field="*{negoYn}" id="negoYn"/><br><br>
 
     <label>전문 분야:</label><br>
     <div th:each="specialization : ${specializations}">
@@ -37,8 +37,8 @@
         <label th:for="${'spec-' + specialization.id}" th:text="${specialization.name}"></label><br>
     </div><br>
 
-    <label>첨부 파일:</label><br>
-    <input type="file" th:field="*{attachments}" multiple><br><br>
+    <label for="attachments">첨부 파일:</label><br>
+    <input type="file" th:field="*{attachments}" name="attachments" id="attachments" multiple/><br><br>
 
     <button type="submit">프로필 생성</button>
 </form>

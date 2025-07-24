@@ -3,10 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>전문가 프로필</title>
+    <style>
+        .attachment-preview {
+            margin-bottom: 20px;
+        }
+
+        .attachment-preview img {
+            max-width: 300px;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .attachment-preview iframe {
+            width: 100%;
+            height: 400px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
 
 <h1>전문가 프로필</h1>
+
+<form th:action="@{|/expert-profiles/${memberProfile.memberId}/deactivate|}" method="post">
+    <input type="hidden" name="_method" value="patch"/>
+    <button type="submit">전문가 프로필 비활성화</button>
+</form>
 
 <div>
     <p><strong>자기소개:</strong> <span th:text="${expertProfile.introduceMessage}"></span></p>
@@ -17,15 +40,26 @@
     <p><strong>희망 연봉:</strong> <span th:text="${expertProfile.salary}"></span>만원</p>
     <p><strong>연봉 협상 가능 여부:</strong> <span th:text="${expertProfile.negoYn == 'Y' ? '가능' : '불가능'}"></span></p>
     <p><strong>완료된 의뢰 수:</strong> <span th:text="${expertProfile.completedRequestCount}"></span></p>
+
     <p><strong>전문 분야:</strong></p>
     <ul>
-        <li th:each="spec : ${expertProfile.specializations}"
-            th:text="${spec.name}"></li>
+        <li th:each="spec : ${expertProfile.specializations}" th:text="${spec.name}"></li>
     </ul>
+
     <p><strong>첨부 파일:</strong></p>
     <ul>
-        <li th:each="attachment : ${expertProfile.attachments}">
+        <li th:each="attachment : ${expertProfile.attachments}" class="attachment-preview">
             <a th:href="${attachment.fileUrl}" th:text="${attachment.fileName}" target="_blank"></a>
+
+            <!-- 이미지 미리보기 -->
+            <div th:if="${attachment.fileType.startsWith('image')}">
+                <img th:src="${attachment.fileUrl}" alt="이미지 미리보기"/>
+            </div>
+
+            <!-- PDF 미리보기 -->
+            <div th:if="${attachment.fileType == 'application/pdf'}">
+                <iframe th:src="${attachment.fileUrl}"></iframe>
+            </div>
         </li>
     </ul>
 </div>
