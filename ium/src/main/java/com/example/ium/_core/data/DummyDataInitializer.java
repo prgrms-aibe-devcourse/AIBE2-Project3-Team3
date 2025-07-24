@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static org.springframework.data.jpa.domain.AbstractAuditable_.createdBy;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
