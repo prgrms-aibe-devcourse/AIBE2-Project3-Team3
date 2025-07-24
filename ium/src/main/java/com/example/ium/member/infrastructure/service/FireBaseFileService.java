@@ -1,5 +1,6 @@
 package com.example.ium.member.infrastructure.service;
 
+import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
@@ -24,8 +25,9 @@ public class FireBaseFileService {
         try {
             Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
             Blob blob = bucket.create(fileName, multipartFile.getInputStream(), multipartFile.getContentType());
+            blob.createAcl(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
 
-            return blob.getMediaLink();
+            return String.format("https://storage.googleapis.com/%s/%s", firebaseStorageUrl, fileName);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
