@@ -31,5 +31,4 @@ public class ExpertSpecialization {
                 .expertProfile(expertProfile)
                 .build();
     }
-
 }

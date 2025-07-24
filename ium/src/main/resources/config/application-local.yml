@@ -23,6 +23,12 @@ spring:
       hibernate:
         format_sql: true
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+      file-size-threshold: 2KB
+
 kakaopay:
   cId: ${KAKAOPAY_CID}
   secretKey: ${KAKAOPAY_SECRET_KEY}

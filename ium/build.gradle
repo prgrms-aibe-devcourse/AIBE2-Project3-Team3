@@ -69,6 +69,9 @@ dependencies {
 
     // 채팅을 위한 웹 소켓
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // Firebase
+    implementation group: 'com.google.firebase', name: 'firebase-admin', version: '8.1.0'
 }
 
 tasks.named('test') {
