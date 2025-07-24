@@ -52,8 +52,11 @@ public class ExpertProfileController {
      */
     @PatchMapping("/{memberId}/activate")
     public String activateExpertProfile(@PathVariable("memberId") Long memberId) {
+        if (!expertProfileService.isExpertProfileActivated(memberId)) {
+            return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
+        }
         expertProfileService.activateExpertProfile(memberId);
-        return "redirect:/profile/" + memberId; // 프로필 페이지로 리다이렉트
+        return "redirect:/profiles/" + memberId; // 프로필 페이지로 리다이렉트
     }
 
     /**
@@ -63,6 +66,6 @@ public class ExpertProfileController {
     @PatchMapping("/{memberId}/deactivate")
     public String deactivateExpertProfile(@PathVariable("memberId") Long memberId) {
         expertProfileService.deactivateProfile(memberId);
-        return "redirect:/profile/" + memberId; // 프로필 페이지로 리다이렉트
+        return "redirect:/profiles/" + memberId; // 프로필 페이지로 리다이렉트
     }
 }

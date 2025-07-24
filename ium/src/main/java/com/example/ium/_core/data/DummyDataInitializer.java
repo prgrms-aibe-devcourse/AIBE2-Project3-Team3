@@ -293,6 +293,9 @@ public class DummyDataInitializer {
             WorkRequestEntity.Status.OPEN, WorkRequestEntity.Status.EXPIRED, WorkRequestEntity.Status.CANCELED
         };
         
+        // AD 포인트 높은 인덱스를 미리 정의 (4개만 500점 이상)
+        Set<Integer> highAdPointIndices = Set.of(0, 5, 10, 15); // 첫 번째, 여섯 번째, 열한 번째, 열여섯 번째
+        
         for (int i = 0; i < titles.length; i++) {
             WorkRequestEntity workRequest = new WorkRequestEntity();
             workRequest.setTitle(titles[i]);
@@ -301,7 +304,13 @@ public class DummyDataInitializer {
             workRequest.setPrice(100000 + random.nextInt(2000000)); // 10만원~210만원
             workRequest.setStatus(statuses[i % statuses.length]);
             workRequest.setType(random.nextBoolean() ? WorkRequestEntity.Type.FORMAL : WorkRequestEntity.Type.INFORMAL);
-            workRequest.setAdPoint(random.nextInt(1000));
+            
+            // AD 포인트 설정: 4개만 500점 이상, 나머지는 500 미만
+            if (highAdPointIndices.contains(i)) {
+                workRequest.setAdPoint(500 + random.nextInt(500)); // 500~999점
+            } else {
+                workRequest.setAdPoint(random.nextInt(500)); // 0~499점
+            }
             
             // 일부 의뢰에 전문가 할당
             if (random.nextInt(3) != 0 && !expertProfiles.isEmpty()) {
@@ -329,7 +338,6 @@ public class DummyDataInitializer {
         
         return workRequests;
     }
-    
     // 5. 포인트/크레딧 생성 (더 다양하고 현실적으로)
     private void createMoneyData(List<Member> members) {
         for (Member member : members) {

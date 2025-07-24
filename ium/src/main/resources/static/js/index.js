@@ -1,6 +1,7 @@
 // 카테고리 필터링 함수 (서버 사이드)
 function filterByCategory(category) {
-    const currentSearch = document.querySelector('.search-input').value.trim();
+    const searchInput = document.querySelector('.search-input');
+    const currentSearch = searchInput ? searchInput.value.trim() : '';
     let url = '/';
     
     const params = new URLSearchParams();
@@ -35,12 +36,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.querySelector('.search-input');
     const searchButton = document.querySelector('.search-button');
     
-    searchButton.addEventListener('click', performSearch);
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            performSearch();
+    if (searchButton) {
+        searchButton.addEventListener('click', performSearch);
+    }
+    
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+        
+        // 검색어가 있다면 input에 설정
+        if (typeof currentSearch !== 'undefined' && currentSearch) {
+            searchInput.value = currentSearch;
         }
-    });
+    }
     
     // 페이지 로드 시 현재 카테고리 버튼 활성화
     if (typeof currentCategory !== 'undefined' && currentCategory) {
@@ -55,7 +66,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function performSearch() {
-    const searchTerm = document.querySelector('.search-input').value.trim();
+    const searchInput = document.querySelector('.search-input');
+    if (!searchInput) return;
+    
+    const searchTerm = searchInput.value.trim();
     let url = '/';
     
     const params = new URLSearchParams();
@@ -74,6 +88,11 @@ function performSearch() {
     }
     
     window.location.href = url;
+}
+
+// 검색어와 카테고리 필터 초기화
+function clearSearchAndFilter() {
+    window.location.href = '/';
 }
 
 // 의뢰 카드 클릭 처리는 HTML에서 직접 처리하도록 변경됨

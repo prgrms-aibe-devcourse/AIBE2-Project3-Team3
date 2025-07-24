@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class AttachmentService {
             }
 
             String fileUrl = fireBaseFileService.uploadFile(file, file.getOriginalFilename());
-            Attachment attachment = Attachment.createAttachment(expertProfile, file.getOriginalFilename(), fileUrl);
+            Attachment attachment = Attachment.createAttachment(expertProfile, file.getOriginalFilename(), fileUrl, file.getContentType());
             newAttachments.add(attachment);
         }
 

@@ -16,7 +16,8 @@ public interface WorkRequestRepository extends JpaRepository<WorkRequestEntity, 
     List<WorkRequestEntity> findAllByOrderByAdPointDesc();
     
     // 카테고리별 필터링 (ad_point 높은 순)
-    List<WorkRequestEntity> findByCategoryContainingIgnoreCaseOrderByAdPointDesc(String category);
+    @Query("SELECT w FROM WorkRequestEntity w WHERE " + "LOWER(w.category) LIKE LOWER(CONCAT('%', :category, '%')) " + "ORDER BY w.adPoint DESC")
+    List<WorkRequestEntity> findByCategoryContainingIgnoreCaseOrderByAdPointDesc(@Param("category") String category);
     
     // 검색 기능 (제목, 내용, 카테고리에서 검색)
     @Query("SELECT w FROM WorkRequestEntity w WHERE " +
