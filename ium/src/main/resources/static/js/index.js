@@ -1,25 +1,23 @@
-// 현재 활성화된 카테고리
-let currentCategory = 'all';
-
-// 카테고리 필터링 함수
+// 카테고리 필터링 함수 (서버 사이드)
 function filterByCategory(category) {
-    currentCategory = category;
+    const currentSearch = document.querySelector('.search-input').value.trim();
+    let url = '/';
     
-    // 카테고리 버튼 활성화 상태 변경
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelector(`[data-category="${category}"]`).classList.add('active');
+    const params = new URLSearchParams();
     
-    // 의뢰 카드 필터링
-    const requestCards = document.querySelectorAll('.request-card');
-    requestCards.forEach(card => {
-        if (category === 'all' || card.dataset.category === category) {
-            card.style.display = 'flex';
-        } else {
-            card.style.display = 'none';
-        }
-    });
+    if (category !== 'all') {
+        params.append('category', category);
+    }
+    
+    if (currentSearch) {
+        params.append('search', currentSearch);
+    }
+    
+    if (params.toString()) {
+        url += '?' + params.toString();
+    }
+    
+    window.location.href = url;
 }
 
 // 의뢰하기 버튼 클릭
@@ -43,23 +41,42 @@ document.addEventListener('DOMContentLoaded', function() {
             performSearch();
         }
     });
+    
+    // 페이지 로드 시 현재 카테고리 버튼 활성화
+    if (typeof currentCategory !== 'undefined' && currentCategory) {
+        const activeBtn = document.querySelector(`[data-category="${currentCategory}"]`);
+        if (activeBtn) {
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            activeBtn.classList.add('active');
+        }
+    }
 });
 
 function performSearch() {
     const searchTerm = document.querySelector('.search-input').value.trim();
-    if (searchTerm) {
-        window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+    let url = '/';
+    
+    const params = new URLSearchParams();
+    
+    // 현재 활성화된 카테고리 유지
+    if (typeof currentCategory !== 'undefined' && currentCategory && currentCategory !== 'all') {
+        params.append('category', currentCategory);
     }
+    
+    if (searchTerm) {
+        params.append('search', searchTerm);
+    }
+    
+    if (params.toString()) {
+        url += '?' + params.toString();
+    }
+    
+    window.location.href = url;
 }
 
-// 의뢰 카드 클릭
-document.addEventListener('click', function(e) {
-    if (e.target.closest('.request-card')) {
-        const card = e.target.closest('.request-card');
-        const requestId = card.dataset.requestId || '1';
-        window.location.href = `/request/${requestId}`;
-    }
-});
+// 의뢰 카드 클릭 처리는 HTML에서 직접 처리하도록 변경됨
 
 // 채팅방 이동
 function getRandomString(length) {
@@ -71,23 +88,34 @@ function getRandomString(length) {
     return result;
 }
 
-document.querySelector('.chat-icon').addEventListener('click', function() {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/chat/createRoom';
+// 채팅 아이콘이 있는 경우에만 이벤트 리스너 추가
+document.addEventListener('DOMContentLoaded', function() {
+    const chatIcon = document.querySelector('.chat-icon');
+    if (chatIcon) {
+        chatIcon.addEventListener('click', function() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/chat/createRoom';
 
-    const nameInput = document.createElement('input');
-    nameInput.type = 'hidden';
-    nameInput.name = 'name';
-    nameInput.value = getRandomString(10);
-    form.appendChild(nameInput);
+            const nameInput = document.createElement('input');
+            nameInput.type = 'hidden';
+            nameInput.name = 'name';
+            nameInput.value = getRandomString(10);
+            form.appendChild(nameInput);
 
-    const targetUserInput = document.createElement('input');
-    targetUserInput.type = 'hidden';
-    targetUserInput.name = 'targetUser';
-    targetUserInput.value = 'admin@test.com'; // admin user email
-    form.appendChild(targetUserInput);
+            const targetUserInput = document.createElement('input');
+            targetUserInput.type = 'hidden';
+            targetUserInput.name = 'targetUser';
+            targetUserInput.value = 'admin@test.com'; // admin user email
+            form.appendChild(targetUserInput);
 
-    document.body.appendChild(form);
-    form.submit();
+            document.body.appendChild(form);
+            form.submit();
+        });
+    }
 });
+
+// 가격 포맷팅 함수 (이미 서버에서 처리되므로 필요시에만 사용)
+function formatPrice(price) {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원~';
+}

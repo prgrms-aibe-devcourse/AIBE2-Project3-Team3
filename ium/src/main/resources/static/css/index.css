@@ -178,6 +178,7 @@ body {
     border: 2px solid #E6F6DC;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     height: 280px;
+    position: relative;
 }
 
 .request-card:hover {
@@ -209,6 +210,40 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: relative;
+}
+
+/* AD Badge */
+.ad-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #FF6B6B;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 10px;
+    z-index: 1;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.ad-text {
+    font-size: 10px;
+    letter-spacing: 0.5px;
+}
+
+/* No Requests */
+.no-requests {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px 20px;
+    color: #666666;
+}
+
+.no-requests p {
+    font-size: 16px;
+    margin-bottom: 20px;
 }
 
 .request-title {
