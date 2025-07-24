@@ -49,4 +49,14 @@ public class WorkRequestController {
         workRequestService.saveRequest(workRequest);
         return "redirect:/workrequest";
     }
+    
+    @GetMapping("/workrequest/resultUpload")
+    public String showResultUploadPage() {
+        return "/request/resultUpload";
+    }
+    
+    @PostMapping("/workrequest/resultUpload")
+    public String uploadResult() {
+        return "redirect:/workrequest";
+    }
 }
