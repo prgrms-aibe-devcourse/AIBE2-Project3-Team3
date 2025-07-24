@@ -10,7 +10,7 @@
 </head>
 <body>
     <!-- Header -->
-    <div th:replace="header :: header"></div>
+    <div th:replace="~{header :: header}"></div>
 
     <!-- Main Content -->
     <main class="main-content">
@@ -21,7 +21,7 @@
             
             <div class="search-and-buttons">
                 <div class="search-container">
-                    <input type="text" class="search-input" placeholder="원하는 서비스를 검색해보세요" th:value="${currentSearch}">
+                    <input type="text" class="search-input" placeholder="원하는 서비스를 검색해보세요" th:value="${currentSearch != null ? currentSearch : ''}">
                     <button class="search-button">🔍</button>
                 </div>
                 
@@ -65,11 +65,11 @@
                      th:data-request-id="${request.id}"
                      th:data-category="${request.category}"
                      th:data-budget="${request.price}"
-                     th:onclick="'window.location.href=\'/workrequest/\' + ' + ${request.id}">
+                     th:onclick="|window.location.href='/workrequest/' + ${request.id}|">
                     <div class="request-image">
-                        <img th:src="${request.fileUrl != null ? request.fileUrl : 'https://via.placeholder.com/150x100/E6F6DC/000000?text=' + (request.category != null ? request.category : '의뢰')}" 
+                        <img th:src="${request.fileUrl != null ? request.fileUrl : '/img/profile.jpg'}"
                              th:alt="${request.title}" 
-                             onerror="this.src='https://via.placeholder.com/150x100/E6F6DC/000000?text=의뢰'">
+                             onerror="this.src='/img/profile.jpg'">
                     </div>
                     <div class="request-content">
                         <h3 class="request-title" th:text="${request.title}">제목</h3>
@@ -87,15 +87,20 @@
                 
                 <!-- 의뢰가 없는 경우 -->
                 <div th:if="${#lists.isEmpty(workRequests)}" class="no-requests">
-                    <p>현재 조건에 맞는 의뢰가 없습니다.</p>
-                    <button class="action-btn primary" onclick="filterByCategory('all')">전체 보기</button>
+                    <p th:if="${currentSearch != null and !currentSearch.isEmpty()}">
+                        '<span th:text="${currentSearch}"></span>' 검색 결과가 없습니다.
+                    </p>
+                    <p th:if="${currentSearch == null or currentSearch.isEmpty()}">
+                        현재 카테고리에 맞는 의뢰가 없습니다.
+                    </p>
+                    <button class="action-btn primary" onclick="clearSearchAndFilter()">전체 보기</button>
                 </div>
             </div>
         </section>
     </main>
 
     <!-- Footer -->
-    <div th:replace="footer :: footer"></div>
+    <div th:replace="~{footer :: footer}"></div>
 
     <script th:src="@{/js/index.js}"></script>
     <script th:src="@{/js/header.js}"></script>
