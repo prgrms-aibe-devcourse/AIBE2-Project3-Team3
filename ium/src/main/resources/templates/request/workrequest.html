@@ -27,7 +27,7 @@
         </div>
 
         <div class="right">
-            <button class="chat-icon" th:data-target-user="${targetUser}">문의하기</button>
+            <button class="work-request-chat-icon" th:data-target-user="${targetUser}">문의하기</button>
             <button>수주받기</button>
         </div>
     </section>
@@ -54,6 +54,6 @@
 <div th:replace="footer :: footer"></div>
 
 <script th:src="@{/js/header.js}"></script>
-<script th:src="@{/workrequest.js}"></script>
+<script th:src="@{/js/workrequest/workrequest.js}"></script>
 </body>
 </html>
