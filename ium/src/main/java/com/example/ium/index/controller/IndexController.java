@@ -22,8 +22,8 @@ public class IndexController {
   
   @GetMapping("/")
   public String home(Model model, 
-                     @RequestParam(required = false) String category,
-                     @RequestParam(required = false) String search) {
+                     @RequestParam(value = "category", required = false) String category,
+                     @RequestParam(value = "search", required = false) String search) {
     
     List<WorkRequestEntity> workRequests;
     
