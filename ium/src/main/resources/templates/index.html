@@ -21,7 +21,7 @@
             
             <div class="search-and-buttons">
                 <div class="search-container">
-                    <input type="text" class="search-input" placeholder="원하는 서비스를 검색해보세요" th:value="${currentSearch}">
+                    <input type="text" class="search-input" placeholder="원하는 서비스를 검색해보세요" th:value="${currentSearch != null ? currentSearch : ''}">
                     <button class="search-button">🔍</button>
                 </div>
                 
@@ -87,8 +87,13 @@
                 
                 <!-- 의뢰가 없는 경우 -->
                 <div th:if="${#lists.isEmpty(workRequests)}" class="no-requests">
-                    <p>현재 조건에 맞는 의뢰가 없습니다.</p>
-                    <button class="action-btn primary" onclick="filterByCategory('all')">전체 보기</button>
+                    <p th:if="${currentSearch != null and !currentSearch.isEmpty()}">
+                        '<span th:text="${currentSearch}"></span>' 검색 결과가 없습니다.
+                    </p>
+                    <p th:if="${currentSearch == null or currentSearch.isEmpty()}">
+                        현재 카테고리에 맞는 의뢰가 없습니다.
+                    </p>
+                    <button class="action-btn primary" onclick="clearSearchAndFilter()">전체 보기</button>
                 </div>
             </div>
         </section>
