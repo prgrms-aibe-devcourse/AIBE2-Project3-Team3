@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>의뢰 상세 페이지</title>
-    <link rel="stylesheet" th:href="@{/workrequest.css}">
+    <link rel="stylesheet" th:href="@{/css/workrequest.css}">
 </head>
 <body>
 
@@ -14,7 +14,7 @@
     <div class="menu">
         <button><img src="/images/chat.png" alt="말풍선"></button>
         <button><img src="/images/info.png" alt="내정보"></button>
-        <button><img src="/images/menu.png" alt="메뉴바"></button>
+        <button><img src="/images/menu.png" alt="메뉴"></button>
     </div>
 </header>
 
@@ -26,7 +26,7 @@
             <div class="title" th:text="${request.title}">제목</div>
             <div class="content">
                 <span th:text="'₩' + ${request.price}">가격</span> /
-                <span th:text="${request.name}">이름</span>
+                <span th:text="${request.createdBy}">이름</span>
                 <br>
                 <span th:text="${request.status}">상태</span>
             </div>
@@ -39,7 +39,7 @@
     </section>
 
     <section class="description">
-        <p th:text="${request.description}">설명</p>
+        <p th:text="${request.content}">설명</p>
     </section>
 
     <section class="ai-recommend">
