@@ -98,7 +98,7 @@ public class ExpertProfileService {
                         .map(s -> new ExpertProfileViewDto.SpecializationSummary(s.getId(), s.getSpecializationName().getValue()))
                         .toList();
         List<ExpertProfileViewDto.AttachmentInfo> attachmentInfos = expertProfile.getAttachments().stream()
-                .map(attachment -> new ExpertProfileViewDto.AttachmentInfo(attachment.getFileName(), attachment.getFileUrl()))
+                .map(attachment -> new ExpertProfileViewDto.AttachmentInfo(attachment.getFileName(), attachment.getFileUrl(), attachment.getFileType()))
                 .toList();
         return new ExpertProfileViewDto(
                 expertProfile.getIntroduceMessage(),

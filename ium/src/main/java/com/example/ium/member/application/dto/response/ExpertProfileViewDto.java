@@ -16,5 +16,5 @@ public record ExpertProfileViewDto(
         List<AttachmentInfo> attachments
 ) {
     public record SpecializationSummary(Long id, String name) {}
-    public record AttachmentInfo(String fileName, String fileUrl) {}
+    public record AttachmentInfo(String fileName, String fileUrl, String fileType) {}
 }

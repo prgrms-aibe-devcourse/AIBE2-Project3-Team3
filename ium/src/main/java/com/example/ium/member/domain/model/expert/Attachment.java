@@ -23,19 +23,23 @@ public class Attachment {
     private String fileName;
     @Column(name = "file_url", nullable = false, columnDefinition = "TEXT")
     private String fileUrl;
+    @Column
+    private String fileType;
 
     @Builder
-    private Attachment(ExpertProfile expertProfile, String fileName, String fileUrl) {
+    private Attachment(ExpertProfile expertProfile, String fileName, String fileUrl, String fileType) {
         this.expertProfile = expertProfile;
         this.fileName = fileName;
         this.fileUrl = fileUrl;
+        this.fileType = fileType;
     }
 
-    public static Attachment createAttachment(ExpertProfile expertProfile, String fileName, String fileUrl) {
+    public static Attachment createAttachment(ExpertProfile expertProfile, String fileName, String fileUrl, String fileType) {
         return Attachment.builder()
                 .expertProfile(expertProfile)
                 .fileName(fileName)
                 .fileUrl(fileUrl)
+                .fileType(fileType)
                 .build();
     }
 }
