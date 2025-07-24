@@ -1,5 +1,6 @@
 package com.example.ium.workrequest.controller;
 
+import com.example.ium._core.exception.IumApplicationException;
 import com.example.ium.workrequest.dto.ExpertDto;
 import com.example.ium.workrequest.entity.WorkRequestEntity;
 import com.example.ium.workrequest.service.WorkRequestService;
@@ -7,9 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.web.multipart.MultipartFile;
 import java.security.Principal;
+
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class WorkRequestController {
 
     @GetMapping("/workrequest")
     public String showWorkRequest(Model model) {
-        List<WorkRequestEntity> allRequests = workRequestService.findAllRequests();
+        List<WorkRequestEntity> allRequests = workRequestService.getAllRequests();
         WorkRequestEntity workRequest = workRequestService.getLatestRequest();
         model.addAttribute("requests", allRequests);
 
@@ -53,11 +55,22 @@ public class WorkRequestController {
         return "/request/resultUpload";
     }
     
-    @PostMapping("/workrequest/resultUpload")
-    public String uploadResult(@RequestParam("file") MultipartFile file,
-                               @RequestParam("workRequestId") Long workRequestId,
-                               Principal principal) {
-        workRequestService.uploadFile(file, workRequestId, principal.getName());
-        return "redirect:/workrequest"; // TODO pathvariable 수정
+//    @PostMapping("/workrequest/resultUpload")
+//    public String uploadResult(@RequestParam("file") MultipartFile file,
+//                               @RequestParam("workRequestId") Long workRequestId,
+//                               Principal principal) {
+//        workRequestService.uploadFile(file, workRequestId, principal.getName());
+//        return "redirect:/workrequest"; // TODO pathvariable 수정
+//    }
+@GetMapping("/workrequest/{id}")
+public String showWorkRequestDetail(@PathVariable Long id, Model model) {
+    try {
+        WorkRequestEntity workRequest = workRequestService.getRequest(id);
+        model.addAttribute("request", workRequest);
+        return "request/workrequest"; // 기존 템플릿 재사용
+    } catch (IumApplicationException e) {
+        model.addAttribute("error", "의뢰를 찾을 수 없습니다.");
+        return "common/error";
     }
+}
 }
