@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>전문가 프로필</title>
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
     <style>
         .attachment-preview {
             margin-bottom: 20px;
@@ -30,7 +32,7 @@
     </style>
 </head>
 <body>
-
+<div th:replace="~{header :: header}"></div>
 <h1>전문가 프로필</h1>
 
 <div class="summary-box">
@@ -44,6 +46,12 @@
 </form>
 
 <hr/>
+
+<div style="margin-top: 20px;">
+    <a th:href="@{|/expert-profiles/${expertProfile.memberId}/work-requests|}" style="padding: 8px 12px; background-color: #AAD2DA; color: white; text-decoration: none; border-radius: 5px;">
+        내 의뢰 목록 보기
+    </a>
+</div>
 
 <div id="profile-content">
     <p><strong>자기소개:</strong> <span th:text="${expertProfile.introduceMessage}"></span></p>
@@ -78,5 +86,7 @@
     </ul>
 </div>
 
+<div th:replace="~{footer :: footer}"></div>
+<script th:src="@{/js/header.js}"></script>
 </body>
 </html>
