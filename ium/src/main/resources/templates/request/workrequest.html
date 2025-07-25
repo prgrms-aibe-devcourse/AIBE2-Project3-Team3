@@ -34,7 +34,12 @@
 
     <section class="description">
         <p th:text="${request.content}">설명</p>
+        <div class="request-image-section">
+            <img th:if="${request.fileUrl != null}" th:src="${request.fileUrl}" alt="첨부 이미지" style="max-width: 400px;" />
+        </div>
     </section>
+
+
 
     <section class="ai-recommend">
         <h2>AI 추천</h2>
