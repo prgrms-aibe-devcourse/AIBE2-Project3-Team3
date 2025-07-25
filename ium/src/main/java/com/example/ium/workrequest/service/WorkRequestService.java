@@ -113,6 +113,7 @@ public class WorkRequestService {
                 .map(workRequestEntity -> new MyWorkRequestListViewDto(
                         workRequestEntity.getId(),
                         workRequestEntity.getTitle(),
+                        workRequestEntity.getContent(),
                         workRequestEntity.getPrice(),
                         workRequestEntity.getCreatedBy()
                 ))

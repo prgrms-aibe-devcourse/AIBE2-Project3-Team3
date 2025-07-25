@@ -104,6 +104,7 @@ public class ExpertProfileController {
         if (!expertProfileService.isExpertProfileActivated(memberId)) {
             return "redirect:/profiles"; // 프로필 작성 페이지로 리다이렉트
         }
+        model.addAttribute("expertProfile", expertProfileService.getExpertProfile(memberId));
         model.addAttribute("countWorkRequestsByStatus", workRequestService.countMyWorkRequestsByStatus(memberId));
         model.addAttribute("moneyInfo", moneyService.getMoneyInfo(memberId));
         return "member/work-request"; // 전문가 프로필 페이지 경로
