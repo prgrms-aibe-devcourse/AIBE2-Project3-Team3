@@ -296,7 +296,7 @@ public class DummyDataInitializer {
             
             // 작업 요청 생성자 설정 (회원 중에서 랜덤 선택)
             Member requestCreator = members.get(random.nextInt(members.size()));
-            workRequest.setCreatedBy(requestCreator.getEmail().getValue());
+            workRequest.setCreatedBy(requestCreator.getEmail().getValue()); // BaseEntity.java에 세터 추가해서 사용하겠습니다.
             
             // AD 포인트 설정: 4개만 500점 이상, 나머지는 500 미만
             if (highAdPointIndices.contains(i)) {
