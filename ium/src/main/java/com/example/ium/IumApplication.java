@@ -48,13 +48,6 @@ public class IumApplication {
                   newSpecialization("번역/통역")
         ));
       }
-      specializationJPARepository.saveAll(Arrays.asList(
-                newSpecialization("디자인"),
-                newSpecialization("프로그래밍"),
-                newSpecialization("영상편집"),
-                newSpecialization("세무/회계"),
-                newSpecialization("번역/통역")
-      ));
       workRequestRepository.saveAll(Arrays.asList(
                 createRequest("의뢰 제목 1", "내용 1", "디자인", WorkRequestEntity.Status.OPEN, WorkRequestEntity.Type.FORMAL, expert.getId()),
                 createRequest("의뢰 제목 2", "내용 2", "프로그래밍", WorkRequestEntity.Status.IN_PROGRESS, WorkRequestEntity.Type.INFORMAL, expert.getId()),
