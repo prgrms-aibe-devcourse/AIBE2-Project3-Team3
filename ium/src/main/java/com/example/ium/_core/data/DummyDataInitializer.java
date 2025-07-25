@@ -78,6 +78,12 @@ public class DummyDataInitializer {
     
     // 1. 전문 분야 생성 (IumApplication.java와 동일한 5개 카테고리)
     private List<Specialization> createSpecializations() {
+        // 이미 존재하는 specialization 건너뛰기
+        if (specializationRepository.count() > 0) {
+            log.info("전문분야 데이터가 이미 존재합니다. 생성을 건너뛁니다.");
+            return specializationRepository.findAll();
+        }
+        
         List<Specialization> specializations = new ArrayList<>();
         
         // IumApplication.java에서 정의한 5개 전문 분야
@@ -290,7 +296,7 @@ public class DummyDataInitializer {
             
             // 작업 요청 생성자 설정 (회원 중에서 랜덤 선택)
             Member requestCreator = members.get(random.nextInt(members.size()));
-            workRequest.setCreatedBy(requestCreator.getUsername());
+            workRequest.setCreatedBy(requestCreator.getEmail().getValue());
             
             // AD 포인트 설정: 4개만 500점 이상, 나머지는 500 미만
             if (highAdPointIndices.contains(i)) {
