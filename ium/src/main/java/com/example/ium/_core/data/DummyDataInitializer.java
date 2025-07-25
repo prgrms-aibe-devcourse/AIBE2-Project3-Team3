@@ -118,17 +118,17 @@ public class DummyDataInitializer {
     private List<Member> createMembers() {
         List<Member> members = new ArrayList<>();
         
-        // 일반 사용자들 (25명)
+        // 일반 사용자들 (30명) - 닉네임으로 변경
         String[] usernames = {
-            "김철수", "이영희", "박민수", "최지은", "정현우", "강민정", "윤서준", "임소영", "오준혁", "한예린",
-            "신동욱", "조미진", "배성훈", "서지혜", "홍길동", "문지원", "장준혁", "김나영", "이준호", "박소라",
-            "최민준", "정유진", "강태우", "윤아름", "임지훈", "송미나", "유창현", "노지수", "백준서", "안채원"
+            "코딩마스터", "디자인킹", "영상편집러", "번역고수", "개발자123", "크리에이터", "마케터Pro", "데이터분석가", "풀스택개발자", "UI디자이너",
+            "모션그래픽", "웹개발자", "앱개발러", "로고마스터", "번역전문가", "영상제작자", "프론트엔드", "백엔드개발", "그래픽디자인", "콘텐츠라이터",
+            "SEO전문가", "광고기획자", "브랜딩전문", "3D모델러", "게임개발자", "챗봇개발", "데이터과학자", "AI개발자", "블록체인개발", "스타트업CEO"
         };
         
         String[] emailPrefixes = {
-            "kimcs", "leeyh", "parkms", "choije", "junghw", "kangmj", "yunsj", "limsy", "ohjh", "hanyr",
-            "sindw", "jomj", "baesh", "seojh", "hongkd", "moonjw", "jangjh", "kimny", "leejh", "parksr",
-            "choimj", "jungyj", "kangtw", "yunar", "limjh", "songmn", "yuch", "nojs", "baekjs", "ancw"
+            "coding_master", "design_king", "video_editor", "translator", "developer123", "creator", "marketer_pro", "data_analyst", "fullstack_dev", "ui_designer",
+            "motion_graphic", "web_developer", "app_developer", "logo_master", "translation_pro", "video_creator", "frontend_dev", "backend_dev", "graphic_design", "content_writer",
+            "seo_expert", "ad_planner", "branding_pro", "3d_modeler", "game_developer", "chatbot_dev", "data_scientist", "ai_developer", "blockchain_dev", "startup_ceo"
         };
         
         for (int i = 0; i < usernames.length; i++) {
@@ -142,7 +142,7 @@ public class DummyDataInitializer {
         
         // 관리자 계정
         Member admin = Member.builder()
-            .username("관리자")
+            .username("운영진")
             .email(Email.of("admin123@test.com"))
             .password(Password.encode("admin123", passwordEncoder))
             .role(Role.ADMIN)
@@ -304,6 +304,10 @@ public class DummyDataInitializer {
             workRequest.setPrice(100000 + random.nextInt(2000000)); // 10만원~210만원
             workRequest.setStatus(statuses[i % statuses.length]);
             workRequest.setType(random.nextBoolean() ? WorkRequestEntity.Type.FORMAL : WorkRequestEntity.Type.INFORMAL);
+            
+            // 작업 요청 생성자 설정 (회원 중에서 랜덤 선택)
+            Member requestCreator = members.get(random.nextInt(members.size()));
+            workRequest.setCreatedBy(requestCreator.getUsername());
             
             // AD 포인트 설정: 4개만 500점 이상, 나머지는 500 미만
             if (highAdPointIndices.contains(i)) {
