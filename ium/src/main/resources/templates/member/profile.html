@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>일반 회원 프로필</title>
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
 </head>
 <body>
+<div th:replace="~{header :: header}"></div>
 <h1>일반 회원 프로필</h1>
 
 <div>
@@ -22,5 +25,7 @@
     <button type="submit">전문가 프로필 활성화</button>
 </form>
 
+<div th:replace="~{footer :: footer}"></div>
+<script th:src="@{/js/header.js}"></script>
 </body>
 </html>

@@ -3,8 +3,10 @@ package com.example.ium.member.application.controller;
 import com.example.ium._core.security.CustomUserDetails;
 import com.example.ium.member.application.dto.request.ExpertProfileFormDto;
 import com.example.ium.member.application.service.ExpertProfileService;
+import com.example.ium.money.service.MoneyService;
 import com.example.ium.specialization.application.dto.response.SpecializationDto;
 import com.example.ium.specialization.application.service.SpecializationService;
+import com.example.ium.workrequest.service.WorkRequestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,6 +24,8 @@ public class ExpertProfileController {
 
     private final ExpertProfileService expertProfileService;
     private final SpecializationService specializationService;
+    private final WorkRequestService workRequestService;
+    private final MoneyService moneyService;
 
     /**
      * 전문가 프로필 작성 페이지로 이동
@@ -43,7 +47,7 @@ public class ExpertProfileController {
     public String createExpertProfile(@ModelAttribute ExpertProfileFormDto requestDto, @AuthenticationPrincipal CustomUserDetails memberDetails) {
         Long memberId = memberDetails.getMemberId();
         expertProfileService.createExpertProfile(requestDto, memberId);
-        return "redirect:/profiles/" + memberId;
+        return "redirect:/profiles";
     }
 
     /**
@@ -56,7 +60,7 @@ public class ExpertProfileController {
             return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
         }
         expertProfileService.activateExpertProfile(memberId);
-        return "redirect:/profiles/" + memberId; // 프로필 페이지로 리다이렉트
+        return "redirect:/expert-profiles/" + memberId;
     }
 
     /**
@@ -66,6 +70,45 @@ public class ExpertProfileController {
     @PatchMapping("/{memberId}/deactivate")
     public String deactivateExpertProfile(@PathVariable("memberId") Long memberId) {
         expertProfileService.deactivateProfile(memberId);
-        return "redirect:/profiles/" + memberId; // 프로필 페이지로 리다이렉트
+        return "redirect:/profiles";
+    }
+
+    /**
+     * 전문가 프로필 조회
+     * @param memberId 전문가 프로필의 멤버 ID
+     * @param model 모델 객체
+     * @return 전문가 프로필 페이지 경로
+     */
+    @GetMapping("/{memberId}")
+    public String getExpertProfile(@PathVariable Long memberId, Model model) {
+
+        if (!expertProfileService.isExpertProfileActivated(memberId)) {
+            return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
+        }
+        model.addAttribute("expertProfile", expertProfileService.getExpertProfile(memberId));
+        model.addAttribute("moneyInfo", moneyService.getMoneyInfo(memberId));
+        return "member/expert-profile"; // 전문가 프로필 페이지 경로
+    }
+
+    @GetMapping("/{memberId}/work-requests")
+    public String getMyWorkRequestsByStatus(@PathVariable Long memberId, Model model) {
+        if (!expertProfileService.isExpertProfileActivated(memberId)) {
+            return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
+        }
+        model.addAttribute("countWorkRequestsByStatus", workRequestService.countMyWorkRequestsByStatus(memberId));
+        model.addAttribute("moneyInfo", moneyService.getMoneyInfo(memberId));
+        return "member/work-request"; // 전문가 프로필 페이지 경로
+    }
+
+    @GetMapping("/{memberId}/work-request-list")
+    public String getMyWorkRequests(@PathVariable Long memberId, @RequestParam(value = "status", required = false) String status, Model model) {
+        if (!expertProfileService.isExpertProfileActivated(memberId)) {
+            return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
+        }
+        model.addAttribute("memberId", memberId);
+        model.addAttribute("workRequests", workRequestService.getMyWorkRequests(memberId, status));
+
+
+        return "member/fragments/work-request-list :: workRequestFragment";
     }
 }
