@@ -31,7 +31,7 @@ public class WorkRequestService {
     private final MoneyRepository moneyRepository;
     private final MemberJPARepository memberJPARepository;
     private final ExpertProfileJPARepository expertProfileJPARepository;
-    private final MemberJPARepository memberJPARepository;
+
 
     // 전체 (ad_point 높은 순으로 정렬)
     public List<WorkRequestEntity> getAllRequests() {
