@@ -56,9 +56,6 @@ public class ExpertProfileController {
      */
     @PatchMapping("/{memberId}/activate")
     public String activateExpertProfile(@PathVariable("memberId") Long memberId) {
-        if (!expertProfileService.isExpertProfileActivated(memberId)) {
-            return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
-        }
         expertProfileService.activateExpertProfile(memberId);
         return "redirect:/expert-profiles/" + memberId;
     }

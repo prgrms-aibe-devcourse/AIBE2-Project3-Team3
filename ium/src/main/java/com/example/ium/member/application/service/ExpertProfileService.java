@@ -125,6 +125,8 @@ public class ExpertProfileService {
     public void activateExpertProfile(Long memberId) {
         ExpertProfile expertProfile = findExpertProfile(memberId);
         expertProfile.activate();
+
+        memberMetaCommandService.cacheMemberMeta(expertProfile.getMember().getEmail().getValue());
     }
 
     /**
