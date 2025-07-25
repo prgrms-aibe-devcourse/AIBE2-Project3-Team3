@@ -1,5 +1,6 @@
 package com.example.ium.workrequest.service;
 
+import com.example.ium.member.application.dto.response.MyWorkRequestStatusDto;
 import com.example.ium.workrequest.entity.WorkRequestEntity;
 import com.example.ium.workrequest.repository.WorkRequestRepository;
 import lombok.RequiredArgsConstructor;
@@ -74,5 +75,13 @@ public class WorkRequestService {
     public WorkRequestEntity getLatestRequest() {
         return workRequestRepository.findTopByOrderByIdDesc()
                 .orElseThrow(() -> new IllegalArgumentException("등록된 요청이 없습니다."));
+    }
+
+    public List<MyWorkRequestStatusDto> countMyWorkRequestsByStatus(Long memberId) {
+        return workRequestRepository.countMyWorkRequestsByStatus(memberId).stream()
+                .map(result -> new MyWorkRequestStatusDto(
+                        result[0].toString(),
+                        (Long) result[1]))
+                .toList();
     }
 }

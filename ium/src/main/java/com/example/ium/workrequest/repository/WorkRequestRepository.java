@@ -35,4 +35,10 @@ public interface WorkRequestRepository extends JpaRepository<WorkRequestEntity, 
            "LOWER(w.category) LIKE LOWER(CONCAT('%', :search, '%'))) " +
            "ORDER BY w.adPoint DESC")
     List<WorkRequestEntity> findByCategoryAndSearchOrderByAdPointDesc(@Param("category") String category, @Param("search") String search);
+
+    @Query("SELECT w.status, COUNT(w) " +
+           "FROM WorkRequestEntity w " +
+           "WHERE w.expert = :memberId " +
+           "GROUP BY w.status")
+    List<Object[]> countMyWorkRequestsByStatus(@Param("memberId") Long memberId);
 }

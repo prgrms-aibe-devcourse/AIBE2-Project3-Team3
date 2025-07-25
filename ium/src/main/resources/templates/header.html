@@ -8,7 +8,7 @@
       <div class="user-icon" onclick="toggleDropdown()">👤</div>
 
       <div class="dropdown-menu" id="userDropdown">
-        <a th:href="@{/profile}">프로필</a>
+        <a th:href="@{/profiles}">프로필</a>
         <form th:action="@{/logout}" method="post">
           <button type="submit">로그아웃</button>
         </form>

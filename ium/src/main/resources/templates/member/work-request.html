@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>내 의뢰 목록</title>
+    <style>
+        .status-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-tabs button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+
+        .status-tabs button.active {
+            background-color: #AAD2DA;
+            color: white;
+        }
+
+        .summary-box {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        #workRequestList {
+            margin-top: 20px;
+        }
+
+        .request-item {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+    <script>
+        function loadWorkRequests(status) {
+            document.querySelectorAll(".status-tabs button").forEach(btn => btn.classList.remove("active"));
+            document.getElementById("tab-" + status).classList.add("active");
+
+            fetch(`/expert-profiles/work-requests/ajax?status=` + status)
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById("workRequestList").innerHTML = html;
+                });
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            loadWorkRequests("ALL");
+        });
+    </script>
+</head>
+<body>
+
+<h1>내 의뢰 목록</h1>
+
+<div class="summary-box">
+    <p><strong>보유 코인:</strong> <span th:text="${moneyInfo.credit}"></span> 원</p>
+    <p><strong>보유 포인트:</strong> <span th:text="${moneyInfo.point}"></span> P</p>
+</div>
+
+<div class="status-tabs">
+    <button th:each="status : ${countWorkRequestsByStatus}"
+            th:id="'tab-' + ${status.status}"
+            th:text="${status.status + ' (' + status.count + ')'}"
+            th:onclick="'loadWorkRequests(\\'' + ${status.status} + '\\')'">
+    </button>
+</div>
+
+<div id="workRequestList">
+    <!-- Ajax로 리스트 삽입 -->
+</div>
+
+</body>
+</html>
