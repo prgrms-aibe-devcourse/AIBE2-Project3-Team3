@@ -25,11 +25,10 @@ public class WorkRequestEntity extends BaseEntity {
     private String title;
     private String content;
     private String category;
+    private String createdBy;
 
     @Enumerated(EnumType.STRING)
     private Status status;
-
-    @Enumerated(EnumType.STRING)
     private Type type;
 
     private Long expert;
