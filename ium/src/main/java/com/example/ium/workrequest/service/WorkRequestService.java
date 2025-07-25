@@ -1,9 +1,12 @@
 package com.example.ium.workrequest.service;
 
+import com.example.ium.member.application.dto.response.MyWorkRequestListViewDto;
 import com.example.ium.member.application.dto.response.MyWorkRequestStatusDto;
 import com.example.ium.workrequest.entity.WorkRequestEntity;
 import com.example.ium.workrequest.repository.WorkRequestRepository;
+import com.example.ium.workrequest.repository.WorkRequestSpecification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import com.example.ium._core.exception.IumApplicationException;
 import com.example.ium._core.exception.ErrorCode;
@@ -12,6 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WorkRequestService {
 
     private final WorkRequestRepository workRequestRepository;
@@ -82,6 +86,25 @@ public class WorkRequestService {
                 .map(result -> new MyWorkRequestStatusDto(
                         result[0].toString(),
                         (Long) result[1]))
+                .toList();
+    }
+
+    public List<MyWorkRequestListViewDto> getMyWorkRequests(Long memberId, String status) {
+
+        List<WorkRequestEntity> workRequests = workRequestRepository.findAll(
+                WorkRequestSpecification.filterWorkRequestsByConditions(memberId, status)
+        );
+        log.info("workRequests: {}", workRequests);
+
+        return workRequestRepository.findAll(
+                WorkRequestSpecification.filterWorkRequestsByConditions(memberId, status)
+        ).stream()
+                .map(workRequestEntity -> new MyWorkRequestListViewDto(
+                        workRequestEntity.getId(),
+                        workRequestEntity.getTitle(),
+                        workRequestEntity.getPrice(),
+                        workRequestEntity.getCreatedBy()
+                ))
                 .toList();
     }
 }

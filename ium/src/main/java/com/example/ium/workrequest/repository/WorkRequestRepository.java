@@ -2,6 +2,7 @@ package com.example.ium.workrequest.repository;
 
 import com.example.ium.workrequest.entity.WorkRequestEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface WorkRequestRepository extends JpaRepository<WorkRequestEntity, Long> {
+public interface WorkRequestRepository extends JpaRepository<WorkRequestEntity, Long>, JpaSpecificationExecutor<WorkRequestEntity> {
     Optional<WorkRequestEntity> findTopByOrderByIdDesc();
     
     // ad_point 높은 순으로 정렬

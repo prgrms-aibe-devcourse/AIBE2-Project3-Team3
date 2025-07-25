@@ -91,12 +91,24 @@ public class ExpertProfileController {
     }
 
     @GetMapping("/{memberId}/work-requests")
-    public String getMyWorkRequests(@PathVariable Long memberId, Model model) {
+    public String getMyWorkRequestsByStatus(@PathVariable Long memberId, Model model) {
         if (!expertProfileService.isExpertProfileActivated(memberId)) {
             return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
         }
         model.addAttribute("countWorkRequestsByStatus", workRequestService.countMyWorkRequestsByStatus(memberId));
         model.addAttribute("moneyInfo", moneyService.getMoneyInfo(memberId));
         return "member/work-request"; // 전문가 프로필 페이지 경로
+    }
+
+    @GetMapping("/{memberId}/work-request-list")
+    public String getMyWorkRequests(@PathVariable Long memberId, @RequestParam(value = "status", required = false) String status, Model model) {
+        if (!expertProfileService.isExpertProfileActivated(memberId)) {
+            return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
+        }
+        model.addAttribute("memberId", memberId);
+        model.addAttribute("workRequests", workRequestService.getMyWorkRequests(memberId, status));
+
+
+        return "member/fragments/work-request-list :: workRequestFragment";
     }
 }
