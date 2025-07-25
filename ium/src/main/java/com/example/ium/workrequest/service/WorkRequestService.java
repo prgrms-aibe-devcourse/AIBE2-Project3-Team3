@@ -7,6 +7,11 @@ import com.example.ium.member.infrastructure.service.FireBaseFileService;
 import com.example.ium.money.domain.model.Money;
 import com.example.ium.money.domain.model.MoneyType;
 import com.example.ium.money.domain.repository.MoneyRepository;
+import com.example.ium.member.domain.model.Member;
+import com.example.ium.member.domain.model.expert.ExpertProfile;
+import com.example.ium.member.domain.repository.ExpertProfileJPARepository;
+import com.example.ium.member.domain.repository.MemberJPARepository;
+import com.example.ium.workrequest.dto.MatchedDto;
 import com.example.ium.workrequest.entity.WorkRequestEntity;
 import com.example.ium.workrequest.repository.WorkRequestRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +29,8 @@ public class WorkRequestService {
     private final WorkRequestRepository workRequestRepository;
     private final FireBaseFileService fireBaseFileService;
     private final MoneyRepository moneyRepository;
+    private final MemberJPARepository memberJPARepository;
+    private final ExpertProfileJPARepository expertProfileJPARepository;
     private final MemberJPARepository memberJPARepository;
 
     // 전체 (ad_point 높은 순으로 정렬)
@@ -85,6 +92,22 @@ public class WorkRequestService {
     public WorkRequestEntity getLatestRequest() {
         return workRequestRepository.findTopByOrderByIdDesc()
                 .orElseThrow(() -> new IllegalArgumentException("등록된 요청이 없습니다."));
+    }
+    public MatchedDto getMatchedExpert(Long expertId) {
+        ExpertProfile profile = expertProfileJPARepository.findByIdByEagerLoading(expertId)
+                .orElseThrow(() -> new RuntimeException("프로필 없음"));
+
+        Member member = memberJPARepository.findById(expertId)
+                .orElseThrow(() -> new RuntimeException("회원 없음"));
+
+        return new MatchedDto(
+                member.getUsername(),
+                member.getEmail(),
+                member.getRole(),
+                profile.getCareerDate(),
+                profile.getSalary(),
+                profile.getSchool()
+        );
     }
 
     public void uploadFile(MultipartFile file, Long workRequestId, String email) {

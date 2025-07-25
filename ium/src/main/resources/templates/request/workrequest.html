@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <title>의뢰 상세 페이지</title>
     <link rel="stylesheet" th:href="@{/css/workrequest/workrequest.css}">
-    <link rel="stylesheet" th:href="@{/css/header.css}">
-    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <base href="/" />
+    <script th:src="@{/js/workrequest/workrequest.js}"></script>
 </head>
 <body>
 
-<!-- Header -->
-<div th:replace="~{header :: header}"></div>
+<header>
+    <div class="logo">
+        <img src="/images/logo.png">
+    </div>
+    <div class="menu">
+        <button><img src="/images/chat.png" alt="말풍선"></button>
+        <button><img src="/images/info.png" alt="내정보"></button>
+        <button><img src="/images/menu.png" alt="메뉴"></button>
+    </div>
+</header>
 
 <main class="container">
 
@@ -27,8 +35,8 @@
         </div>
 
         <div class="right">
-            <button class="work-request-chat-icon" th:data-target-user="${targetUser}">문의하기</button>
-            <button>수주받기</button>
+            <button class="chat-icon" th:data-target-user="${targetUser}">문의하기</button>
+            <button>수주하기</button>
         </div>
     </section>
 

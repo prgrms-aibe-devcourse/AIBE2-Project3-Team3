@@ -2,6 +2,7 @@ package com.example.ium.workrequest.controller;
 
 import com.example.ium._core.exception.IumApplicationException;
 import com.example.ium.workrequest.dto.ExpertDto;
+import com.example.ium.workrequest.dto.MatchedDto;
 import com.example.ium.workrequest.entity.WorkRequestEntity;
 import com.example.ium.workrequest.service.WorkRequestService;
 import lombok.RequiredArgsConstructor;
@@ -75,4 +76,13 @@ public String showWorkRequestDetail(@PathVariable Long id, Model model) {
         return "common/error";
     }
 }
+    @GetMapping("/workrequest/{id}/matched")
+    public String showMatchedPage(@PathVariable Long id, Model model) {
+        WorkRequestEntity request = workRequestService.getRequest(id);
+        MatchedDto expertDto = workRequestService.getMatchedExpert(request.getExpert());
+
+        model.addAttribute("request", request);
+        model.addAttribute("expert", expertDto);
+        return "request/matched";
+    }
 }
