@@ -33,13 +33,17 @@ public class IumApplication {
               newMember("USERNAME2", "user2@test.com", "test1", passwordEncoder),
               newMember("ADMIN", "admin@test.com", "test1", passwordEncoder)
       ));
-      specializationJPARepository.saveAll(Arrays.asList(
-                newSpecialization("디자인"),
-                newSpecialization("프로그래밍"),
-                newSpecialization("영상편집"),
-                newSpecialization("세무/회계"),
-                newSpecialization("번역/통역")
-      ));
+      
+      // 전문분야 데이터 중복 체크
+      if (specializationJPARepository.count() == 0) {
+        specializationJPARepository.saveAll(Arrays.asList(
+                  newSpecialization("디자인"),
+                  newSpecialization("프로그래밍"),
+                  newSpecialization("영상편집"),
+                  newSpecialization("세무/법무/노무"),
+                  newSpecialization("번역/통역")
+        ));
+      }
     };
   }
 

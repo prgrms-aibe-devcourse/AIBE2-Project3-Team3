@@ -76,34 +76,23 @@ public class DummyDataInitializer {
                 members.size(), expertProfiles.size(), workRequests.size(), specializations.size());
     }
     
-    // 1. 전문 분야 생성 (더 많이)
+    // 1. 전문 분야 생성 (IumApplication.java와 동일한 5개 카테고리)
     private List<Specialization> createSpecializations() {
+        // 이미 존재하는 specialization 건너뛰기
+        if (specializationRepository.count() > 0) {
+            log.info("전문분야 데이터가 이미 존재합니다. 생성을 건너뛁니다.");
+            return specializationRepository.findAll();
+        }
+        
         List<Specialization> specializations = new ArrayList<>();
         
+        // IumApplication.java에서 정의한 5개 전문 분야
         String[] specializationNames = {
-            // IT/개발
-            "웹 개발", "모바일 앱 개발", "백엔드 개발", "프론트엔드 개발", "풀스택 개발",
-            "AI/머신러닝", "데이터 분석", "블록체인", "게임 개발", "DevOps",
-            
-            // 디자인
-            "UI/UX 디자인", "그래픽 디자인", "로고 디자인", "브랜드 디자인", "웹 디자인",
-            "모바일 디자인", "인쇄물 디자인", "3D 디자인", "캐릭터 디자인", "일러스트",
-            
-            // 영상/미디어
-            "영상 편집", "모션 그래픽", "애니메이션", "사진 촬영", "영상 제작",
-            "유튜브 편집", "광고 영상", "웨딩 영상", "기업 홍보영상", "음향 편집",
-            
-            // 번역/언어
-            "영한 번역", "한영 번역", "중국어 번역", "일본어 번역", "독일어 번역",
-            "프랑스어 번역", "스페인어 번역", "러시아어 번역", "통역", "자막 번역",
-            
-            // 비즈니스/법무
-            "법무 자문", "세무 회계", "노무 관리", "특허 출원", "계약서 작성",
-            "사업계획서", "투자 제안서", "마케팅 기획", "경영 컨설팅", "IR 자료",
-            
-            // 콘텐츠/마케팅
-            "콘텐츠 작성", "블로그 포스팅", "SNS 마케팅", "유튜브 기획", "카피라이팅",
-            "SEO 최적화", "온라인 광고", "바이럴 마케팅", "브랜딩", "네이밍"
+            "디자인",
+            "프로그래밍", 
+            "영상편집",
+            "세무/법무/노무",
+            "번역/통역"
         };
         
         for (String name : specializationNames) {
@@ -118,17 +107,17 @@ public class DummyDataInitializer {
     private List<Member> createMembers() {
         List<Member> members = new ArrayList<>();
         
-        // 일반 사용자들 (25명)
+        // 일반 사용자들 (30명) - 닉네임으로 변경
         String[] usernames = {
-            "김철수", "이영희", "박민수", "최지은", "정현우", "강민정", "윤서준", "임소영", "오준혁", "한예린",
-            "신동욱", "조미진", "배성훈", "서지혜", "홍길동", "문지원", "장준혁", "김나영", "이준호", "박소라",
-            "최민준", "정유진", "강태우", "윤아름", "임지훈", "송미나", "유창현", "노지수", "백준서", "안채원"
+            "코딩마스터", "디자인킹", "영상편집러", "번역고수", "개발자123", "크리에이터", "마케터Pro", "데이터분석가", "풀스택개발자", "UI디자이너",
+            "모션그래픽", "웹개발자", "앱개발러", "로고마스터", "번역전문가", "영상제작자", "프론트엔드", "백엔드개발", "그래픽디자인", "콘텐츠라이터",
+            "SEO전문가", "광고기획자", "브랜딩전문", "3D모델러", "게임개발자", "챗봇개발", "데이터과학자", "AI개발자", "블록체인개발", "스타트업CEO"
         };
         
         String[] emailPrefixes = {
-            "kimcs", "leeyh", "parkms", "choije", "junghw", "kangmj", "yunsj", "limsy", "ohjh", "hanyr",
-            "sindw", "jomj", "baesh", "seojh", "hongkd", "moonjw", "jangjh", "kimny", "leejh", "parksr",
-            "choimj", "jungyj", "kangtw", "yunar", "limjh", "songmn", "yuch", "nojs", "baekjs", "ancw"
+            "coding_master", "design_king", "video_editor", "translator", "developer123", "creator", "marketer_pro", "data_analyst", "fullstack_dev", "ui_designer",
+            "motion_graphic", "web_developer", "app_developer", "logo_master", "translation_pro", "video_creator", "frontend_dev", "backend_dev", "graphic_design", "content_writer",
+            "seo_expert", "ad_planner", "branding_pro", "3d_modeler", "game_developer", "chatbot_dev", "data_scientist", "ai_developer", "blockchain_dev", "startup_ceo"
         };
         
         for (int i = 0; i < usernames.length; i++) {
@@ -142,7 +131,7 @@ public class DummyDataInitializer {
         
         // 관리자 계정
         Member admin = Member.builder()
-            .username("관리자")
+            .username("운영진")
             .email(Email.of("admin123@test.com"))
             .password(Password.encode("admin123", passwordEncoder))
             .role(Role.ADMIN)
@@ -281,9 +270,9 @@ public class DummyDataInitializer {
         };
         
         String[] categories = {
-            "디자인", "프로그래밍", "영상편집", "디자인", "번역", "법무", "콘텐츠", "데이터분석", "프로그래밍", "3D모델링",
-            "프로그래밍", "영상편집", "디자인", "디자인", "번역", "회계", "마케팅", "데이터분석", "프로그래밍", "영상편집",
-            "디자인", "프로그래밍", "디자인", "디자인", "법무", "마케팅", "프로그래밍", "디자인", "번역", "프로그래밍"
+            "디자인", "프로그래밍", "영상편집", "디자인", "번역/통역", "세무/법무/노무", "디자인", "프로그래밍", "프로그래밍", "디자인",
+            "프로그래밍", "영상편집", "디자인", "디자인", "번역/통역", "세무/법무/노무", "프로그래밍", "프로그래밍", "디자인", "디자인",
+            "디자인", "프로그래밍", "디자인", "디자인", "세무/법무/노무", "프로그래밍", "프로그래밍", "디자인", "번역/통역", "프로그래밍"
         };
         
         WorkRequestEntity.Status[] statuses = {
@@ -304,6 +293,10 @@ public class DummyDataInitializer {
             workRequest.setPrice(100000 + random.nextInt(2000000)); // 10만원~210만원
             workRequest.setStatus(statuses[i % statuses.length]);
             workRequest.setType(random.nextBoolean() ? WorkRequestEntity.Type.FORMAL : WorkRequestEntity.Type.INFORMAL);
+            
+            // 작업 요청 생성자 설정 (회원 중에서 랜덤 선택)
+            Member requestCreator = members.get(random.nextInt(members.size()));
+            workRequest.setCreatedBy(requestCreator.getEmail().getValue()); // BaseEntity.java에 세터 추가해서 사용하겠습니다.
             
             // AD 포인트 설정: 4개만 500점 이상, 나머지는 500 미만
             if (highAdPointIndices.contains(i)) {
