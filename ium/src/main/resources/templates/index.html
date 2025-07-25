@@ -67,7 +67,7 @@
                      th:data-budget="${request.price}"
                      th:onclick="|window.location.href='/workrequest/' + ${request.id}|">
                     <div class="request-image">
-                        <img th:src="${request.fileUrl != null ? request.fileUrl : '/img/profile.jpg'}" 
+                        <img th:src="${request.fileUrl != null ? request.fileUrl : '/img/profile.jpg'}"
                              th:alt="${request.title}" 
                              onerror="this.src='/img/profile.jpg'">
                     </div>

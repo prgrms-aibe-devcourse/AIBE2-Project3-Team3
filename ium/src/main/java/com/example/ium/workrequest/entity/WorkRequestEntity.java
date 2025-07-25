@@ -28,8 +28,6 @@ public class WorkRequestEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Status status;
-
-    @Enumerated(EnumType.STRING)
     private Type type;
 
     private Long expert;

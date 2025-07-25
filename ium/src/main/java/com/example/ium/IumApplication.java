@@ -36,6 +36,18 @@ public class IumApplication {
               newMember("USERNAME2", "user2@test.com", "test1", passwordEncoder),
               newMember("ADMIN", "admin@test.com", "test1", passwordEncoder)
       ));
+      Member expert = memberJPARepository.save(newMember("Expert", "expert@test.com", "test", passwordEncoder));
+
+      // 전문분야 데이터 중복 체크
+      if (specializationJPARepository.count() == 0) {
+        specializationJPARepository.saveAll(Arrays.asList(
+                  newSpecialization("디자인"),
+                  newSpecialization("프로그래밍"),
+                  newSpecialization("영상편집"),
+                  newSpecialization("세무/법무/노무"),
+                  newSpecialization("번역/통역")
+        ));
+      }
       specializationJPARepository.saveAll(Arrays.asList(
                 newSpecialization("디자인"),
                 newSpecialization("프로그래밍"),
@@ -43,15 +55,13 @@ public class IumApplication {
                 newSpecialization("세무/회계"),
                 newSpecialization("번역/통역")
       ));
-      Member expert = memberJPARepository.save(newMember("Expert", "expert@test.com", "test", passwordEncoder));
-      // 더미 의뢰 생성
       workRequestRepository.saveAll(Arrays.asList(
-              createRequest("의뢰 제목 1", "내용 1", "디자인", WorkRequestEntity.Status.OPEN, WorkRequestEntity.Type.FORMAL, expert.getId()),
-              createRequest("의뢰 제목 2", "내용 2", "프로그래밍", WorkRequestEntity.Status.IN_PROGRESS, WorkRequestEntity.Type.INFORMAL, expert.getId()),
-              createRequest("의뢰 제목 3", "내용 3", "영상편집", WorkRequestEntity.Status.DONE, WorkRequestEntity.Type.FORMAL, expert.getId()),
-              createRequest("의뢰 제목 4", "내용 4", "세무/회계", WorkRequestEntity.Status.WAIT, WorkRequestEntity.Type.INFORMAL, expert.getId()),
-              createRequest("의뢰 제목 5", "내용 5", "번역/통역", WorkRequestEntity.Status.CANCELED, WorkRequestEntity.Type.FORMAL, expert.getId()),
-              createRequest("의뢰 제목 6", "내용 6", "디자인", WorkRequestEntity.Status.EXPIRED, WorkRequestEntity.Type.FORMAL, expert.getId())
+                createRequest("의뢰 제목 1", "내용 1", "디자인", WorkRequestEntity.Status.OPEN, WorkRequestEntity.Type.FORMAL, expert.getId()),
+                createRequest("의뢰 제목 2", "내용 2", "프로그래밍", WorkRequestEntity.Status.IN_PROGRESS, WorkRequestEntity.Type.INFORMAL, expert.getId()),
+                createRequest("의뢰 제목 3", "내용 3", "영상편집", WorkRequestEntity.Status.DONE, WorkRequestEntity.Type.FORMAL, expert.getId()),
+                createRequest("의뢰 제목 4", "내용 4", "세무/회계", WorkRequestEntity.Status.WAIT, WorkRequestEntity.Type.INFORMAL, expert.getId()),
+                createRequest("의뢰 제목 5", "내용 5", "번역/통역", WorkRequestEntity.Status.CANCELED, WorkRequestEntity.Type.FORMAL, expert.getId()),
+                createRequest("의뢰 제목 6", "내용 6", "디자인", WorkRequestEntity.Status.EXPIRED, WorkRequestEntity.Type.FORMAL, expert.getId())
       ));
     };
   }
