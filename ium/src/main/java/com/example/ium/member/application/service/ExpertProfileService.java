@@ -102,6 +102,7 @@ public class ExpertProfileService {
                 .toList();
         return new ExpertProfileViewDto(
                 expertProfile.getMemberId(),
+                expertProfile.getMember().getUsername(),
                 expertProfile.getIntroduceMessage(),
                 expertProfile.getPortfolioDescription(),
                 expertProfile.getSchool(),
