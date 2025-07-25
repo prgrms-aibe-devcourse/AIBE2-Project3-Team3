@@ -198,4 +198,8 @@ public class ExpertProfileService {
                 .map(ExpertProfile::isActivated)
                 .orElse(false));
     }
+
+    public boolean isExpertProfileExist(Long memberId) {
+        return expertProfileJPARepository.existsById(memberId);
+    }
 }

@@ -56,6 +56,9 @@ public class ExpertProfileController {
      */
     @PatchMapping("/{memberId}/activate")
     public String activateExpertProfile(@PathVariable("memberId") Long memberId) {
+        if (!expertProfileService.isExpertProfileExist(memberId)) {
+            return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
+        }
         expertProfileService.activateExpertProfile(memberId);
         return "redirect:/expert-profiles/" + memberId;
     }
@@ -66,6 +69,9 @@ public class ExpertProfileController {
      */
     @PatchMapping("/{memberId}/deactivate")
     public String deactivateExpertProfile(@PathVariable("memberId") Long memberId) {
+        if (!expertProfileService.isExpertProfileExist(memberId)) {
+            return "redirect:/profiles";
+        }
         expertProfileService.deactivateProfile(memberId);
         return "redirect:/profiles";
     }
@@ -79,8 +85,11 @@ public class ExpertProfileController {
     @GetMapping("/{memberId}")
     public String getExpertProfile(@PathVariable Long memberId, Model model) {
 
-        if (!expertProfileService.isExpertProfileActivated(memberId)) {
+        if (!expertProfileService.isExpertProfileExist(memberId)) {
             return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
+        }
+        if (!expertProfileService.isExpertProfileActivated(memberId)) {
+            return "redirect:/profiles"; // 프로필 작성 페이지로 리다이렉트
         }
         model.addAttribute("expertProfile", expertProfileService.getExpertProfile(memberId));
         model.addAttribute("moneyInfo", moneyService.getMoneyInfo(memberId));
@@ -89,8 +98,11 @@ public class ExpertProfileController {
 
     @GetMapping("/{memberId}/work-requests")
     public String getMyWorkRequestsByStatus(@PathVariable Long memberId, Model model) {
-        if (!expertProfileService.isExpertProfileActivated(memberId)) {
+        if (!expertProfileService.isExpertProfileExist(memberId)) {
             return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
+        }
+        if (!expertProfileService.isExpertProfileActivated(memberId)) {
+            return "redirect:/profiles"; // 프로필 작성 페이지로 리다이렉트
         }
         model.addAttribute("countWorkRequestsByStatus", workRequestService.countMyWorkRequestsByStatus(memberId));
         model.addAttribute("moneyInfo", moneyService.getMoneyInfo(memberId));
@@ -99,8 +111,11 @@ public class ExpertProfileController {
 
     @GetMapping("/{memberId}/work-request-list")
     public String getMyWorkRequests(@PathVariable Long memberId, @RequestParam(value = "status", required = false) String status, Model model) {
-        if (!expertProfileService.isExpertProfileActivated(memberId)) {
+        if (!expertProfileService.isExpertProfileExist(memberId)) {
             return "redirect:/expert-profiles/form-data"; // 프로필 작성 페이지로 리다이렉트
+        }
+        if (!expertProfileService.isExpertProfileActivated(memberId)) {
+            return "redirect:/profiles"; // 프로필 작성 페이지로 리다이렉트
         }
         model.addAttribute("memberId", memberId);
         model.addAttribute("workRequests", workRequestService.getMyWorkRequests(memberId, status));
