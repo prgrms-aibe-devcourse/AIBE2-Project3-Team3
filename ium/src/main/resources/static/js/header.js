@@ -29,3 +29,19 @@ document.querySelector('.chat-icon').addEventListener('click', function() {
     document.body.appendChild(form);
     form.submit();
 });
+
+function toggleDropdown() {
+    const dropdown = document.getElementById("userDropdown");
+    if (dropdown) {
+        dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+    }
+}
+
+document.addEventListener("click", function (event) {
+    const dropdown = document.getElementById("userDropdown");
+    const icon = document.querySelector(".user-icon");
+
+    if (dropdown && icon && !dropdown.contains(event.target) && !icon.contains(event.target)) {
+        dropdown.style.display = "none";
+    }
+});

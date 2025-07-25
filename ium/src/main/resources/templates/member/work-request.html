@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>내 의뢰 목록</title>
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <style>
+        .status-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-tabs button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+
+        .status-tabs button.active {
+            background-color: #AAD2DA;
+            color: white;
+        }
+
+        .summary-box {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        #workRequestList {
+            margin-top: 20px;
+        }
+
+        .request-item {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+    <script th:inline="javascript">
+        const memberId = [[${memberId}]];
+
+        function loadWorkRequests(status) {
+            document.querySelectorAll(".status-tabs button").forEach(btn => btn.classList.remove("active"));
+            document.getElementById("tab-" + status).classList.add("active");
+
+            fetch(`/expert-profiles/${memberId}/work-request-list?status=` + status)
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById("workRequestList").innerHTML = html;
+                });
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            loadWorkRequests("ALL");
+        });
+    </script>
+</head>
+<body>
+<div th:replace="~{header :: header}"></div>
+<h1>내 의뢰 목록</h1>
+
+<div class="summary-box">
+    <p><strong>보유 코인:</strong> <span th:text="${moneyInfo.credit}"></span> 원</p>
+    <p><strong>보유 포인트:</strong> <span th:text="${moneyInfo.point}"></span> P</p>
+</div>
+<div style="margin-bottom: 20px;">
+    <a th:href="@{|/expert-profiles/${memberId}|}" style="padding: 8px 12px; background-color: #AAD2DA; color: white; text-decoration: none; border-radius: 5px;">
+        전문가 프로필 보기
+    </a>
+</div>
+<div class="status-tabs">
+    <button id="tab-ALL"
+            class="active"
+            onclick="loadWorkRequests('ALL')">
+        전체
+    </button>
+    <button th:each="status : ${countWorkRequestsByStatus}"
+            th:id="'tab-' + ${status.status}"
+            th:text="${status.status + ' (' + status.count + ')'}"
+            th:attr="onclick=|loadWorkRequests('${status.status}')|"
+            th:classappend="${status.status == 'ALL'} ? 'active'">
+    </button>
+</div>
+
+<div id="workRequestList"></div>
+
+<div th:replace="~{footer :: footer}"></div>
+<script th:src="@{/js/header.js}"></script>
+</body>
+</html>
