@@ -110,7 +110,7 @@ public class DummyDataInitializer {
     private List<Member> createMembers() {
         List<Member> members = new ArrayList<>();
         
-        // 일반 사용자들 (30명) - 닉네임으로 변경
+        // 전체 30명 중 24명을 전문가로, 6명을 일반 사용자로 생성
         String[] usernames = {
             "코딩마스터", "디자인킹", "영상편집러", "번역고수", "개발자123", "크리에이터", "마케터Pro", "데이터분석가", "풀스택개발자", "UI디자이너",
             "모션그래픽", "웹개발자", "앱개발러", "로고마스터", "번역전문가", "영상제작자", "프론트엔드", "백엔드개발", "그래픽디자인", "콘텐츠라이터",
@@ -123,12 +123,26 @@ public class DummyDataInitializer {
             "seo_expert", "ad_planner", "branding_pro", "3d_modeler", "game_developer", "chatbot_dev", "data_scientist", "ai_developer", "blockchain_dev", "startup_ceo"
         };
         
+        // 처음 24명은 전문가로, 나머지 6명은 일반 사용자로 생성
         for (int i = 0; i < usernames.length; i++) {
-            Member member = Member.createMember(
-                usernames[i],
-                Email.of(emailPrefixes[i] + "@test.com"),
-                Password.encode("password123", passwordEncoder)
-            );
+            Member member;
+            
+            if (i < 24) { // 처음 24명은 전문가
+                member = Member.createExpert(
+                    usernames[i],
+                    Email.of(emailPrefixes[i] + "@test.com"),
+                    Password.encode("password123", passwordEncoder)
+                );
+                log.debug("전문가 회원 생성: {}", usernames[i]);
+            } else { // 나머지 6명은 일반 사용자
+                member = Member.createMember(
+                    usernames[i],
+                    Email.of(emailPrefixes[i] + "@test.com"),
+                    Password.encode("password123", passwordEncoder)
+                );
+                log.debug("일반 회원 생성: {}", usernames[i]);
+            }
+            
             members.add(memberRepository.save(member));
         }
         
@@ -153,48 +167,36 @@ public class DummyDataInitializer {
         List<ExpertProfile> existingProfiles = expertProfileRepository.findAll();
         log.info("기존 전문가 프로필 수: {}", existingProfiles.size());
         
-        // 기존 전문가 프로필의 member ID 수집 (간단한 방법 사용)
+        // 기존 전문가 프로필의 member ID 수집
         Set<Long> existingMemberIds = new HashSet<>();
         for (ExpertProfile profile : existingProfiles) {
             existingMemberIds.add(profile.getMember().getId());
         }
         
-        // 30명 중 24명을 전문가로 설정 (관리자 제외, 기존 프로필이 없는 경우만)
-        int targetExpertCount = 24; // 30명 중 24명
+        // Role.EXPERT인 회원들에 대해서만 전문가 프로필 생성
         int profileCount = 0;
         
-        // 랜덤하게 24명을 선택하기 위해 인덱스 리스트 생성
-        List<Integer> indices = new ArrayList<>();
-        for (int i = 0; i < members.size() - 1; i++) { // 관리자(마지막 회원) 제외
-            indices.add(i);
-        }
-        // 인덱스를 섞어서 랜덤하게 24명 선택
-        java.util.Collections.shuffle(indices);
-        
-        for (int idx = 0; idx < indices.size() && profileCount < targetExpertCount; idx++) {
-            int i = indices.get(idx);
-            Member member = members.get(i);
+        for (Member member : members) {
+            // EXPERT role이 아니거나 이미 프로필이 있는 경우 건너뛰기
+            if (member.getRole() != Role.EXPERT) {
+                continue;
+            }
             
-            // 이미 전문가 프로필이 있는 회원은 건너뛰기
             if (existingMemberIds.contains(member.getId())) {
                 log.info("회원 {}은 이미 전문가 프로필이 있어 건너뜁니다.", member.getUsername());
                 continue;
             }
             
             try {
-                // Role을 EXPERT로 변경
-                member.getClass().getDeclaredField("role").setAccessible(true);
-                member.getClass().getDeclaredField("role").set(member, Role.EXPERT);
-                memberRepository.save(member);
                 
                 ExpertProfile expertProfile = ExpertProfile.createExpertProfile(
                     member,
-                    getIntroMessage(i),
-                    getPortfolioDescription(i),
-                    getSchool(i),
-                    getMajor(i),
+                    getIntroMessage(profileCount),
+                    getPortfolioDescription(profileCount),
+                    getSchool(profileCount),
+                    getMajor(profileCount),
                     LocalDate.now().minusYears(1 + random.nextInt(8)), // 1-8년 경력
-                    300000 + (i * 50000) + random.nextInt(200000), // 30만원~200만원 희망 연봉
+                    300000 + (profileCount * 50000) + random.nextInt(200000), // 30만원~200만원 희망 연봉
                     random.nextBoolean() // 협상 가능 여부 랜덤
                 );
                 
@@ -492,10 +494,10 @@ public class DummyDataInitializer {
                         // ExpertProfile 생성
                         ExpertProfile expertProfile = ExpertProfile.createExpertProfile(
                             member,
-                            getIntroMessage(fixedCount),
-                            getPortfolioDescription(fixedCount),
-                            getSchool(fixedCount),
-                            getMajor(fixedCount),
+                            getIntroMessage(expertWithoutProfile),
+                            getPortfolioDescription(expertWithoutProfile),
+                            getSchool(expertWithoutProfile),
+                            getMajor(expertWithoutProfile),
                             LocalDate.now().minusYears(1 + random.nextInt(8)),
                             300000 + random.nextInt(700000), // 30만원~100만원
                             random.nextBoolean()
@@ -547,8 +549,7 @@ public class DummyDataInitializer {
                 
                 try {
                     // Role을 EXPERT로 변경
-                    member.getClass().getDeclaredField("role").setAccessible(true);
-                    member.getClass().getDeclaredField("role").set(member, Role.EXPERT);
+                    member.changeToExpert();
                     memberRepository.save(member);
                     log.info("회원 {} 의 Role을 EXPERT로 변경했습니다.", member.getUsername());
                 } catch (Exception e) {
