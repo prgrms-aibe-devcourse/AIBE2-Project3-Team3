@@ -51,8 +51,8 @@ public class RecommendController {
      */
     @PostMapping("/suggest")
     @ResponseBody
-    public Map<String, Object> getSuggestion(@RequestParam String category, 
-                                           @RequestParam String message,
+    public Map<String, Object> getSuggestion(@RequestParam("category") String category, 
+                                           @RequestParam("message") String message,
                                            Principal principal) {
         Map<String, Object> response = new HashMap<>();
         

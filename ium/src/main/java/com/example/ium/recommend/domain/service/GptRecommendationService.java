@@ -1,7 +1,11 @@
 package com.example.ium.recommend.domain.service;
 
+import com.example.ium.recommend.application.dto.request.GptRequestDto;
 import com.example.ium.recommend.application.dto.response.ExpertRecommendationDto;
+import com.example.ium.recommend.application.dto.response.GptResponseDto;
 import com.example.ium.recommend.application.dto.response.WorkRequestRecommendationDto;
+import com.example.ium.recommend.infrastructure.client.GptApiClient;
+import com.example.ium.recommend.infrastructure.client.GptApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,8 +21,7 @@ import java.util.List;
 @Service
 public class GptRecommendationService {
     
-    // TODO: 4단계에서 GPT API 클라이언트 주입 예정
-    // private final GptApiClient gptApiClient;
+    private final GptApiClient gptApiClient;
     
     /**
      * 전문가 추천 요청
@@ -37,9 +40,30 @@ public class GptRecommendationService {
         
         log.debug("전문가 추천 GPT 요청 시작 - category: {}", category);
         
-        // TODO: 4단계에서 실제 GPT API 호출 구현 예정
-        // 현재는 임시 더미 데이터 반환
-        return generateDummyExpertRecommendations(category);
+        try {
+            // GPT 요청 메시지 생성
+            String prompt = buildExpertRecommendationPrompt(userProfileData, expertProfilesData, userMessage, category);
+            
+            // GPT API 호출
+            GptRequestDto request = GptRequestDto.createRecommendationRequest(prompt);
+            GptResponseDto response = gptApiClient.sendRecommendationRequest(request);
+            
+            if (!response.isSuccessful()) {
+                log.warn("GPT API 응답 비정상 - category: {}", category);
+                return generateDummyExpertRecommendations(category);
+            }
+            
+            // 실제 GPT 응답을 사용할 수 있지만, 현재는 구조화된 데이터를 위해 더미 데이터 사용
+            // TODO: 5단계에서 GPT 응답을 구조화된 데이터로 파싱하는 로직 추가
+            log.debug("GPT 응답 수신: {}", response.getOutputText().substring(0, Math.min(100, response.getOutputText().length())));
+            
+            return generateDummyExpertRecommendations(category);
+            
+        } catch (GptApiException e) {
+            log.error("전문가 추천 GPT API 호출 실패 - category: {}, error: {}", category, e.getMessage());
+            // API 실패 시 더미 데이터로 폴백
+            return generateDummyExpertRecommendations(category);
+        }
     }
     
     /**
@@ -59,9 +83,30 @@ public class GptRecommendationService {
         
         log.debug("의뢰 추천 GPT 요청 시작 - category: {}", category);
         
-        // TODO: 4단계에서 실제 GPT API 호출 구현 예정
-        // 현재는 임시 더미 데이터 반환
-        return generateDummyWorkRequestRecommendations(category);
+        try {
+            // GPT 요청 메시지 생성
+            String prompt = buildWorkRequestRecommendationPrompt(expertProfileData, workRequestsData, userMessage, category);
+            
+            // GPT API 호출
+            GptRequestDto request = GptRequestDto.createRecommendationRequest(prompt);
+            GptResponseDto response = gptApiClient.sendRecommendationRequest(request);
+            
+            if (!response.isSuccessful()) {
+                log.warn("GPT API 응답 비정상 - category: {}", category);
+                return generateDummyWorkRequestRecommendations(category);
+            }
+            
+            // 실제 GPT 응답을 사용할 수 있지만, 현재는 구조화된 데이터를 위해 더미 데이터 사용
+            // TODO: 5단계에서 GPT 응답을 구조화된 데이터로 파싱하는 로직 추가
+            log.debug("GPT 응답 수신: {}", response.getOutputText().substring(0, Math.min(100, response.getOutputText().length())));
+            
+            return generateDummyWorkRequestRecommendations(category);
+            
+        } catch (GptApiException e) {
+            log.error("의뢰 추천 GPT API 호출 실패 - category: {}, error: {}", category, e.getMessage());
+            // API 실패 시 더미 데이터로 폴백
+            return generateDummyWorkRequestRecommendations(category);
+        }
     }
     
     /**
@@ -118,6 +163,50 @@ public class GptRecommendationService {
         message.append("관심있는 의뢰에 지원해보세요! 💪");
         
         return message.toString();
+    }
+    
+    /**
+     * 전문가 추천용 GPT 프롬프트 생성
+     */
+    private String buildExpertRecommendationPrompt(String userProfileData, String expertProfilesData, String userMessage, String category) {
+        return String.format("""
+            당신은 전문가와 클라이언트를 매칭해주는 AI 어시스턴트입니다.
+            
+            **사용자 정보:**
+            %s
+            
+            **사용자 요청:**
+            %s
+            
+            **사용 가능한 전문가들:**
+            %s
+            
+            **요청사항:**
+            위 정보를 바탕으로 %s 분야에서 가장 적합한 전문가 2-3명을 추천하고, 각 전문가에 대한 추천 이유를 상세히 설명해주세요.
+            추천도는 0-100%% 범위로 표현해주세요.
+            """, userProfileData, userMessage, expertProfilesData, getCategoryName(category));
+    }
+    
+    /**
+     * 의뢰 추천용 GPT 프롬프트 생성
+     */
+    private String buildWorkRequestRecommendationPrompt(String expertProfileData, String workRequestsData, String userMessage, String category) {
+        return String.format("""
+            당신은 전문가에게 적합한 의뢰를 추천해주는 AI 어시스턴트입니다.
+            
+            **전문가 정보:**
+            %s
+            
+            **전문가 요청:**
+            %s
+            
+            **사용 가능한 의뢰들:**
+            %s
+            
+            **요청사항:**
+            위 정보를 바탕으로 %s 분야에서 이 전문가에게 가장 적합한 의뢰 2-3개를 추천하고, 각 의뢰에 대한 추천 이유를 상세히 설명해주세요.
+            추천도는 0-100%% 범위로 표현해주세요.
+            """, expertProfileData, userMessage, workRequestsData, getCategoryName(category));
     }
     
     /**
