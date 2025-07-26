@@ -1,4 +1,4 @@
-package com.example.ium.recommend.controller;
+package com.example.ium.recommend.application.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
