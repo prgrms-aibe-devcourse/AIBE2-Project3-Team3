@@ -71,6 +71,9 @@ public class DummyDataInitializer {
         // 5. 포인트/크레딧 생성
         createMoneyData(members);
         
+        // 6. 데이터 정합성 검증 및 수정
+        validateAndFixDataIntegrity(members, specializations);
+        
         log.info("더미 데이터 초기화가 완료되었습니다!");
         log.info("생성된 데이터: 회원 {}, 전문가 {}, 의뢰 {}, 전문분야 {}", 
                 members.size(), expertProfiles.size(), workRequests.size(), specializations.size());
@@ -156,9 +159,20 @@ public class DummyDataInitializer {
             existingMemberIds.add(profile.getMember().getId());
         }
         
-        // 처음 15명을 전문가로 설정 (기존 프로필이 없는 경우만)
+        // 30명 중 24명을 전문가로 설정 (관리자 제외, 기존 프로필이 없는 경우만)
+        int targetExpertCount = 24; // 30명 중 24명
         int profileCount = 0;
-        for (int i = 0; i < Math.min(15, members.size()) && profileCount < 15; i++) {
+        
+        // 랜덤하게 24명을 선택하기 위해 인덱스 리스트 생성
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < members.size() - 1; i++) { // 관리자(마지막 회원) 제외
+            indices.add(i);
+        }
+        // 인덱스를 섞어서 랜덤하게 24명 선택
+        java.util.Collections.shuffle(indices);
+        
+        for (int idx = 0; idx < indices.size() && profileCount < targetExpertCount; idx++) {
+            int i = indices.get(idx);
             Member member = members.get(i);
             
             // 이미 전문가 프로필이 있는 회원은 건너뛰기
@@ -168,6 +182,11 @@ public class DummyDataInitializer {
             }
             
             try {
+                // Role을 EXPERT로 변경
+                member.getClass().getDeclaredField("role").setAccessible(true);
+                member.getClass().getDeclaredField("role").set(member, Role.EXPERT);
+                memberRepository.save(member);
+                
                 ExpertProfile expertProfile = ExpertProfile.createExpertProfile(
                     member,
                     getIntroMessage(i),
@@ -179,8 +198,8 @@ public class DummyDataInitializer {
                     random.nextBoolean() // 협상 가능 여부 랜덤
                 );
                 
-                // 의뢰 완료 경험 시뮬레이션 (저장하기 전에 설정)
-                int completedCount = random.nextInt(5);
+                // 의뢰 완료 경험 시뮬레이션 (더 현실적으로 0-20개 범위)
+                int completedCount = random.nextInt(21);
                 for (int k = 0; k < completedCount; k++) {
                     expertProfile.incrementCompletedRequestCount();
                 }
@@ -189,11 +208,17 @@ public class DummyDataInitializer {
                 expertProfile = expertProfileRepository.save(expertProfile);
                 log.info("전문가 프로필 생성 완료: {}", member.getUsername());
                 
-                // 전문 분야 매핑 (각 전문가마다 1-4개의 전문분야)
-                int specCount = 1 + random.nextInt(4);
+                // 전문 분야 매핑 (각 전문가마다 1-3개의 전문분야)
+                int specCount = 1 + random.nextInt(3);
+                Set<Integer> usedSpecIndices = new HashSet<>(); // 중복 방지
                 for (int j = 0; j < specCount; j++) {
                     try {
-                        int specIndex = (i * 3 + j) % specializations.size();
+                        int specIndex;
+                        do {
+                            specIndex = random.nextInt(specializations.size());
+                        } while (usedSpecIndices.contains(specIndex));
+                        usedSpecIndices.add(specIndex);
+                        
                         ExpertSpecialization expertSpecialization = ExpertSpecialization.createExpertSpecialization(
                             expertProfile, 
                             specializations.get(specIndex).getId()
@@ -385,7 +410,16 @@ public class DummyDataInitializer {
             "영상 제작 전문가로 기획부터 촬영, 편집까지 원스톱 서비스를 제공합니다.",
             "번역뿐만 아니라 현지화까지 고려한 전문적인 언어 서비스를 제공합니다.",
             "스타트업부터 대기업까지 다양한 규모의 법무 업무 경험이 있습니다.",
-            "디지털 마케팅 전문가로서 온라인 마케팅 전략 수립과 실행을 도와드립니다."
+            "디지털 마케팅 전문가로서 온라인 마케팅 전략 수립과 실행을 도와드립니다.",
+            "게임 개발 전문가입니다. Unity와 Unreal Engine을 활용한 다양한 게임 개발 경험이 있습니다.",
+            "3D 모델링 및 애니메이션 전문가입니다. 영화, 게임, 광고 등 다양한 분야의 작업이 가능합니다.",
+            "블록체인 개발 전문가입니다. 스마트 컨트랙트 개발과 DApp 구축 경험이 풍부합니다.",
+            "클라우드 아키텍처 전문가입니다. AWS, Azure, GCP를 활용한 인프라 설계와 구축을 도와드립니다.",
+            "인공지능 및 머신러닝 엔지니어입니다. 실무에서 활용 가능한 AI 솔루션을 개발합니다.",
+            "보안 전문가입니다. 웹/앱 보안 진단과 보안 솔루션 구축을 전문으로 합니다.",
+            "DevOps 엔지니어로서 CI/CD 파이프라인 구축과 인프라 자동화를 도와드립니다.",
+            "전자상거래 개발 전문가입니다. 쇼핑몰 구축부터 결제 시스템까지 통합 솔루션을 제공합니다.",
+            "AR/VR 콘텐츠 개발자입니다. 메타버스와 가상현실 콘텐츠 제작 경험이 풍부합니다."
         };
         return intros[index % intros.length];
     }
@@ -406,7 +440,15 @@ public class DummyDataInitializer {
             "• 드라마, 영화 편집 참여\n• 광고 영상 제작 100편 이상\n• DaVinci Resolve, Avid 활용",
             "• IT 특허 번역 전문\n• 학술논문 번역 200편 이상\n• 의료, 법률 분야 번역 가능",
             "• 상장기업 법무팀 근무 경험\n• M&A, 투자 계약 전문\n• 국제계약 검토 가능",
-            "• 성장 마케팅 전문가\n• 스타트업 마케팅 컨설팅\n• 퍼포먼스 마케팅 ROI 300% 달성"
+            "• 성장 마케팅 전문가\n• 스타트업 마케팅 컨설팅\n• 퍼포먼스 마케팅 ROI 300% 달성",
+            "• Unity 게임 개발 프로젝트 25건\n• 모바일 게임 출시 10건\n• VR/AR 게임 개발 경험",
+            "• 3D 캐릭터 모델링 100건 이상\n• 영화 VFX 작업 참여\n• Maya, Blender, ZBrush 전문",
+            "• 블록체인 프로젝트 개발 15건\n• NFT 마켓플레이스 구축\n• Solidity, Web3.js 전문",
+            "• 클라우드 마이그레이션 프로젝트 40건\n• 쿠버네티스 클러스터 구축\n• AWS Solutions Architect 자격 보유",
+            "• AI 모델 개발 및 배포 20건\n• 컴퓨터 비전 프로젝트 10건\n• TensorFlow, PyTorch 전문",
+            "• 모의해킹 및 보안 진단 50건\n• 보안 솔루션 구축 프로젝트 20건\n• CISSP, CEH 자격 보유",
+            "• DevOps 파이프라인 구축 30건\n• 인프라 자동화 프로젝트 25건\n• Jenkins, GitLab CI/CD, Terraform 전문",
+            "• 대형 쇼핑몰 구축 프로젝트 15건\n• 결제 시스템 연동 50건 이상\n• 옴니채널 커머스 솔루션 구축"
         };
         return portfolios[index % portfolios.length];
     }
@@ -424,8 +466,116 @@ public class DummyDataInitializer {
         String[] majors = {
             "컴퓨터공학과", "시각디자인학과", "산업디자인학과", "영상학과", "영어영문학과",
             "법학과", "경영학과", "통계학과", "수학과", "전자공학과",
-            "정보시스템학과", "멀티미디어학과", "국제통상학과", "회계학과", "광고홍보학과"
+            "정보시스템학과", "멀티미디어학과", "국제통상학과", "회계학과", "광고홍보학과",
+            "소프트웨어학과", "게임공학과", "정보보안학과", "인공지능학과", "데이터사이언스학과"
         };
         return majors[index % majors.length];
+    }
+    
+    // 6. 데이터 정합성 검증 및 수정
+    private void validateAndFixDataIntegrity(List<Member> members, List<Specialization> specializations) {
+        log.info("데이터 정합성 검증을 시작합니다...");
+        
+        int fixedCount = 0;
+        int expertWithoutProfile = 0;
+        
+        for (Member member : members) {
+            // Role이 EXPERT인데 ExpertProfile이 없는 경우 체크
+            if (member.getRole() == Role.EXPERT) {
+                boolean hasProfile = expertProfileRepository.existsById(member.getId());
+                
+                if (!hasProfile) {
+                    expertWithoutProfile++;
+                    log.warn("Role.EXPERT이지만 프로필이 없는 회원 발견: {} (ID: {})", member.getUsername(), member.getId());
+                    
+                    try {
+                        // ExpertProfile 생성
+                        ExpertProfile expertProfile = ExpertProfile.createExpertProfile(
+                            member,
+                            getIntroMessage(fixedCount),
+                            getPortfolioDescription(fixedCount),
+                            getSchool(fixedCount),
+                            getMajor(fixedCount),
+                            LocalDate.now().minusYears(1 + random.nextInt(8)),
+                            300000 + random.nextInt(700000), // 30만원~100만원
+                            random.nextBoolean()
+                        );
+                        
+                        // 의뢰 완료 경험 추가
+                        int completedCount = random.nextInt(16);
+                        for (int i = 0; i < completedCount; i++) {
+                            expertProfile.incrementCompletedRequestCount();
+                        }
+                        
+                        expertProfile = expertProfileRepository.save(expertProfile);
+                        
+                        // 전문 분야 1-3개 랜덤 할당
+                        int specCount = 1 + random.nextInt(3);
+                        Set<Integer> usedIndices = new HashSet<>();
+                        
+                        for (int i = 0; i < specCount; i++) {
+                            int specIndex;
+                            do {
+                                specIndex = random.nextInt(specializations.size());
+                            } while (usedIndices.contains(specIndex));
+                            usedIndices.add(specIndex);
+                            
+                            ExpertSpecialization expertSpec = ExpertSpecialization.createExpertSpecialization(
+                                expertProfile,
+                                specializations.get(specIndex).getId()
+                            );
+                            expertProfile.addExpertSpecialization(expertSpec);
+                            expertSpecializationRepository.save(expertSpec);
+                        }
+                        
+                        fixedCount++;
+                        log.info("전문가 프로필 복구 완료: {} (전문분야 {}개)", member.getUsername(), specCount);
+                        
+                    } catch (Exception e) {
+                        log.error("전문가 프로필 복구 실패 - 회원: {}, 오류: {}", member.getUsername(), e.getMessage());
+                    }
+                }
+            }
+        }
+        
+        // Role.USER인데 ExpertProfile을 가진 경우 체크 (반대 경우)
+        List<ExpertProfile> allProfiles = expertProfileRepository.findAll();
+        for (ExpertProfile profile : allProfiles) {
+            Member member = profile.getMember();
+            if (member.getRole() != Role.EXPERT && member.getRole() != Role.ADMIN) {
+                log.warn("Role.USER이지만 전문가 프로필을 가진 회원 발견: {} (ID: {})", member.getUsername(), member.getId());
+                
+                try {
+                    // Role을 EXPERT로 변경
+                    member.getClass().getDeclaredField("role").setAccessible(true);
+                    member.getClass().getDeclaredField("role").set(member, Role.EXPERT);
+                    memberRepository.save(member);
+                    log.info("회원 {} 의 Role을 EXPERT로 변경했습니다.", member.getUsername());
+                } catch (Exception e) {
+                    log.error("Role 변경 실패 - 회원: {}, 오류: {}", member.getUsername(), e.getMessage());
+                }
+            }
+        }
+        
+        if (expertWithoutProfile > 0) {
+            log.info("데이터 정합성 검증 완료: {}명의 전문가 프로필 복구", fixedCount);
+        } else {
+            log.info("데이터 정합성 검증 완료: 모든 데이터가 정상입니다.");
+        }
+        
+        // 최종 통계 출력
+        long totalMembers = memberRepository.count();
+        long expertMembers = memberRepository.findAll().stream()
+            .filter(m -> m.getRole() == Role.EXPERT)
+            .count();
+        long totalProfiles = expertProfileRepository.count();
+        long totalSpecializations = specializationRepository.count();
+        
+        log.info("=== 최종 데이터 통계 ===");
+        log.info("전체 회원 수: {}", totalMembers);
+        log.info("전문가 회원 수 (Role.EXPERT): {}", expertMembers);
+        log.info("전문가 프로필 수: {}", totalProfiles);
+        log.info("전문 분야 수: {}", totalSpecializations);
+        log.info("====================");
     }
 }
