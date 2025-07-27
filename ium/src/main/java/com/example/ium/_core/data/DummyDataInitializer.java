@@ -110,35 +110,37 @@ public class DummyDataInitializer {
     private List<Member> createMembers() {
         List<Member> members = new ArrayList<>();
         
-        // 전체 30명 중 24명을 전문가로, 6명을 일반 사용자로 생성
+        // 전체 32명 중 26명을 전문가로, 6명을 일반 사용자로 생성
         String[] usernames = {
+            "USERNAME1", "USERNAME2", // 기본 테스트 계정 2개 추가
             "코딩마스터", "디자인킹", "영상편집러", "번역고수", "개발자123", "크리에이터", "마케터Pro", "데이터분석가", "풀스택개발자", "UI디자이너",
             "모션그래픽", "웹개발자", "앱개발러", "로고마스터", "번역전문가", "영상제작자", "프론트엔드", "백엔드개발", "그래픽디자인", "콘텐츠라이터",
             "SEO전문가", "광고기획자", "브랜딩전문", "3D모델러", "게임개발자", "챗봇개발", "데이터과학자", "AI개발자", "블록체인개발", "스타트업CEO"
         };
         
         String[] emailPrefixes = {
+            "user1", "user2", // 기본 테스트 계정 이메일
             "coding_master", "design_king", "video_editor", "translator", "developer123", "creator", "marketer_pro", "data_analyst", "fullstack_dev", "ui_designer",
             "motion_graphic", "web_developer", "app_developer", "logo_master", "translation_pro", "video_creator", "frontend_dev", "backend_dev", "graphic_design", "content_writer",
             "seo_expert", "ad_planner", "branding_pro", "3d_modeler", "game_developer", "chatbot_dev", "data_scientist", "ai_developer", "blockchain_dev", "startup_ceo"
         };
         
-        // 처음 24명은 전문가로, 나머지 6명은 일반 사용자로 생성
+        // 처음 26명은 전문가로, 나머지 6명은 일반 사용자로 생성
         for (int i = 0; i < usernames.length; i++) {
             Member member;
             
-            if (i < 24) { // 처음 24명은 전문가
+            if (i < 26) { // 처음 26명은 전문가 (USERNAME1, USERNAME2 포함)
                 member = Member.createExpert(
                     usernames[i],
                     Email.of(emailPrefixes[i] + "@test.com"),
-                    Password.encode("password123", passwordEncoder)
+                    Password.encode("test1", passwordEncoder)
                 );
                 log.debug("전문가 회원 생성: {}", usernames[i]);
             } else { // 나머지 6명은 일반 사용자
                 member = Member.createMember(
                     usernames[i],
                     Email.of(emailPrefixes[i] + "@test.com"),
-                    Password.encode("password123", passwordEncoder)
+                    Password.encode("test1", passwordEncoder)
                 );
                 log.debug("일반 회원 생성: {}", usernames[i]);
             }
@@ -148,9 +150,9 @@ public class DummyDataInitializer {
         
         // 관리자 계정
         Member admin = Member.builder()
-            .username("운영진")
-            .email(Email.of("admin123@test.com"))
-            .password(Password.encode("admin123", passwordEncoder))
+            .username("ADMIN")
+            .email(Email.of("admin@test.com"))
+            .password(Password.encode("test1", passwordEncoder))
             .role(Role.ADMIN)
             .status(Status.ACTIVE)
             .build();
@@ -398,6 +400,8 @@ public class DummyDataInitializer {
     // Helper methods for expert profile data (더 다양하게)
     private String getIntroMessage(int index) {
         String[] intros = {
+            "안녕하세요! 다양한 기술 스택을 보유한 풀스택 개발자 USERNAME1입니다. 사용자 중심의 개발을 통해 최상의 사용자 경험을 제공합니다.",
+            "안녕하세요! 창의적이고 혁신적인 디자인 전문가 USERNAME2입니다. 브랜드의 가치를 시각적으로 표현하여 고객의 비즈니스 성공을 돕겠습니다.",
             "안녕하세요! 5년 경력의 웹 개발자입니다. 고객의 요구사항을 정확히 파악하여 최고 품질의 결과물을 제공해드립니다.",
             "UI/UX 디자인 전문가입니다. 사용자 중심의 직관적인 디자인을 만들어드립니다.",
             "10년 경력의 그래픽 디자이너입니다. 브랜딩부터 인쇄물까지 모든 디자인 작업을 도와드립니다.",
@@ -428,6 +432,8 @@ public class DummyDataInitializer {
     
     private String getPortfolioDescription(int index) {
         String[] portfolios = {
+            "• 전자상거래 플랫폼 개발 (React + Spring Boot)\n• 모바일 앱 개발 (React Native) 8건\n• 실시간 채팅 시스템 구축\n• AWS 클라우드 인프라 설계 및 운영",
+            "• 브랜드 아이덴티티 디자인 30건 이상\n• 웹/모바일 UI/UX 디자인 50건\n• 로고 디자인 및 브랜딩 가이드라인 제작\n• Figma, Adobe Creative Suite 마스터 레벨",
             "• 대기업 공식 홈페이지 3건 개발\n• 스타트업 MVP 서비스 5건 구축\n• React, Vue.js, Node.js 전문",
             "• 모바일 앱 UI/UX 디자인 20건\n• 웹서비스 리뉴얼 프로젝트 10건\n• Figma, Sketch, Adobe XD 활용",
             "• 브랜드 아이덴티티 디자인 50건\n• 로고 디자인 100건 이상\n• 인쇄물 디자인 다수",
