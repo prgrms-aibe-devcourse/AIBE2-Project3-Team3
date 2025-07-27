@@ -108,11 +108,13 @@
         <h3>내 의뢰 목록</h3>
         <div class="request-list">
             <div th:each="request : ${workRequestInfo}" class="request-card">
-                <h4 th:text="${request.title}">의뢰 제목</h4>
-                <p th:text="${request.content}">의뢰 내용</p>
-                <p>가격: <span th:text="${#numbers.formatInteger(request.price, 3, 'COMMA')}"></span> 원</p>
-                <p>전문가: <span th:text="${request.expertName}"></span></p>
-                <p>상태: <span th:text="${request.status}"></span></p>
+                <a th:href="@{|/workrequest/${request.workRequestId}|}" style="text-decoration: none; color: inherit;">
+                    <h4 th:text="${request.title}">의뢰 제목</h4>
+                    <p th:text="${request.content}">의뢰 내용</p>
+                    <p>가격: <span th:text="${#numbers.formatInteger(request.price, 3, 'COMMA')}"></span> 원</p>
+                    <p>전문가: <span th:text="${request.expertName}"></span></p>
+                    <p>상태: <span th:text="${request.status}"></span></p>
+                </a>
             </div>
         </div>
     </div>
