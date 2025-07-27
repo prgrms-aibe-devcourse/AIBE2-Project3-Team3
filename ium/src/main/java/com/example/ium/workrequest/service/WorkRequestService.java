@@ -162,4 +162,17 @@ public class WorkRequestService {
                 .build();
         moneyRepository.save(money);
     }
+
+    public void matchExpertToWorkRequest(Long requestId, Long expertId) {
+        WorkRequestEntity request = workRequestRepository.findById(requestId)
+                .orElseThrow(() -> new IumApplicationException(ErrorCode.WORK_REQUEST_NOT_FOUND));
+
+        Member expert = memberJPARepository.findById(expertId)
+                .orElseThrow(() -> new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND));
+
+        // 전문가 매칭 처리
+        request.setExpert(expert.getId());
+        request.setStatus(WorkRequestEntity.Status.IN_PROGRESS); // 상태 변경
+        workRequestRepository.save(request);
+    }
 }

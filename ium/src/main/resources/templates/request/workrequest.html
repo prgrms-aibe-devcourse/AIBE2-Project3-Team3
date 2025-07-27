@@ -6,6 +6,15 @@
     <link rel="stylesheet" th:href="@{/css/workrequest/workrequest.css}">
     <base href="/" />
     <script th:src="@{/js/workrequest/workrequest.js}"></script>
+
+    <script th:inline="javascript">
+        if ([[${matchSuccess}]] === true) {
+            alert("수주가 완료되었습니다!");
+        }
+        if ([[${alreadyMatched}]] === true) {
+            alert("이미 수주된 의뢰입니다.");
+        }
+    </script>
 </head>
 <body>
 
@@ -36,7 +45,11 @@
 
         <div class="right">
             <button class="chat-icon" th:data-target-user="${targetUser}">문의하기</button>
-            <button>수주하기</button>
+            <form th:action="@{/workrequest/{id}/matched(id=${request?.id})}"
+                  method="post"
+                  id="matchForm">
+                <button type="submit">수주하기</button>
+            </form>
         </div>
     </section>
 
@@ -70,5 +83,6 @@
 
 <script th:src="@{/js/workrequest/workrequest.js}"></script>
 <script th:src="@{/js/header.js}"></script>
+<script th:src="@{/js/workrequest/matched.js}"></script>
 </body>
 </html>
