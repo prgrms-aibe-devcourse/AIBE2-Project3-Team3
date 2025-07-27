@@ -42,4 +42,6 @@ public interface WorkRequestRepository extends JpaRepository<WorkRequestEntity, 
            "WHERE w.expert = :memberId " +
            "GROUP BY w.status")
     List<Object[]> countMyWorkRequestsByStatus(@Param("memberId") Long memberId);
+
+    List<WorkRequestEntity> findByCreatedBy(String createdBy);
 }
