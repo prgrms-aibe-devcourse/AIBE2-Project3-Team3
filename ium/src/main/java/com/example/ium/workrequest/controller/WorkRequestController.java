@@ -96,6 +96,6 @@ public class WorkRequestController {
             Long expertId = userDetails.getMemberId(); // 현재 로그인한 전문가 ID
             workRequestService.matchExpertToWorkRequest(id, expertId); // 여기서 호출!
 
-            return "redirect:/workrequest" + id + "/matched";
+            return "redirect:/workrequest/" + id;
         }
     }
