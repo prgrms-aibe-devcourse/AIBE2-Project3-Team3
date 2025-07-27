@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>전문가 프로필</title>
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
     <style>
         .attachment-preview {
             margin-bottom: 20px;
@@ -20,18 +22,38 @@
             margin-top: 10px;
             border: 1px solid #ccc;
         }
+
+        .summary-box {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
-
+<div th:replace="~{header :: header}"></div>
 <h1>전문가 프로필</h1>
 
-<form th:action="@{|/expert-profiles/${memberProfile.memberId}/deactivate|}" method="post">
+<div class="summary-box">
+    <p><strong>보유 코인:</strong> <span th:text="${moneyInfo.credit}"></span> 원</p>
+    <p><strong>보유 포인트:</strong> <span th:text="${moneyInfo.point}"></span> P</p>
+</div>
+
+<form th:action="@{|/expert-profiles/${expertProfile.memberId}/deactivate|}" method="post">
     <input type="hidden" name="_method" value="patch"/>
     <button type="submit">전문가 프로필 비활성화</button>
 </form>
 
-<div>
+<hr/>
+
+<div style="margin-top: 20px;">
+    <a th:href="@{|/expert-profiles/${expertProfile.memberId}/work-requests|}" style="padding: 8px 12px; background-color: #AAD2DA; color: white; text-decoration: none; border-radius: 5px;">
+        내 의뢰 목록 보기
+    </a>
+</div>
+
+<div id="profile-content">
     <p><strong>자기소개:</strong> <span th:text="${expertProfile.introduceMessage}"></span></p>
     <p><strong>포트폴리오 설명:</strong> <span th:text="${expertProfile.portfolioDescription}"></span></p>
     <p><strong>학교:</strong> <span th:text="${expertProfile.school}"></span></p>
@@ -64,5 +86,7 @@
     </ul>
 </div>
 
+<div th:replace="~{footer :: footer}"></div>
+<script th:src="@{/js/header.js}"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 /* Header */
 .header {
     background-color: #AAD2DA;
-    padding: 20px;
+    padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -30,4 +30,33 @@
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     color: #000000;
+}
+
+.dropdown-menu a,
+ .dropdown-menu button {
+     padding: 8px 12px;
+     display: block;
+     width: 100%;
+     background: none;
+     border: none;
+     text-align: left;
+     cursor: pointer;
+ }
+
+.user-dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 45px; /* 아이콘 아래에 위치 */
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 8px 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    display: none;
+    z-index: 999;
+    min-width: 120px;
+    text-align: left;
 }

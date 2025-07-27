@@ -90,6 +90,7 @@ public class SecurityConfig {
                         .successHandler(customLoginSuccessHandler)
                 )
                 .logout(logout -> logout
+                        .logoutUrl("/logout")
                         .logoutSuccessUrl("/"))
                 .httpBasic(Customizer.withDefaults());
         return http.build();

@@ -3,6 +3,8 @@ package com.example.ium;
 
 import com.example.ium.specialization.domain.model.Specialization;
 import com.example.ium.specialization.domain.repository.SpecializationJPARepository;
+import com.example.ium.workrequest.entity.WorkRequestEntity;
+import com.example.ium.workrequest.repository.WorkRequestRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -36,5 +38,20 @@ public class IumApplication {
 
   private Specialization newSpecialization(String name) {
     return Specialization.createSpecialization(name);
+  }
+
+  private WorkRequestEntity createRequest(String title, String content, String category, WorkRequestEntity.Status status, WorkRequestEntity.Type type, Long expertId) {
+    WorkRequestEntity entity = new WorkRequestEntity();
+    entity.setTitle(title);
+    entity.setContent(content);
+    entity.setCategory(category);
+    entity.setStatus(status);
+    entity.setType(type);
+    entity.setExpert(expertId);
+    entity.setPrice(50000);
+    entity.setFileName("sample.pdf");
+    entity.setFileUrl("https://example.com/sample.pdf");
+    entity.setAdPoint(10);
+    return entity;
   }
 }
