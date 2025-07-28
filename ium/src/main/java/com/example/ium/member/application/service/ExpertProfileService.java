@@ -102,6 +102,7 @@ public class ExpertProfileService {
                 .toList();
         return new ExpertProfileViewDto(
                 expertProfile.getMemberId(),
+                expertProfile.getMember().getUsername(),
                 expertProfile.getIntroduceMessage(),
                 expertProfile.getPortfolioDescription(),
                 expertProfile.getSchool(),
@@ -124,6 +125,8 @@ public class ExpertProfileService {
     public void activateExpertProfile(Long memberId) {
         ExpertProfile expertProfile = findExpertProfile(memberId);
         expertProfile.activate();
+
+        memberMetaCommandService.cacheMemberMeta(expertProfile.getMember().getEmail().getValue());
     }
 
     /**
@@ -194,5 +197,9 @@ public class ExpertProfileService {
         return cachedActivationStatus.orElseGet(() -> expertProfileJPARepository.findById(memberId)
                 .map(ExpertProfile::isActivated)
                 .orElse(false));
+    }
+
+    public boolean isExpertProfileExist(Long memberId) {
+        return expertProfileJPARepository.existsById(memberId);
     }
 }

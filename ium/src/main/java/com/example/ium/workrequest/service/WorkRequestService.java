@@ -2,6 +2,7 @@ package com.example.ium.workrequest.service;
 
 import com.example.ium.member.application.dto.response.MyWorkRequestListViewDto;
 import com.example.ium.member.application.dto.response.MyWorkRequestStatusDto;
+import com.example.ium.member.application.dto.response.WorkRequestInfoViewDto;
 import com.example.ium.member.domain.model.Email;
 import com.example.ium.member.domain.model.Member;
 import com.example.ium.member.domain.repository.MemberJPARepository;
@@ -9,11 +10,6 @@ import com.example.ium.member.infrastructure.service.FireBaseFileService;
 import com.example.ium.money.domain.model.Money;
 import com.example.ium.money.domain.model.MoneyType;
 import com.example.ium.money.domain.repository.MoneyRepository;
-import com.example.ium.member.domain.model.Member;
-import com.example.ium.member.domain.model.expert.ExpertProfile;
-import com.example.ium.member.domain.repository.ExpertProfileJPARepository;
-import com.example.ium.member.domain.repository.MemberJPARepository;
-import com.example.ium.workrequest.dto.MatchedDto;
 import com.example.ium.workrequest.entity.WorkRequestEntity;
 import com.example.ium.workrequest.repository.WorkRequestRepository;
 import com.example.ium.workrequest.repository.WorkRequestSpecification;
@@ -35,8 +31,6 @@ public class WorkRequestService {
     private final FireBaseFileService fireBaseFileService;
     private final MoneyRepository moneyRepository;
     private final MemberJPARepository memberJPARepository;
-    private final ExpertProfileJPARepository expertProfileJPARepository;
-
 
     // 전체 (ad_point 높은 순으로 정렬)
     public List<WorkRequestEntity> getAllRequests() {
@@ -98,22 +92,6 @@ public class WorkRequestService {
         return workRequestRepository.findTopByOrderByIdDesc()
                 .orElseThrow(() -> new IllegalArgumentException("등록된 요청이 없습니다."));
     }
-    public MatchedDto getMatchedExpert(Long expertId) {
-        ExpertProfile profile = expertProfileJPARepository.findByIdByEagerLoading(expertId)
-                .orElseThrow(() -> new RuntimeException("프로필 없음"));
-
-        Member member = memberJPARepository.findById(expertId)
-                .orElseThrow(() -> new RuntimeException("회원 없음"));
-
-        return new MatchedDto(
-                member.getUsername(),
-                member.getEmail(),
-                member.getRole(),
-                profile.getCareerDate(),
-                profile.getSalary(),
-                profile.getSchool()
-        );
-    }
 
     public List<MyWorkRequestStatusDto> countMyWorkRequestsByStatus(Long memberId) {
         return workRequestRepository.countMyWorkRequestsByStatus(memberId).stream()
@@ -136,6 +114,7 @@ public class WorkRequestService {
                 .map(workRequestEntity -> new MyWorkRequestListViewDto(
                         workRequestEntity.getId(),
                         workRequestEntity.getTitle(),
+                        workRequestEntity.getContent(),
                         workRequestEntity.getPrice(),
                         workRequestEntity.getCreatedBy()
                 ))
@@ -163,16 +142,23 @@ public class WorkRequestService {
         moneyRepository.save(money);
     }
 
-    public void matchExpertToWorkRequest(Long requestId, Long expertId) {
-        WorkRequestEntity request = workRequestRepository.findById(requestId)
-                .orElseThrow(() -> new IumApplicationException(ErrorCode.WORK_REQUEST_NOT_FOUND));
+    public List<WorkRequestInfoViewDto> getWorkRequestInfo(String email) {
+        List<WorkRequestEntity> workRequests = workRequestRepository.findByCreatedBy(email);
+        return workRequests.stream()
+                .map(request -> new WorkRequestInfoViewDto(
+                        request.getId(),
+                        request.getTitle(),
+                        request.getContent(),
+                        request.getPrice(),
+                        request.getExpert() != null ? getExpertNameById(request.getExpert()) : "미배정",
+                        request.getStatus().name()
+                ))
+                .toList();
+    }
 
-        Member expert = memberJPARepository.findById(expertId)
-                .orElseThrow(() -> new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND));
-
-        // 전문가 매칭 처리
-        request.setExpert(expert.getId());
-        request.setStatus(WorkRequestEntity.Status.IN_PROGRESS); // 상태 변경
-        workRequestRepository.save(request);
+    private String getExpertNameById(Long expert) {
+        return memberJPARepository.findById(expert)
+                .map(Member::getUsername)
+                .orElse("미배정");
     }
 }
