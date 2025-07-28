@@ -76,8 +76,9 @@
 <script th:src="@{/js/header.js}"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
-    const errorMsg = [[${param.errorMsg}]];
-    if (errorMsg) {
+    const rawMsg = [[${param.errorMsg}]];
+    if (rawMsg) {
+        const errorMsg = decodeURIComponent(rawMsg);
         alert(errorMsg);
     }
     /*]]>*/
