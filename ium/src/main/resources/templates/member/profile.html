@@ -5,25 +5,121 @@
     <title>일반 회원 프로필</title>
     <link rel="stylesheet" th:href="@{/css/header.css}">
     <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <style>
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .profile-header img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #ccc;
+        }
+
+        .profile-info h2 {
+            margin: 0;
+        }
+
+        .coins {
+            margin-top: 8px;
+            color: #555;
+        }
+
+        .action-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #AAD2DA;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+
+        .action-button:hover {
+            background-color: #93c2cc;
+        }
+
+        .work-requests h3 {
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .request-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .request-card {
+            padding: 16px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .request-card h4 {
+            font-size: 16px;
+            margin: 0 0 8px;
+        }
+
+        .request-card p {
+            margin: 4px 0;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{header :: header}"></div>
-<h1>일반 회원 프로필</h1>
 
-<div>
-    <label>회원 ID:</label>
-    <span th:text="${memberProfile.memberId}"></span>
+<div class="container">
+
+    <div class="profile-header">
+        <img src="/images/default-profile.png" alt="프로필 이미지">
+        <div class="profile-info">
+            <h2 th:text="${memberProfile.username}">회원명</h2>
+            <div class="coins">
+                <span th:text="${moneyInfo.credit + ' 원'}">0 원</span> /
+                <span th:text="${moneyInfo.point + ' P'}">0 P</span>
+            </div>
+        </div>
+    </div>
+
+    <form th:action="@{|/expert-profiles/${memberProfile.memberId}/activate|}" method="post">
+        <input type="hidden" name="_method" value="patch"/>
+        <button type="submit" class="action-button">전문가 프로필 활성화</button>
+    </form>
+
+    <div class="work-requests" th:if="${workRequestInfo != null and !workRequestInfo.isEmpty()}">
+        <h3>내 의뢰 목록</h3>
+        <div class="request-list">
+            <div th:each="request : ${workRequestInfo}" class="request-card">
+                <a th:href="@{|/workrequest/${request.workRequestId}|}" style="text-decoration: none; color: inherit;">
+                    <h4 th:text="${request.title}">의뢰 제목</h4>
+                    <p th:text="${request.content}">의뢰 내용</p>
+                    <p>가격: <span th:text="${#numbers.formatInteger(request.price, 3, 'COMMA')}"></span> 원</p>
+                    <p>전문가: <span th:text="${request.expertName}"></span></p>
+                    <p>상태: <span th:text="${request.status}"></span></p>
+                </a>
+            </div>
+        </div>
+    </div>
+
 </div>
-
-<div>
-    <label>이메일:</label>
-    <span th:text="${memberProfile.email}"></span>
-</div>
-
-<form th:action="@{|/expert-profiles/${memberProfile.memberId}/activate|}" method="post">
-    <input type="hidden" name="_method" value="patch"/>
-    <button type="submit">전문가 프로필 활성화</button>
-</form>
 
 <div th:replace="~{footer :: footer}"></div>
 <script th:src="@{/js/header.js}"></script>

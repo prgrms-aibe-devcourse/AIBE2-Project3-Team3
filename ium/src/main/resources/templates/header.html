@@ -1,17 +1,25 @@
 <header class="header" th:fragment="header">
-  <div class="logo">ium</div>
+  <div class="logo">
+    <a th:href="@{/}" style="text-decoration: none; color: inherit;">ium</a>
+  </div>
 
   <div class="user-menu">
     <div class="chat-icon">💬</div>
 
-    <div class="user-dropdown" th:if="${#authentication.principal != null}">
+    <div class="user-dropdown">
       <div class="user-icon" onclick="toggleDropdown()">👤</div>
 
       <div class="dropdown-menu" id="userDropdown">
-        <a th:href="@{/profiles}">프로필</a>
-        <form th:action="@{/logout}" method="post">
-          <button type="submit">로그아웃</button>
-        </form>
+        <div th:if="${#authentication.principal != 'anonymousUser'}">
+          <a th:href="@{/profiles}">프로필</a>
+          <form th:action="@{/logout}" method="post">
+            <button type="submit">로그아웃</button>
+          </form>
+        </div>
+        <div th:unless="${#authentication.principal != 'anonymousUser'}">
+          <a th:href="@{/login}">로그인</a>
+          <a th:href="@{/signup}">회원가입</a>
+        </div>
       </div>
     </div>
   </div>

@@ -3,45 +3,128 @@
 <head>
     <title>전문가 프로필 작성</title>
     <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <style>
+        .container {
+            max-width: 700px;
+            margin: 60px auto;
+            padding: 30px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        form label {
+            font-weight: bold;
+            display: block;
+            margin-top: 20px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            margin-top: 10px;
+        }
+
+        .checkbox-group input {
+            margin-right: 6px;
+        }
+
+        .checkbox-group label {
+            margin-right: 15px;
+        }
+
+        input[type="file"] {
+            margin-top: 10px;
+        }
+
+        button {
+            margin-top: 30px;
+            width: 100%;
+            padding: 12px;
+            background-color: #AAD2DA;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #93c2cc;
+        }
+    </style>
 </head>
 <body>
-<h1>전문가 프로필 작성</h1>
+<div th:replace="~{header :: header}"></div>
 
-<form th:action="@{/expert-profiles}" th:object="${expertProfileForm}" method="post" enctype="multipart/form-data">
-    <label for="introduceMessage">자기소개:</label><br>
-    <textarea th:field="*{introduceMessage}" id="introduceMessage" rows="4" cols="50"></textarea><br><br>
+<div class="container">
+    <h1>전문가 프로필 작성</h1>
 
-    <label for="portfolioDescription">포트폴리오 설명:</label><br>
-    <textarea th:field="*{portfolioDescription}" id="portfolioDescription" rows="4" cols="50"></textarea><br><br>
+    <form th:action="@{/expert-profiles}" th:object="${expertProfileForm}" method="post" enctype="multipart/form-data">
+        <label for="introduceMessage">자기소개</label>
+        <textarea th:field="*{introduceMessage}" id="introduceMessage" rows="4"></textarea>
 
-    <label for="school">학교:</label><br>
-    <input type="text" th:field="*{school}" id="school"/><br><br>
+        <label for="portfolioDescription">포트폴리오 설명</label>
+        <textarea th:field="*{portfolioDescription}" id="portfolioDescription" rows="4"></textarea>
 
-    <label for="major">전공:</label><br>
-    <input type="text" th:field="*{major}" id="major"/><br><br>
+        <label for="school">학교</label>
+        <input type="text" th:field="*{school}" id="school"/>
 
-    <label for="startCareerDate">경력 시작일:</label><br>
-    <input type="date" th:field="*{startCareerDate}" id="startCareerDate"/><br><br>
+        <label for="major">전공</label>
+        <input type="text" th:field="*{major}" id="major"/>
 
-    <label for="salary">희망 연봉:</label><br>
-    <input type="number" th:field="*{salary}" id="salary"/><br><br>
+        <label for="startCareerDate">경력 시작일</label>
+        <input type="date" th:field="*{startCareerDate}" id="startCareerDate"/>
 
-    <label for="negoYn">연봉 협상 가능 여부:</label><br>
-    <input type="checkbox" th:field="*{negoYn}" id="negoYn"/><br><br>
+        <label for="salary">희망 연봉 (만원)</label>
+        <input type="number" th:field="*{salary}" id="salary"/>
 
-    <label>전문 분야:</label><br>
-    <div th:each="specialization : ${specializations}">
-        <input type="checkbox" th:field="*{specializationIds}"
-               th:value="${specialization.id}"
-               th:id="${'spec-' + specialization.id}"/>
-        <label th:for="${'spec-' + specialization.id}" th:text="${specialization.name}"></label><br>
-    </div><br>
+        <label for="negoYn">
+            <input type="checkbox" th:field="*{negoYn}" id="negoYn"/>
+            연봉 협상 가능 여부
+        </label>
 
-    <label for="attachments">첨부 파일:</label><br>
-    <input type="file" th:field="*{attachments}" name="attachments" id="attachments" multiple/><br><br>
+        <label>전문 분야</label>
+        <div class="checkbox-group" th:each="specialization : ${specializations}">
+            <label>
+                <input type="checkbox"
+                       th:field="*{specializationIds}"
+                       th:value="${specialization.id}"
+                       th:id="${'spec-' + specialization.id}"/>
+                <span th:text="${specialization.name}"></span>
+            </label>
+        </div>
 
-    <button type="submit">프로필 생성</button>
-</form>
+        <label for="attachments">첨부 파일</label>
+        <input type="file" th:field="*{attachments}" name="attachments" id="attachments" multiple/>
 
+        <button type="submit">프로필 생성</button>
+    </form>
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+<script th:src="@{/js/header.js}"></script>
 </body>
 </html>

@@ -1,11 +1,19 @@
-<!-- member/fragments/work-request-list.html -->
 <div th:fragment="workRequestFragment">
     <div th:if="${#lists.isEmpty(workRequests)}">
         <p>의뢰가 없습니다.</p>
     </div>
-    <div th:each="request : ${workRequests}" class="request-item">
-        <p><strong th:text="${request.title}">의뢰 제목</strong></p>
-        <p>가격: <span th:text="${request.price}">0</span> 원</p>
-        <p>의뢰자: <span th:text="${request.clientName}">이름</span></p>
+
+    <div th:if="${!#lists.isEmpty(workRequests)}" class="request-grid">
+        <div th:each="request : ${workRequests}" class="request-card">
+            <a th:href="@{|/workrequest/${request.workRequestId}|}" style="text-decoration: none; color: inherit;">
+                <h3 th:text="${request.title}">의뢰 제목</h3>
+                <p th:text="${request.content}">내용</p>
+                <p>
+                    가격:
+                    <span th:text="${#numbers.formatInteger(request.price, 3, 'COMMA')}"></span> 원
+                </p>
+                <p>의뢰자: <span th:text="${request.clientName}"></span></p>
+            </a>
+        </div>
     </div>
 </div>
