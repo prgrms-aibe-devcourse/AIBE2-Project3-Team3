@@ -432,14 +432,17 @@ public class GptRecommendationService {
                     expertInfo.put("id", expertId);
                     expertInfo.put("name", realExpertName);
                     expertInfo.put("email", realExpertEmail);
+                    expertInfo.put("profileUrl", "/expert-profiles/" + expertId);
                     expertInfo.put("school", expert.getSchool());
                     expertInfo.put("major", expert.getMajor());
                     expertInfo.put("salary", expert.getSalary().getValue());
                     expertInfo.put("negoYn", expert.getNegoYn().isNegotiable());
                     expertInfo.put("introduceMessage", expert.getIntroduceMessage());
+                    expertInfo.put("completedRequestCount", expert.getCompletedRequestCount().getValue());
+                    expertInfo.put("recommendation", recommendation);
                     
-                    result.put("message", String.format("🎆 %s 분야에 딱 맞는 전문가를 찾았어요!\n\n👨‍💼 **%s**\n%s\n\n💬 지금 바로 연락해보세요: %s", 
-                            getCategoryName(category), realExpertName, recommendation, realExpertEmail));
+                    result.put("message", String.format("🎆 %s 분야에 딱 맞는 전문가를 찾았어요!\n\n%s", 
+                            getCategoryName(category), recommendation));
                     result.put("expertInfo", expertInfo);
                     
                     log.debug("GPT 응답 파싱 성공 - expertId: {}, expertName: {}", expertId, realExpertName);

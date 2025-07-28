@@ -182,6 +182,11 @@ async function sendMessage() {
         
         if (data.success) {
             addMessage(data.message, 'ai');
+            
+            // 전문가 정보가 있으면 전문가 카드 추가
+            if (data.expertInfo) {
+                addExpertCard(data.expertInfo);
+            }
         } else {
             addMessage('죄송합니다. 오류가 발생했습니다. 다시 시도해주세요.', 'ai');
         }
@@ -267,6 +272,64 @@ function updateCharCount() {
         
         sendBtn.disabled = count === 0 || count > 50;
     }
+}
+
+// 전문가 카드 추가
+function addExpertCard(expertInfo) {
+    const chatMessages = document.getElementById('chatMessages');
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'ai-message';
+    
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'message-content expert-card';
+    
+    const cardHTML = `
+        <div class="expert-info">
+            <div class="expert-header">
+                <div class="expert-avatar">
+                    👨‍💼
+                </div>
+                <div class="expert-details">
+                    <h3 class="expert-name">${expertInfo.name}</h3>
+                    <p class="expert-school">${expertInfo.school} • ${expertInfo.major}</p>
+                </div>
+            </div>
+            
+            <div class="expert-description">
+                <p><strong>✨ AI 추천 이유:</strong></p>
+                <p>${expertInfo.recommendation}</p>
+            </div>
+            
+            <div class="expert-stats">
+                <div class="stat-item">
+                    <span class="stat-label">💰 급여</span>
+                    <span class="stat-value">${expertInfo.salary}만원 ${expertInfo.negoYn ? '(협의가능)' : ''}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">📊 완료 의뢰</span>
+                    <span class="stat-value">${expertInfo.completedRequestCount}건</span>
+                </div>
+            </div>
+            
+            <div class="expert-contact">
+                <p><strong>📧 연락처:</strong> ${expertInfo.email}</p>
+            </div>
+            
+            <div class="expert-actions">
+                <button class="profile-btn" onclick="window.open('${expertInfo.profileUrl}', '_blank')">
+                    🔗 프로필 상세보기
+                </button>
+            </div>
+        </div>
+    `;
+    
+    contentDiv.innerHTML = cardHTML;
+    messageDiv.appendChild(contentDiv);
+    chatMessages.appendChild(messageDiv);
+    
+    // 스크롤을 맨 아래로
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 // 랜덤 문자열 생성 (채팅방 이름용)
