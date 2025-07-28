@@ -83,6 +83,7 @@ public class ExpertDataCollectionService {
         for (ExpertProfile expert : activeExperts) {
             expertsData.append("\n전문가 ID: ").append(expert.getMemberId()).append("\n");
             expertsData.append("- 이름: ").append(expert.getMember().getUsername()).append("\n");
+            expertsData.append("- 이메일: ").append(expert.getMember().getEmail().getValue()).append("\n");
             expertsData.append("- 소개: ").append(expert.getIntroduceMessage()).append("\n");
             expertsData.append("- 포트폴리오: ").append(expert.getPortfolioDescription()).append("\n");
             expertsData.append("- 학교: ").append(expert.getSchool()).append("\n");
@@ -122,6 +123,7 @@ public class ExpertDataCollectionService {
         StringBuilder expertData = new StringBuilder();
         expertData.append("전문가 정보:\n");
         expertData.append("- 이름: ").append(expert.getMember().getUsername()).append("\n");
+        expertData.append("- 이메일: ").append(expert.getMember().getEmail().getValue()).append("\n");
         expertData.append("- 소개: ").append(expert.getIntroduceMessage()).append("\n");
         expertData.append("- 포트폴리오: ").append(expert.getPortfolioDescription()).append("\n");
         expertData.append("- 학교: ").append(expert.getSchool()).append("\n");

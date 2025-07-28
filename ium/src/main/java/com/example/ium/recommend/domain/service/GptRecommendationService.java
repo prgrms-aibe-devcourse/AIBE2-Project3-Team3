@@ -1,5 +1,9 @@
 package com.example.ium.recommend.domain.service;
 
+import com.example.ium.member.domain.model.Member;
+import com.example.ium.member.domain.model.expert.ExpertProfile;
+import com.example.ium.member.domain.repository.ExpertProfileJPARepository;
+import com.example.ium.member.domain.repository.MemberJPARepository;
 import com.example.ium.recommend.application.dto.request.GptRequestDto;
 import com.example.ium.recommend.application.dto.response.ExpertRecommendationDto;
 import com.example.ium.recommend.application.dto.response.GptResponseDto;
@@ -10,7 +14,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * GPT API를 활용한 추천 서비스
@@ -22,6 +30,59 @@ import java.util.List;
 public class GptRecommendationService {
     
     private final GptApiClient gptApiClient;
+    private final ExpertDataCollectionService expertDataCollectionService;
+    private final MemberJPARepository memberJPARepository;
+    private final ExpertProfileJPARepository expertProfileJPARepository;
+    
+    /**
+     * AI 전문가 매칭 추천 (신규 메서드)
+     * 
+     * @param memberId 사용자 ID
+     * @param category 카테고리
+     * @param userMessage 사용자 메시지
+     * @return 추천 결과 (메시지 + 전문가 정보)
+     */
+    public Map<String, Object> getAIExpertRecommendation(Long memberId, String category, String userMessage) {
+        log.debug("AI 전문가 매칭 추천 시작 - memberId: {}, category: {}", memberId, category);
+        
+        try {
+            // 1. 사용자 프로필 데이터 수집
+            String userProfileData = expertDataCollectionService.collectUserProfileData(memberId);
+            
+            // 2. 해당 카테고리의 전문가들 프로필 데이터 수집
+            String expertProfilesData = expertDataCollectionService.collectExpertProfilesData(category);
+            
+            // 3. GPT 프롬프트 생성
+            String prompt = buildAIMatchingPrompt(userProfileData, expertProfilesData, userMessage, category);
+            
+            // 4. GPT API 호출
+            GptRequestDto request = GptRequestDto.createRecommendationRequest(prompt);
+            GptResponseDto response = gptApiClient.sendRecommendationRequest(request);
+            
+            if (!response.isSuccessful()) {
+                log.warn("GPT API 응답 비정상 - category: {}", category);
+                return createFallbackResponse(category);
+            }
+            
+            // 5. GPT 응답에서 추천 전문가 정보 파싱
+            Map<String, Object> parsedResult = parseGptRecommendationResponse(response.getOutputText(), category);
+            
+            if (parsedResult.isEmpty()) {
+                log.warn("GPT 응답 파싱 실패 - category: {}", category);
+                return createFallbackResponse(category);
+            }
+            
+            log.debug("AI 전문가 매칭 추천 완료 - memberId: {}, category: {}", memberId, category);
+            return parsedResult;
+            
+        } catch (GptApiException e) {
+            log.error("AI 전문가 매칭 GPT API 호출 실패 - memberId: {}, category: {}, error: {}", memberId, category, e.getMessage());
+            return createFallbackResponse(category);
+        } catch (Exception e) {
+            log.error("AI 전문가 매칭 중 예상치 못한 오류 - memberId: {}, category: {}", memberId, category, e);
+            return createFallbackResponse(category);
+        }
+    }
     
     /**
      * 전문가 추천 요청
@@ -307,6 +368,111 @@ public class GptRecommendationService {
             );
             default -> List.of();
         };
+    }
+    
+    /**
+     * AI 매칭용 GPT 프롬프트 생성
+     */
+    private String buildAIMatchingPrompt(String userProfileData, String expertProfilesData, String userMessage, String category) {
+        return String.format("""
+            당신은 전문가와 클라이언트를 매칭해주는 AI 어시스턴트입니다.
+            
+            **사용자 정보:**
+            %s
+            
+            **사용자 요청:**
+            %s
+            
+            **사용 가능한 전문가들:**
+            %s
+            
+            **요청사항:**
+            위 정보를 바탕으로 %s 분야에서 가장 적합한 전문가 1명을 추천해주세요.
+            
+            **응답 형식:** 다음 형식으로 정확히 응답해주세요.
+            EXPERT_ID: [전문가ID]
+            EXPERT_NAME: [전문가이름]
+            EXPERT_EMAIL: [전문가이메일]
+            RECOMMENDATION: [추천이유 및 전문가 설명 (고객에게 말하는 방식으로 2-3문장)]
+            """, userProfileData, userMessage, expertProfilesData, getCategoryName(category));
+    }
+    
+    /**
+     * GPT 응답에서 추천 전문가 정보 파싱
+     */
+    private Map<String, Object> parseGptRecommendationResponse(String gptResponse, String category) {
+        Map<String, Object> result = new HashMap<>();
+        
+        try {
+            // 정규식으로 전문가 정보 추출
+            Pattern expertIdPattern = Pattern.compile("EXPERT_ID:\\s*([0-9]+)");
+            Pattern expertNamePattern = Pattern.compile("EXPERT_NAME:\\s*(.+)");
+            Pattern expertEmailPattern = Pattern.compile("EXPERT_EMAIL:\\s*(.+)");
+            Pattern recommendationPattern = Pattern.compile("RECOMMENDATION:\\s*(.+?)(?=\\n\\n|$)", Pattern.DOTALL);
+            
+            Matcher idMatcher = expertIdPattern.matcher(gptResponse);
+            Matcher nameMatcher = expertNamePattern.matcher(gptResponse);
+            Matcher emailMatcher = expertEmailPattern.matcher(gptResponse);
+            Matcher recommendationMatcher = recommendationPattern.matcher(gptResponse);
+            
+            if (idMatcher.find() && nameMatcher.find() && emailMatcher.find() && recommendationMatcher.find()) {
+                Long expertId = Long.parseLong(idMatcher.group(1).trim());
+                String expertName = nameMatcher.group(1).trim();
+                String expertEmail = emailMatcher.group(1).trim();
+                String recommendation = recommendationMatcher.group(1).trim();
+                
+                // 전문가 정보 검증 및 실제 데이터 가져오기
+                ExpertProfile expert = expertProfileJPARepository.findByIdByEagerLoading(expertId).orElse(null);
+                if (expert != null && expert.isActivated()) {
+                    // 실제 전문가 이메일 가져오기
+                    String realExpertEmail = expert.getMember().getEmail().getValue();
+                    String realExpertName = expert.getMember().getUsername();
+                    
+                    Map<String, Object> expertInfo = new HashMap<>();
+                    expertInfo.put("id", expertId);
+                    expertInfo.put("name", realExpertName);
+                    expertInfo.put("email", realExpertEmail);
+                    expertInfo.put("school", expert.getSchool());
+                    expertInfo.put("major", expert.getMajor());
+                    expertInfo.put("salary", expert.getSalary().getValue());
+                    expertInfo.put("negoYn", expert.getNegoYn().isNegotiable());
+                    expertInfo.put("introduceMessage", expert.getIntroduceMessage());
+                    
+                    result.put("message", String.format("🎆 %s 분야에 딱 맞는 전문가를 찾았어요!\n\n👨‍💼 **%s**\n%s\n\n💬 지금 바로 연락해보세요: %s", 
+                            getCategoryName(category), realExpertName, recommendation, realExpertEmail));
+                    result.put("expertInfo", expertInfo);
+                    
+                    log.debug("GPT 응답 파싱 성공 - expertId: {}, expertName: {}", expertId, realExpertName);
+                    return result;
+                }
+            }
+            
+            log.warn("GPT 응답 파싱 실패 - 형식이 맞지 않거나 전문가를 찾을 수 없음: {}", gptResponse.substring(0, Math.min(200, gptResponse.length())));
+            
+        } catch (Exception e) {
+            log.error("GPT 응답 파싱 중 오류 발생", e);
+        }
+        
+        return result;
+    }
+    
+    /**
+     * 폴백 응답 생성 (GPT 실패 시)
+     */
+    private Map<String, Object> createFallbackResponse(String category) {
+        Map<String, Object> response = new HashMap<>();
+        
+        String fallbackMessage = String.format(
+            "죄송합니다. 현재 %s 분야에서 가장 적합한 전문가를 찾는 중입니다. \n\n" +
+            "잠시 후 다시 시도하거나, 더 구체적인 요구사항을 말씀해주시면 \n" +
+            "더 정확한 추천을 드릴 수 있습니다. 🚀",
+            getCategoryName(category)
+        );
+        
+        response.put("message", fallbackMessage);
+        response.put("expertInfo", null);
+        
+        return response;
     }
     
     /**
