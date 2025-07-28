@@ -61,18 +61,17 @@ public class WorkRequestController {
         workRequestService.uploadFile(file, workRequestId, principal.getName());
         return "redirect:/workrequest/" + workRequestId;
     }
-@GetMapping("/workrequest/{id}")
-public String showWorkRequestDetail(@PathVariable Long id, Model model) {
-    try {
-        WorkRequestEntity workRequest = workRequestService.getRequest(id);
-        model.addAttribute("request", workRequest);
-        model.addAttribute("targetUser", workRequest.getCreatedBy());
-        return "request/workrequest"; // 기존 템플릿 재사용
-    } catch (IumApplicationException e) {
-        model.addAttribute("error", "의뢰를 찾을 수 없습니다.");
 
-
-        return "common/error";
+    @GetMapping("/workrequest/{id}")
+    public String showWorkRequestDetail(@PathVariable Long id, Model model) {
+        try {
+            WorkRequestEntity workRequest = workRequestService.getRequest(id);
+            model.addAttribute("request", workRequest);
+            model.addAttribute("targetUser", workRequest.getCreatedBy());
+            return "request/workrequest"; // 기존 템플릿 재사용
+        } catch (IumApplicationException e) {
+            model.addAttribute("error", "의뢰를 찾을 수 없습니다.");
+            return "common/error";
+        }
     }
-}
 }

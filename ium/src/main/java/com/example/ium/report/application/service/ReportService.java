@@ -35,6 +35,9 @@ public class ReportService {
 
         if (memberId.equals(client.getId())) {
             reporterId = memberId;
+            if (workRequest.getExpert() == null) {
+                throw new IumApplicationException(ErrorCode.WORK_REQUEST_DOES_NOT_HAVE_EXPERT);
+            }
             reportedId = workRequest.getExpert();
         } else {
             reporterId = memberId;
