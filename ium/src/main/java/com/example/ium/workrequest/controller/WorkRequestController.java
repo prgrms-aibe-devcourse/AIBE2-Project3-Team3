@@ -75,8 +75,6 @@ public class WorkRequestController {
             return "request/workrequest"; // 기존 템플릿 재사용
         } catch (IumApplicationException e) {
             model.addAttribute("error", "의뢰를 찾을 수 없습니다.");
-
-
             return "common/error";
         }
     }

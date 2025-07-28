@@ -11,7 +11,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
         "com.example.ium.member.domain.repository",
         "com.example.ium.money.domain.repository",
         "com.example.ium.workrequest.repository",
-        "com.example.ium.specialization.domain.repository"
+        "com.example.ium.specialization.domain.repository",
+        "com.example.ium.report.domain.repository",
 })
 //@EnableRedisRepositories(basePackages = {
 //        "com.example.ium.member.infrastructure.repository"

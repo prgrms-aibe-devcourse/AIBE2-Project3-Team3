@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>신고하기</title>
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 60px auto;
+            padding: 30px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 20px;
+        }
+
+        select, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #AAD2DA;
+            color: white;
+            font-size: 16px;
+            margin-top: 30px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #93c2cc;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{header :: header}"></div>
+
+<div class="container">
+    <h1>신고하기</h1>
+
+    <form th:action="@{/reports}" method="post">
+        <input type="hidden" name="workRequestId" th:value="${workRequestId}" />
+
+        <label for="reason">신고 사유</label>
+        <select name="reportReason" id="reason" required>
+            <option value="">-- 사유 선택 --</option>
+            <option th:each="reason : ${reasons}"
+                    th:value="${reason.name()}"
+                    th:text="${reason.description}"></option>
+        </select>
+
+        <label for="details">상세 내용</label>
+        <textarea name="reportDetails" id="details" rows="5" placeholder="상세 내용을 입력해주세요."></textarea>
+
+        <button type="submit">신고 제출</button>
+    </form>
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+<script th:src="@{/js/header.js}"></script>
+</body>
+</html>
