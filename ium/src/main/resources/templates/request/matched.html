@@ -3,22 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>의뢰 상세 페이지</title>
-    <link rel="stylesheet" th:href="@{/css/workrequest/workrequest.css}">
     <base href="/" />
-    <script th:src="@{/js/workrequest/workrequest.js}"></script>
+
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
 </head>
 <body>
 
-<header>
-    <div class="logo">
-        <img src="/images/logo.png">
-    </div>
-    <div class="menu">
-        <button><img src="/images/chat.png" alt="말풍선"></button>
-        <button><img src="/images/info.png" alt="내정보"></button>
-        <button><img src="/images/menu.png" alt="메뉴"></button>
-    </div>
-</header>
+<div th:replace="~{header :: header}"></div>
+
 
 <main class="container">
 
@@ -53,7 +46,7 @@
 
     <section class="matching-result">
         <h2>매칭 결과</h2>
-        <div class="expert-profile">
+        <div th:if="${expert != null}">
             <p>이름: <span th:text="${expert.username}">이름</span></p>
             <p>이메일: <span th:text="${expert.email}">이메일</span></p>
             <p>전문 분야: <span th:text="${expert.role}">주요 역할</span></p>
@@ -64,7 +57,7 @@
     </section>
 
 </main>
-
+<div th:replace="~{footer :: footer}"></div>
 <script th:src="@{/js/workrequest/workrequest.js}"></script>
 <script th:src="@{/js/workrequest/matched.js}"></script>
 </body>

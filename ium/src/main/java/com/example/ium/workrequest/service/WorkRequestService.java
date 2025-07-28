@@ -5,11 +5,13 @@ import com.example.ium.member.application.dto.response.MyWorkRequestStatusDto;
 import com.example.ium.member.application.dto.response.WorkRequestInfoViewDto;
 import com.example.ium.member.domain.model.Email;
 import com.example.ium.member.domain.model.Member;
+import com.example.ium.member.domain.repository.ExpertProfileJPARepository;
 import com.example.ium.member.domain.repository.MemberJPARepository;
 import com.example.ium.member.infrastructure.service.FireBaseFileService;
 import com.example.ium.money.domain.model.Money;
 import com.example.ium.money.domain.model.MoneyType;
 import com.example.ium.money.domain.repository.MoneyRepository;
+import com.example.ium.workrequest.dto.MatchedDto;
 import com.example.ium.workrequest.entity.WorkRequestEntity;
 import com.example.ium.workrequest.repository.WorkRequestRepository;
 import com.example.ium.workrequest.repository.WorkRequestSpecification;
@@ -31,6 +33,7 @@ public class WorkRequestService {
     private final FireBaseFileService fireBaseFileService;
     private final MoneyRepository moneyRepository;
     private final MemberJPARepository memberJPARepository;
+    private final ExpertProfileJPARepository expertProfileJPARepository;
 
     // 전체 (ad_point 높은 순으로 정렬)
     public List<WorkRequestEntity> getAllRequests() {
@@ -160,5 +163,32 @@ public class WorkRequestService {
         return memberJPARepository.findById(expert)
                 .map(Member::getUsername)
                 .orElse("미배정");
+    }
+
+    public String matchExpertToWorkRequest(Long requestId, Long expertId) {
+        WorkRequestEntity request = workRequestRepository.findById(requestId)
+                .orElseThrow(() -> new IumApplicationException(ErrorCode.WORK_REQUEST_NOT_FOUND));
+
+        expertProfileJPARepository.findById(expertId)
+                .orElseThrow(() -> new IumApplicationException(ErrorCode.EXPERT_PROFILE_NOT_FOUND));
+
+        // 이미 수주된 경우
+        if (request.getExpert() != null) {
+            return "already";
+        }
+
+        // 수주 처리
+        request.setExpert(expertId);
+        request.setStatus(WorkRequestEntity.Status.MATCHED); // 상태 매칭 처리도 추가하면 좋아
+        workRequestRepository.save(request);
+
+        return "success";
+    }
+
+    // 매칭된 전문가 조회 (GET용)
+    public MatchedDto getMatchedExpert(Long expertId) {
+        return expertProfileJPARepository.findById(expertId)
+                .map(MatchedDto::of)
+                .orElseThrow(() -> new IumApplicationException(ErrorCode.EXPERT_PROFILE_NOT_FOUND));
     }
 }

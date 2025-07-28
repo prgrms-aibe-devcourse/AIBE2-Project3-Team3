@@ -12,19 +12,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/workrequest")
 public class WorkRequestController {
 
     private final WorkRequestService workRequestService;
 
-    @GetMapping
+    @GetMapping("/workrequest")
     public String showWorkRequest(Model model) {
         List<WorkRequestEntity> allRequests = workRequestService.getAllRequests();
         WorkRequestEntity workRequest = workRequestService.getLatestRequest();
@@ -43,59 +42,67 @@ public class WorkRequestController {
         return "request/workrequest";
     }
 
-    @GetMapping("/registration")
+    @GetMapping("/workrequest/registration")
     public String showWorkRequestRegiPage() {
         return "request/workrequestregi";
     }
-    @PostMapping("/registration")
+
+    @PostMapping("/workrequest/registration")
     public String registerWorkRequest(@ModelAttribute WorkRequestEntity workRequest) {
         workRequestService.saveRequest(workRequest);
         return "redirect:/workrequest";
     }
-    
-    @GetMapping("/{id}/resultUpload")
+
+    @GetMapping("/workrequest/{id}/resultUpload")
     public String showResultUploadPage(Model model, @PathVariable("id") Long workRequestId) {
-        model.addAttribute("workRequestId",workRequestId);
+        model.addAttribute("workRequestId", workRequestId);
         return "/request/resultUpload";
     }
-    
-    @PostMapping("/resultUpload")
+
+    @PostMapping("/workrequest/resultUpload")
     public String uploadResult(@RequestParam("file") MultipartFile file,
                                @RequestParam("workRequestId") Long workRequestId,
                                Principal principal) {
         workRequestService.uploadFile(file, workRequestId, principal.getName());
-        return "redirect:/workrequest" + workRequestId;
+        return "redirect:/workrequest/" + workRequestId;
     }
-    @GetMapping("/{id}")
+
+    @GetMapping("/workrequest/{id}")
     public String showWorkRequestDetail(@PathVariable Long id, Model model) {
         try {
             WorkRequestEntity workRequest = workRequestService.getRequest(id);
             model.addAttribute("request", workRequest);
             model.addAttribute("targetUser", workRequest.getCreatedBy());
-            return "request/workrequest"; // 기존 템플릿 재사용
+
+            // 수주된 상태라면 matched 페이지로
+            if (workRequest.getStatus() == WorkRequestEntity.Status.MATCHED) {
+                MatchedDto expertDto = workRequestService.getMatchedExpert(workRequest.getExpert());
+                model.addAttribute("expert", expertDto);
+                return "request/matched"; // <- matched.html 경로
+            }
+
+            return "request/workrequest"; // 일반 상세 페이지
         } catch (IumApplicationException e) {
             model.addAttribute("error", "의뢰를 찾을 수 없습니다.");
-
-
             return "common/error";
         }
     }
 
-        @GetMapping("/{id}/matched")
-        public String showMatchedPage(@PathVariable Long id, Model model) {
-            WorkRequestEntity request = workRequestService.getRequest(id);
-            MatchedDto expertDto = workRequestService.getMatchedExpert(request.getExpert());
+    @GetMapping("/workrequest/{id}/matched")
+    public String showMatchedPage(@PathVariable Long id, Model model) {
+        WorkRequestEntity request = workRequestService.getRequest(id);
+        MatchedDto expertDto = workRequestService.getMatchedExpert(request.getExpert());
 
-            model.addAttribute("request", request);
-            model.addAttribute("expert", expertDto);
-            return "request/workrequest/" + id + "/matched";
-        }
-
-        @PostMapping("/{id}/matched")
-        public String matchRequest(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
-            Long expertId = userDetails.getMemberId(); // 현재 로그인한 전문가 ID
-            workRequestService.matchExpertToWorkRequest(id, expertId); // 여기서 호출!
-
-            return "redirect:/workrequest/" + id;
-        }
+        model.addAttribute("request", request);
+        model.addAttribute("expert", expertDto);
+        return "request/workrequest/" + id + "/matched";
     }
+
+    @PostMapping("/workrequest/{id}/matched")
+    @ResponseBody
+    public String matchRequest(@PathVariable Long id,
+                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long expertId = userDetails.getMemberId();
+        return workRequestService.matchExpertToWorkRequest(id, expertId); // "success" or "already"
+    }
+}

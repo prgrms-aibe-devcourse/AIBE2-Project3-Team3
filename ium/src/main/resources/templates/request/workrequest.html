@@ -7,17 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/header.css}">
     <link rel="stylesheet" th:href="@{/css/footer.css}">
     <base href="/" />
-    <script th:src="@{/js/workrequest/workrequest.js}"></script>
 
-    <script th:inline="javascript">
-        if ([[${matchSuccess}]] === true) {
-            alert("수주가 완료되었습니다!");
-        }
-        if ([[${alreadyMatched}]] === true) {
-            alert("이미 수주된 의뢰입니다.");
-        }
-    </script>
-</head>
 <body>
 
 <div th:replace="~{header :: header}"></div>
@@ -41,7 +31,7 @@
             <form th:action="@{/workrequest/{id}/matched(id=${request?.id})}"
                   method="post"
                   id="matchForm">
-                <button type="submit">수주하기</button>
+                <button id="matchButton" data-id="[[${request.id}]]" onclick="submitMatch(this)">수주하기</button>
             </form>
         </div>
     </section>
@@ -73,6 +63,9 @@
 
 <!-- Footer -->
 <div th:replace="~{footer :: footer}"></div>
+<script>
+    const REQUEST_ID = [[${request.id}]];
+</script>
 
 <script th:src="@{/js/workrequest/workrequest.js}"></script>
 <script th:src="@{/js/header.js}"></script>
