@@ -289,7 +289,7 @@ function addExpertCard(expertInfo) {
             <div class="expert-stats">
                 <div class="stat-item">
                     <span class="stat-label">💰 급여</span>
-                    <span class="stat-value">${expertInfo.salary}만원 ${expertInfo.negoYn ? '(협의가능)' : ''}</span>
+                    <span class="stat-value">${expertInfo.salary.toLocaleString()}원 ${expertInfo.negoYn ? '(협의가능)' : ''}</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-label">📊 완료 의뢰</span>
