@@ -10,6 +10,7 @@ import com.example.ium.recommend.application.dto.response.GptResponseDto;
 import com.example.ium.recommend.application.dto.response.WorkRequestRecommendationDto;
 import com.example.ium.recommend.infrastructure.client.GptApiClient;
 import com.example.ium.recommend.infrastructure.client.GptApiException;
+import com.example.ium.specialization.domain.repository.SpecializationJPARepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * GPT API를 활용한 추천 서비스
@@ -33,6 +35,7 @@ public class GptRecommendationService {
     private final ExpertDataCollectionService expertDataCollectionService;
     private final MemberJPARepository memberJPARepository;
     private final ExpertProfileJPARepository expertProfileJPARepository;
+    private final SpecializationJPARepository specializationJPARepository;
     
     /**
      * AI 전문가 매칭 추천 (신규 메서드)
@@ -274,54 +277,106 @@ public class GptRecommendationService {
      * 임시 전문가 추천 더미 데이터 생성
      */
     private List<ExpertRecommendationDto> generateDummyExpertRecommendations(String category) {
+        // 실제 데이터베이스에서 해당 카테고리의 전문가들을 가져오기
+        try {
+            String expertProfilesData = expertDataCollectionService.collectExpertProfilesData(category);
+            
+            if (expertProfilesData.contains("해당 카테고리의")) {
+                log.warn("카테고리에 매칭되는 전문가가 없어 빈 목록 반환 - category: {}", category);
+                return List.of();
+            }
+            
+            // 실제 데이터베이스에서 전문가들을 가져와서 변환
+            return convertToExpertRecommendationDtos(category);
+            
+        } catch (Exception e) {
+            log.error("전문가 데이터 수집 실패 - category: {}", category, e);
+            return List.of();
+        }
+    }
+    
+    /**
+     * 실제 데이터베이스에서 전문가들을 ExpertRecommendationDto로 변환
+     */
+    private List<ExpertRecommendationDto> convertToExpertRecommendationDtos(String category) {
+        String categoryName = getCategoryName(category);
+        
+        // 전문가 데이터 수집 서비스를 통해 해당 카테곣리의 전문가들 가져오기
+        // 여기서는 직접 레포지토리를 사용해서 가져오기
+        List<ExpertProfile> categoryExperts = getCategoryExperts(category);
+        
+        return categoryExperts.stream()
+                .limit(3) // 최대 3명만 반환
+                .map(expert -> ExpertRecommendationDto.builder()
+                        .expertId(expert.getMemberId())
+                        .expertName(expert.getMember().getUsername())
+                        .introduceMessage(expert.getIntroduceMessage())
+                        .specializations(getExpertSpecializationNames(expert))
+                        .school(expert.getSchool())
+                        .major(expert.getMajor())
+                        .salary(expert.getSalary().getValue())
+                        .negoYn(expert.getNegoYn().isNegotiable())
+                        .completedRequestCount(expert.getCompletedRequestCount().getValue())
+                        .profileImageUrl(null)
+                        .aiRecommendReason(generateRecommendationReason(expert, categoryName))
+                        .matchingScore(0.90 + (Math.random() * 0.1)) // 90-100% 랜덤 매칭도
+                        .build())
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * 해당 카테고리의 전문가들 가져오기
+     */
+    private List<ExpertProfile> getCategoryExperts(String category) {
+        String targetSpecializationName = mapCategoryToSpecialization(category);
+        
+        return expertProfileJPARepository.findAll().stream()
+                .filter(ExpertProfile::isActivated)
+                .filter(expert -> expert.getExpertSpecialization().stream()
+                        .anyMatch(es -> {
+                            return specializationJPARepository.findById(es.getId().getSpecializationId())
+                                    .map(spec -> spec.getSpecializationName().getValue().equals(targetSpecializationName))
+                                    .orElse(false);
+                        }))
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * 전문가의 전문분야 이름들 가져오기
+     */
+    private List<String> getExpertSpecializationNames(ExpertProfile expert) {
+        return expert.getExpertSpecialization().stream()
+                .map(es -> {
+                    return specializationJPARepository.findById(es.getId().getSpecializationId())
+                            .map(spec -> spec.getSpecializationName().getValue())
+                            .orElse("알 수 없음");
+                })
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * 전문가에 따른 AI 추천 이유 생성
+     */
+    private String generateRecommendationReason(ExpertProfile expert, String categoryName) {
+        String baseReason = expert.getIntroduceMessage();
+        if (baseReason == null || baseReason.trim().isEmpty()) {
+            return String.format("%s 분야의 전문가로 %s에서 공부하시고 %d건의 의뢰를 성공적으로 완료하셨습니다.", 
+                    categoryName, expert.getSchool(), expert.getCompletedRequestCount().getValue());
+        }
+        return baseReason;
+    }
+    
+    /**
+     * 카테고리를 전문분야명으로 매핑 (내부 사용)
+     */
+    private String mapCategoryToSpecialization(String category) {
         return switch (category) {
-            case "design" -> List.of(
-                ExpertRecommendationDto.builder()
-                    .expertId(1L)
-                    .expertName("김디자인")
-                    .introduceMessage("사용자 경험을 중시하는 디자인 전문가입니다")
-                    .specializations(List.of("UI/UX 디자인"))
-                    .school("디자인대학교")
-                    .major("시각디자인")
-                    .salary(75)
-                    .negoYn(true)
-                    .completedRequestCount(15)
-                    .profileImageUrl(null)
-                    .aiRecommendReason("사용자 경험을 중시하는 디자인 전문가입니다")
-                    .matchingScore(0.95)
-                    .build(),
-                ExpertRecommendationDto.builder()
-                    .expertId(2L)
-                    .expertName("박그래픽")
-                    .introduceMessage("브랜딩과 로고 디자인 분야의 베테랑입니다")
-                    .specializations(List.of("그래픽 디자인"))
-                    .school("예술대학교")
-                    .major("그래픽디자인")
-                    .salary(60)
-                    .negoYn(true)
-                    .completedRequestCount(25)
-                    .profileImageUrl(null)
-                    .aiRecommendReason("브랜딩과 로고 디자인 분야의 베테랑입니다")
-                    .matchingScore(0.88)
-                    .build()
-            );
-            case "programming" -> List.of(
-                ExpertRecommendationDto.builder()
-                    .expertId(3L)
-                    .expertName("이개발")
-                    .introduceMessage("반응형 웹사이트 개발 전문가입니다")
-                    .specializations(List.of("웹 개발"))
-                    .school("공과대학교")
-                    .major("컴퓨터공학")
-                    .salary(150)
-                    .negoYn(false)
-                    .completedRequestCount(30)
-                    .profileImageUrl(null)
-                    .aiRecommendReason("반응형 웹사이트 개발 전문가입니다")
-                    .matchingScore(0.92)
-                    .build()
-            );
-            default -> List.of();
+            case "design" -> "디자인";
+            case "programming" -> "프로그래밍";
+            case "video" -> "영상편집";
+            case "legal" -> "세무/법무/노무";
+            case "translation" -> "번역/통역";
+            default -> category;
         };
     }
     

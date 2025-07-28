@@ -56,31 +56,63 @@ public class ExpertDataCollectionService {
     public String collectExpertProfilesData(String category) {
         log.debug("전문가 프로필 데이터 수집 시작 - category: {}", category);
         
+        // 카테고리를 전문분야명으로 매핑
+        String targetSpecializationName = mapCategoryToSpecialization(category);
+        log.debug("상대 전문분야명: {}", targetSpecializationName);
+        
         // 카테고리에 해당하는 전문분야 조회
-        List<Specialization> specializations = specializationJPARepository.findAll().stream()
-                .filter(spec -> isMatchingCategory(spec.getSpecializationName().getValue(), category))
+        List<Specialization> targetSpecializations = specializationJPARepository.findAll().stream()
+                .filter(spec -> spec.getSpecializationName().getValue().equals(targetSpecializationName))
                 .collect(Collectors.toList());
         
-        if (specializations.isEmpty()) {
-            log.warn("카테고리에 해당하는 전문분야를 찾을 수 없습니다: {}", category);
+        log.debug("찾은 전문분야 수: {}", targetSpecializations.size());
+        
+        if (targetSpecializations.isEmpty()) {
+            log.warn("카테고리에 해당하는 전문분야를 찾을 수 없습니다: {} -> {}", category, targetSpecializationName);
+            
+            // 전체 전문분야 로깅
+            List<String> allSpecializations = specializationJPARepository.findAll().stream()
+                    .map(spec -> spec.getSpecializationName().getValue())
+                    .collect(Collectors.toList());
+            log.warn("전체 전문분야 목록: {}", allSpecializations);
+            
             return "해당 카테고리의 전문가가 없습니다.";
         }
         
-        // 해당 전문분야의 활성화된 전문가들 조회
-        List<ExpertProfile> activeExperts = expertProfileJPARepository.findAll().stream()
+        // 전체 활성화된 전문가 수 확인
+        List<ExpertProfile> allActiveExperts = expertProfileJPARepository.findAll().stream()
                 .filter(ExpertProfile::isActivated)
-                .filter(expert -> hasMatchingSpecialization(expert, specializations))
+                .collect(Collectors.toList());
+        log.debug("전체 활성화된 전문가 수: {}", allActiveExperts.size());
+        
+        // 해당 전문분야의 활성화된 전문가들 조회
+        List<ExpertProfile> categoryExperts = allActiveExperts.stream()
+                .filter(expert -> hasMatchingSpecialization(expert, targetSpecializations))
                 .collect(Collectors.toList());
         
-        if (activeExperts.isEmpty()) {
+        log.debug("카테고리에 매칭되는 전문가 수: {}", categoryExperts.size());
+        
+        if (categoryExperts.isEmpty()) {
             log.warn("카테고리에 해당하는 활성화된 전문가가 없습니다: {}", category);
+            
+            // 전체 전문가들의 전문분야 로깅
+            for (ExpertProfile expert : allActiveExperts) {
+                String expertSpecializations = expert.getExpertSpecialization().stream()
+                        .map(es -> specializationJPARepository.findById(es.getId().getSpecializationId())
+                                .map(spec -> spec.getSpecializationName().getValue())
+                                .orElse("알 수 없음"))
+                        .collect(Collectors.joining(", "));
+                log.debug("전문가 {} (ID: {})의 전문분야: {}", 
+                        expert.getMember().getUsername(), expert.getMemberId(), expertSpecializations);
+            }
+            
             return "해당 카테고리의 활성화된 전문가가 없습니다.";
         }
         
         StringBuilder expertsData = new StringBuilder();
         expertsData.append("활성화된 전문가들 목록:\n");
         
-        for (ExpertProfile expert : activeExperts) {
+        for (ExpertProfile expert : categoryExperts) {
             expertsData.append("\n전문가 ID: ").append(expert.getMemberId()).append("\n");
             expertsData.append("- 이름: ").append(expert.getMember().getUsername()).append("\n");
             expertsData.append("- 이메일: ").append(expert.getMember().getEmail().getValue()).append("\n");
@@ -104,7 +136,7 @@ public class ExpertDataCollectionService {
             expertsData.append("- 전문분야: ").append(specializations_str).append("\n");
         }
         
-        log.debug("전문가 프로필 데이터 수집 완료 - category: {}, 전문가 수: {}", category, activeExperts.size());
+        log.debug("전문가 프로필 데이터 수집 완료 - category: {}, 전문가 수: {}", category, categoryExperts.size());
         return expertsData.toString();
     }
     
@@ -152,7 +184,8 @@ public class ExpertDataCollectionService {
      */
     private boolean isMatchingCategory(String specializationName, String category) {
         String normalizedCategory = mapCategoryToSpecialization(category);
-        return specializationName.contains(normalizedCategory) || normalizedCategory.contains(specializationName);
+        // 정확한 매칭을 위해 equals 사용
+        return specializationName.equals(normalizedCategory);
     }
     
     /**
@@ -172,8 +205,8 @@ public class ExpertDataCollectionService {
             case "design" -> "디자인";
             case "programming" -> "프로그래밍";
             case "video" -> "영상편집";
-            case "legal" -> "세무";  // 세무/법무/노무를 포함
-            case "translation" -> "번역";  // 번역/통역을 포함
+            case "legal" -> "세무/법무/노무";  // 정확한 전문분야명으로 수정
+            case "translation" -> "번역/통역";  // 정확한 전문분야명으로 수정
             default -> category;
         };
     }
