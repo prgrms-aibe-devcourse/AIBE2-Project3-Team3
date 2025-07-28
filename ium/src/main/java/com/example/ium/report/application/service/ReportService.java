@@ -3,6 +3,7 @@ package com.example.ium.report.application.service;
 import com.example.ium._core.exception.ErrorCode;
 import com.example.ium._core.exception.IumApplicationException;
 import com.example.ium.member.application.dto.request.UserReportFormDto;
+import com.example.ium.member.application.dto.response.UserReportViewDto;
 import com.example.ium.member.domain.model.Email;
 import com.example.ium.member.domain.model.Member;
 import com.example.ium.member.domain.repository.MemberJPARepository;
@@ -13,6 +14,8 @@ import com.example.ium.workrequest.repository.WorkRequestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -52,5 +55,27 @@ public class ReportService {
         );
 
         userReportJpaRepository.save(userReport);
+    }
+
+    public List<UserReportViewDto> getUserReportList() {
+        List<UserReport> userReports = userReportJpaRepository.findAll();
+
+        return userReports.stream()
+                .map(report -> {
+                    Member reporter = memberJPARepository.findById(report.getReporterId())
+                            .orElseThrow(() -> new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND));
+                    Member reported = memberJPARepository.findById(report.getReportedId())
+                            .orElseThrow(() -> new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND));
+
+                    return new UserReportViewDto(
+                            report.getId(),
+                            reporter.getEmail().getValue(),
+                            reported.getEmail().getValue(),
+                            report.getReportReason().name(),
+                            report.getReportDetails(),
+                            report.getReportStatus().name()
+                    );
+                })
+                .toList();
     }
 }

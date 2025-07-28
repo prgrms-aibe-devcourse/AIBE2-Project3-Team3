@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>신고 관리</title>
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <style>
+        .container {
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .report-list {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .report-list th, .report-list td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .report-list th {
+            background-color: #f2f2f2;
+        }
+
+        .report-list tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .report-link {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .report-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{header :: header}"></div>
+
+<div class="container">
+    <h1>신고 목록</h1>
+
+    <table class="report-list">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>신고자</th>
+            <th>피신고자</th>
+            <th>신고 사유</th>
+            <th>신고 상태</th>
+            <th>상세 보기</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="report : ${reportList}">
+            <td th:text="${report.reportId}">1</td>
+            <td th:text="${report.reporterEmail}">reporter@example.com</td>
+            <td th:text="${report.reportedEmail}">reported@example.com</td>
+            <td th:text="${report.reportReason}">SCAM</td>
+            <td th:text="${report.reportStatus}">PENDING</td>
+            <td>
+                <a th:href="@{'/reports/' + ${report.reportId}}" class="report-link">상세 보기</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+<script th:src="@{/js/header.js}"></script>
+</body>
+</html>
