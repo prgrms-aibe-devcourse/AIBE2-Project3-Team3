@@ -76,4 +76,8 @@ public class Member extends BaseTimeEntity {
     public void changeToUser() {
         this.role = Role.USER;
     }
+
+    public void deactivate() {
+        this.status = Status.SUSPENDED;
+    }
 }

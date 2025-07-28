@@ -16,7 +16,10 @@ public enum ErrorCode {
   CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "채팅방을 찾을 수 없습니다."),
   MONEY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 머니를 찾을 수 없습니다."),
   WORK_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 의뢰를 찾을 수 없습니다."),
-    WORK_REQUEST_DOES_NOT_HAVE_EXPERT(HttpStatus.NOT_FOUND, "해당 의뢰는 아직 전문가가 할당되지 않았습니다."),;
+  WORK_REQUEST_DOES_NOT_HAVE_EXPERT(HttpStatus.NOT_FOUND, "해당 의뢰는 아직 전문가가 할당되지 않았습니다."),
+  REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "신고를 찾을 수 없습니다."),
+  MEMBER_NOT_ACTIVE(HttpStatus.FORBIDDEN, "활동 가능한 회원이 아닙니다.")
+  ;
   
   private HttpStatus status;
   private String message;

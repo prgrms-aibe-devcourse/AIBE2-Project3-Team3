@@ -1,6 +1,7 @@
 package com.example.ium._core.config;
 
 import com.example.ium._core.security.CustomAuthenticationEntryPoint;
+import com.example.ium._core.security.CustomLoginFailureHandler;
 import com.example.ium._core.security.CustomLoginSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,9 +18,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CustomLoginSuccessHandler customLoginSuccessHandler;
+    private final CustomLoginFailureHandler customLoginFailureHandler;
 
-    public SecurityConfig(CustomLoginSuccessHandler customLoginSuccessHandler) {
+    public SecurityConfig(CustomLoginSuccessHandler customLoginSuccessHandler,
+                          CustomLoginFailureHandler customLoginFailureHandler) {
         this.customLoginSuccessHandler = customLoginSuccessHandler;
+        this.customLoginFailureHandler = customLoginFailureHandler;
     }
 
     private static final String[] TEMPLATE_LIST = {
@@ -62,7 +66,7 @@ public class SecurityConfig {
 
     // 관리자 리스트 정의
     private static final String[] ADMIN_LIST = {
-            "/api/admin/**"
+            "/admin/**"
     };
 
     /*
@@ -92,6 +96,9 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.sendRedirect("/error/403");
+                        })
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
@@ -99,6 +106,7 @@ public class SecurityConfig {
                         .usernameParameter("user")
                         .passwordParameter("pwd")
                         .successHandler(customLoginSuccessHandler)
+                        .failureHandler(customLoginFailureHandler)
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
