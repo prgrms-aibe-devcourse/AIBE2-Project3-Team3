@@ -50,7 +50,18 @@ public class SecurityConfig {
             "/recommend/**",
             "/css/**",
             "/js/**",
-            "/img/**"
+            "/img/**",
+            /* swagger */
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/v3/api-docs.yaml",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui/**",
+            "/webjars/**",
     };
 
     // 관리자 리스트 정의

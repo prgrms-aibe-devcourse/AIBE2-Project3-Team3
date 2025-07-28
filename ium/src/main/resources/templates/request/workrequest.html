@@ -44,7 +44,7 @@
         </div>
 
         <div class="right">
-            <button class="chat-icon" th:data-target-user="${targetUser}">문의하기</button>
+            <button class="work-request-chat-icon" th:data-target-user="${targetUser}">문의하기</button>
             <form th:action="@{/workrequest/{id}/matched(id=${request?.id})}"
                   method="post"
                   id="matchForm">

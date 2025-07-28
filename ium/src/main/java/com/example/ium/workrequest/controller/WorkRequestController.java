@@ -64,7 +64,7 @@ public class WorkRequestController {
                                @RequestParam("workRequestId") Long workRequestId,
                                Principal principal) {
         workRequestService.uploadFile(file, workRequestId, principal.getName());
-        return "redirect:/workrequest" + workRequestId;
+        return "redirect:/workrequest/" + workRequestId;
     }
     @GetMapping("/{id}")
     public String showWorkRequestDetail(@PathVariable Long id, Model model) {

@@ -379,7 +379,7 @@ public class DummyDataInitializer {
                 // 인덱스에 따른 데이터 설정
                 int dataIndex = i % introduceMessages.length;
                 LocalDate careerStartDate = LocalDate.now().minusYears(2 + random.nextInt(8)); // 2-9년 경력
-                int salary = 30000000 + random.nextInt(70000000); // 3000만원-1억원
+                int salary = 200000 + (random.nextInt(18000) * 100); // 20만원-200만원, 100원 단위
                 boolean negoYn = random.nextBoolean();
                 
                 // ExpertProfile 생성
