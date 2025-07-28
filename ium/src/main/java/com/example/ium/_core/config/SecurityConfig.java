@@ -51,7 +51,7 @@ public class SecurityConfig {
 
     // 관리자 리스트 정의
     private static final String[] ADMIN_LIST = {
-            "/api/admin/**"
+            "/admin/**"
     };
 
     /*
@@ -81,6 +81,9 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.sendRedirect("/error/403");
+                        })
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
