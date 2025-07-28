@@ -7,6 +7,7 @@ import com.example.ium.member.domain.model.Email;
 import com.example.ium.member.domain.model.Member;
 import com.example.ium.member.domain.model.Password;
 import com.example.ium.member.domain.repository.MemberJPARepository;
+import com.example.ium.report.domain.model.ReportStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -63,5 +64,11 @@ public class MemberAuthService {
     private Member findMemberByEmail(String email) {
         return memberJPARepository.findByEmail(Email.of(email))
                 .orElseThrow(() -> new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND));
+    }
+    @Transactional
+    public void suspendUser(Long reportedId) {
+        Member member = memberJPARepository.findById(reportedId)
+                .orElseThrow(() -> new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND));
+        member.deactivate();
     }
 }

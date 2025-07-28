@@ -50,4 +50,8 @@ public class UserReport extends BaseEntity {
                 .reportStatus(ReportStatus.PENDING) // 기본 상태는 PENDING
                 .build();
     }
+
+    public void updateReportStatus(ReportStatus reportStatus) {
+        this.reportStatus = reportStatus;
+    }
 }
