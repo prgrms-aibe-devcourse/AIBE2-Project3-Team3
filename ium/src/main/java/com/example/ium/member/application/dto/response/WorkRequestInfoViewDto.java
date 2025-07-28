@@ -1,10 +1,11 @@
 package com.example.ium.member.application.dto.response;
 
-public record MyWorkRequestListViewDto(
+public record WorkRequestInfoViewDto(
         Long workRequestId,
         String title,
         String content,
         int price,
-        String clientName
+        String expertName,
+        String status
 ) {
 }

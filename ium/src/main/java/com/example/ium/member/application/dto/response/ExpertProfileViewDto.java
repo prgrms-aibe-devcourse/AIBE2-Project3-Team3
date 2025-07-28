@@ -5,6 +5,7 @@ import java.util.List;
 
 public record ExpertProfileViewDto(
         Long memberId,
+        String username,
         String introduceMessage,
         String portfolioDescription,
         String school,

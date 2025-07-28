@@ -2,6 +2,7 @@ package com.example.ium.workrequest.service;
 
 import com.example.ium.member.application.dto.response.MyWorkRequestListViewDto;
 import com.example.ium.member.application.dto.response.MyWorkRequestStatusDto;
+import com.example.ium.member.application.dto.response.WorkRequestInfoViewDto;
 import com.example.ium.member.domain.model.Email;
 import com.example.ium.member.domain.model.Member;
 import com.example.ium.member.domain.repository.MemberJPARepository;
@@ -113,6 +114,7 @@ public class WorkRequestService {
                 .map(workRequestEntity -> new MyWorkRequestListViewDto(
                         workRequestEntity.getId(),
                         workRequestEntity.getTitle(),
+                        workRequestEntity.getContent(),
                         workRequestEntity.getPrice(),
                         workRequestEntity.getCreatedBy()
                 ))
@@ -138,5 +140,25 @@ public class WorkRequestService {
                 .member(member)
                 .build();
         moneyRepository.save(money);
+    }
+
+    public List<WorkRequestInfoViewDto> getWorkRequestInfo(String email) {
+        List<WorkRequestEntity> workRequests = workRequestRepository.findByCreatedBy(email);
+        return workRequests.stream()
+                .map(request -> new WorkRequestInfoViewDto(
+                        request.getId(),
+                        request.getTitle(),
+                        request.getContent(),
+                        request.getPrice(),
+                        request.getExpert() != null ? getExpertNameById(request.getExpert()) : "미배정",
+                        request.getStatus().name()
+                ))
+                .toList();
+    }
+
+    private String getExpertNameById(Long expert) {
+        return memberJPARepository.findById(expert)
+                .map(Member::getUsername)
+                .orElse("미배정");
     }
 }

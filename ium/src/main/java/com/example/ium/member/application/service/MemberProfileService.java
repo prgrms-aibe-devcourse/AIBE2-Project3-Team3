@@ -19,6 +19,7 @@ public class MemberProfileService {
         return memberJPARepository.findById(memberId)
                 .map(member -> new MemberProfileViewDto(
                         member.getId(),
+                        member.getUsername(),
                         member.getEmail().getValue()
                 ))
                 .orElseThrow(() -> new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND));

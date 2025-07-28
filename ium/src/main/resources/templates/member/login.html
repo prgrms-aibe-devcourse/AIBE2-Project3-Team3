@@ -3,13 +3,76 @@
 <head>
     <title>로그인</title>
     <meta charset="UTF-8"/>
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 80px auto;
+            padding: 30px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fafafa;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-container h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .login-container label {
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: #AAD2DA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .login-container button:hover {
+            background-color: #92bcc6;
+        }
+    </style>
 </head>
 <body>
-<h1>로그인</h1>
-<form action="/authenticate" method="post">
-    <label>이메일: <input type="text" name="user" required></label><br/>
-    <label>비밀번호: <input type="password" name="pwd" required></label><br/>
-    <button type="submit">로그인</button>
-</form>
+<div th:replace="~{header :: header}"></div>
+
+<div class="login-container">
+    <h1>로그인</h1>
+    <form action="/authenticate" method="post">
+        <label>이메일:
+            <input type="text" name="user" required>
+        </label>
+        <label>비밀번호:
+            <input type="password" name="pwd" required>
+        </label>
+        <button type="submit">로그인</button>
+    </form>
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+<script th:src="@{/js/header.js}"></script>
 </body>
 </html>
