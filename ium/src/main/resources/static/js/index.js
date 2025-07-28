@@ -23,7 +23,7 @@ function filterByCategory(category) {
 
 // 의뢰하기 버튼 클릭
 function redirectToRequestForm() {
-    window.location.href = '/request/new';
+    window.location.href = '/workrequest/registration';
 }
 
 // AI 매칭 버튼 클릭

@@ -50,4 +50,30 @@ public class Member extends BaseTimeEntity {
                 .status(Status.ACTIVE)
                 .build();
     }
+
+    public static Member createExpert(String username, Email email, Password password) {
+        return Member.builder()
+                .username(username)
+                .email(email)
+                .password(password)
+                .role(Role.EXPERT)
+                .status(Status.ACTIVE)
+                .build();
+    }
+
+    /**
+     * 회원의 역할을 전문가로 변경
+     * 데이터 초기화나 관리 목적으로만 사용
+     */
+    public void changeToExpert() {
+        this.role = Role.EXPERT;
+    }
+
+    /**
+     * 회원의 역할을 일반 사용자로 변경
+     * 데이터 초기화나 관리 목적으로만 사용
+     */
+    public void changeToUser() {
+        this.role = Role.USER;
+    }
 }

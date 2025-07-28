@@ -53,11 +53,11 @@ public class ExpertProfile extends BaseEntity {
     private CompletedRequestCount completedRequestCount;
 
     @Builder
-    private ExpertProfile(Long memberId, Member member, boolean activated,
+    private ExpertProfile(Member member, boolean activated,
                                  String introduceMessage, String portfolioDescription,
                                  String school, String major,
                                  CareerDate careerDate, Salary salary, NegoYn negoYn, CompletedRequestCount completedRequestCount) {
-        this.memberId = memberId;
+        // @MapsId 사용 시 memberId는 자동 설정되므로 제거
         this.member = member;
         this.activated = activated;
         this.introduceMessage = introduceMessage;
@@ -75,7 +75,7 @@ public class ExpertProfile extends BaseEntity {
                                                     String school, String major,
                                                     LocalDate careerStartDate, int salary, boolean negoYn) {
         return ExpertProfile.builder()
-                .memberId(member.getId())
+                // memberId 설정 제거 - @MapsId가 자동 처리
                 .member(member)
                 .activated(true)
                 .introduceMessage(introduceMessage)
