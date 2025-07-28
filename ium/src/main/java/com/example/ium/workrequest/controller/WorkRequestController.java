@@ -105,4 +105,17 @@ public class WorkRequestController {
         Long expertId = userDetails.getMemberId();
         return workRequestService.matchExpertToWorkRequest(id, expertId); // "success" or "already"
     }
+    @PostMapping("/workrequest/{id}/cancel")
+    public String cancelMatch(@PathVariable Long id, Model model) {
+        boolean result = workRequestService.cancelMatch(id);
+
+        if (result) {
+            // 매칭 취소 성공 → workrequest 상세페이지로 redirect
+            return "redirect:/workrequest/" + id;
+        } else {
+            // 매칭 안 되어 있거나 이미 취소된 상태
+            model.addAttribute("error", "이미 취소되었거나 매칭되지 않은 상태입니다.");
+            return "common/error"; // 혹은 다시 matched 페이지로 보내도 됨
+        }
+    }
 }

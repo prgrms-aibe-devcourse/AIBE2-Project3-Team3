@@ -1,12 +1,15 @@
-// fetch(`/workrequest/${REQUEST_ID}/matched`, {
-//     method: 'POST'
-// })
-//     .then(res => res.text())
-//     .then(result => {
-//         if (result === "already") {
-//             alert("이미 수주하신 의뢰입니다.");
-//         } else {
-//             location.href = `/workrequest/${REQUEST_ID}/matched`;
-//         }
-//     })
-//     .catch(() => alert("수주 중 오류가 발생했습니다."));
+document.addEventListener('DOMContentLoaded', function () {
+    const cancelBtn = document.querySelector('.cancel-button');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function () {
+            if (!confirm("정말 취소하시겠습니까?")) return;
+
+            // form 만들어서 POST로 제출
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/workrequest/${cancelBtn.dataset.id}/cancel`;
+            document.body.appendChild(form);
+            form.submit();
+        });
+    }
+});

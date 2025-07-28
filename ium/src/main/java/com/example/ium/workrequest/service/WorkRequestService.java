@@ -18,6 +18,7 @@ import com.example.ium.workrequest.dto.MatchedDto;
 import com.example.ium.workrequest.entity.WorkRequestEntity;
 import com.example.ium.workrequest.repository.WorkRequestRepository;
 import com.example.ium.workrequest.repository.WorkRequestSpecification;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -203,5 +204,19 @@ public class WorkRequestService {
         workRequestRepository.save(request);
 
         return "success";
+    }
+    @Transactional
+    public boolean cancelMatch(Long id) {
+        WorkRequestEntity request = workRequestRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 의뢰가 존재하지 않습니다."));
+
+        if (request.getStatus() != WorkRequestEntity.Status.MATCHED) {
+            return false;
+        }
+
+        request.setStatus(WorkRequestEntity.Status.WAIT); // 여기 고침!
+        request.setExpert(null);
+
+        return true;
     }
 }
