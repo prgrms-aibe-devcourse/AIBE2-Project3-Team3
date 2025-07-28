@@ -1,0 +1,158 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    width: 100%;
+    background-color: #AAD2DA;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo img {
+    height: 50px;
+    width: 50px;
+    object-fit: contain;
+    display: block;
+}
+.menu button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    vertical-align: middle;
+}
+
+.menu button img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.request-header .category {
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+.request-header .title {
+    font-size: 33px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.request-header .content {
+    font-size: 20px;
+}
+
+.request-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.request-header .left {
+    max-width: 70%;
+}
+
+.request-header .right {
+    display: flex;
+    flex-direction: column; /* 세로로 정렬 */
+    gap: 10px;              /* 버튼 간격 */
+    margin-top: 50px;
+}
+
+.right {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end; /* 필요에 따라 center 또는 start로 변경 가능 */
+    max-width: 220px; /* 버튼이 2열로 정렬되도록 제한 */
+    margin-top: 20px;
+}
+
+.right button {
+    width: 100px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    background-color: #d8f1dd;
+    border: 1px solid #b8d8c4;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.right button:hover {
+    background-color: #c1e7cc;
+}
+.description {
+    margin: 20px 0;
+    line-height: 1.5;
+}
+
+.ai-recommend {
+    margin-top: 100px;
+}
+
+.ai-recommend h2 {
+    margin-bottom: 40px;
+}
+
+.experts {
+    display: flex;
+    gap: 20px;
+}
+
+.expert-card {
+    padding: 10px;
+    text-align: center;
+    flex: 1;
+}
+
+.expert-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.expert-card p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.matching-result {
+    max-width: 600px;
+    margin: 3rem 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: none;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.matching-result h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: left; /* 가운데 정렬이 어울리지 않으면 left */
+    color: #222;
+    font-weight: bold;
+}
+
+.matching-result p {
+    font-size: 1rem;
+    margin: 0.3rem 0;
+    line-height: 1.5;
+    color: #333;
+}
+
+.matching-result span {
+    font-weight: 600;
+    color: #000;
+}

@@ -30,3 +30,23 @@ document.querySelector('.work-request-chat-icon').addEventListener('click', func
     document.body.appendChild(form);
     form.submit();
 });
+
+function submitMatch(button) {
+    const requestId = REQUEST_ID;
+
+    if (!confirm("정말 이 의뢰를 수주하시겠습니까?")) return;
+
+    fetch(`/workrequest/${requestId}/matched`, {
+        method: 'POST'
+    })
+        .then(res => res.text())
+        .then(result => {
+            if (result === "already") {
+                alert("이미 수주하신 의뢰입니다.");
+            } else {
+                alert("수주가 완료되었습니다.");
+            }
+            location.href = `/workrequest/${requestId}`;
+        })
+        .catch(() => alert("수주 중 오류가 발생했습니다."));
+}

@@ -43,7 +43,7 @@ public class WorkRequestEntity extends BaseEntity {
     private int adPoint;
 
     public enum Status {
-        OPEN, IN_PROGRESS, CANCELED, WAIT, DONE, EXPIRED
+        OPEN, IN_PROGRESS, CANCELED, WAIT, DONE, EXPIRED, MATCHED
     }
 
     public enum Type {
