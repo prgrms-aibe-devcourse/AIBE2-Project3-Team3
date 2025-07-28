@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>의뢰 상세 페이지</title>
+    <link rel="stylesheet" th:href="@{/css/workrequest/workrequest.css}">
+    <base href="/" />
+    <script th:src="@{/js/workrequest/workrequest.js}"></script>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img src="/images/logo.png">
+    </div>
+    <div class="menu">
+        <button><img src="/images/chat.png" alt="말풍선"></button>
+        <button><img src="/images/info.png" alt="내정보"></button>
+        <button><img src="/images/menu.png" alt="메뉴"></button>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="request-header">
+        <div class="left">
+            <div class="category" th:text="${request.category}">카테고리</div>
+            <div class="title" th:text="${request.title}">제목</div>
+            <div class="content">
+                <span th:text="'₩' + ${request.price}">가격</span> /
+                <span th:text="${request.createdBy}">이름</span>
+                <br>
+                <span th:text="${request.status}">상태</span>
+            </div>
+        </div>
+
+        <div class="right">
+            <button class="chat-icon" th:data-target-user="${targetUser}">문의하기</button>
+            <button>결과전달</button>
+            <button>신고하기</button>
+            <button>취소하기</button>
+        </div>
+    </section>
+
+    <section class="description">
+        <p th:text="${request.content}">설명</p>
+        <div class="request-image-section">
+            <img th:if="${request.fileUrl != null}" th:src="${request.fileUrl}" alt="첨부 이미지" style="max-width: 400px;" />
+        </div>
+    </section>
+
+
+
+    <section class="matching-result">
+        <h2>매칭 결과</h2>
+        <div class="expert-profile">
+            <p>이름: <span th:text="${expert.username}">이름</span></p>
+            <p>이메일: <span th:text="${expert.email}">이메일</span></p>
+            <p>전문 분야: <span th:text="${expert.role}">주요 역할</span></p>
+            <p>경력:<span th:text="${expert.careerPeriod}">경력</span></p>
+            <p>희망 급여: <span th:text="${expert.salary} ">희망 급여</span></p>
+            <p>학교: <span th:text="${expert.school}">학교</span></p>
+        </div>
+    </section>
+
+</main>
+
+<script th:src="@{/js/workrequest/workrequest.js}"></script>
+<script th:src="@{/js/workrequest/matched.js}"></script>
+</body>
+</html>
