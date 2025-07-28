@@ -1,20 +1,9 @@
 package com.example.ium._core.exception;
 
 import com.example.ium._core.dto.Response;
-import com.example.ium.chat.controller.ChatController;
-import com.example.ium.index.controller.IndexController;
-import com.example.ium.member.application.controller.ExpertProfileController;
-import com.example.ium.member.application.controller.MemberAuthController;
-import com.example.ium.member.application.controller.MemberAuthViewController;
-import com.example.ium.member.application.controller.MemberProfileController;
-import com.example.ium.money.controller.MoneyController;
-import com.example.ium.recommend.controller.RecommendController;
-import com.example.ium.workrequest.controller.WorkRequestController;
-import com.example.ium.workrequest.dto.WorkRequestDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
