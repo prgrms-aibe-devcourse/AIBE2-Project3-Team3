@@ -18,6 +18,7 @@ import com.example.ium.workrequest.dto.MatchedDto;
 import com.example.ium.workrequest.entity.WorkRequestEntity;
 import com.example.ium.workrequest.repository.WorkRequestRepository;
 import com.example.ium.workrequest.repository.WorkRequestSpecification;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -185,16 +186,37 @@ public class WorkRequestService {
                 .orElse("미배정");
     }
 
-    public void matchExpertToWorkRequest(Long requestId, Long expertId) {
+    public String matchExpertToWorkRequest(Long requestId, Long expertId) {
         WorkRequestEntity request = workRequestRepository.findById(requestId)
                 .orElseThrow(() -> new IumApplicationException(ErrorCode.WORK_REQUEST_NOT_FOUND));
 
-        Member expert = memberJPARepository.findById(expertId)
-                .orElseThrow(() -> new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND));
+        expertProfileJPARepository.findById(expertId)
+                .orElseThrow(() -> new IumApplicationException(ErrorCode.EXPERT_PROFILE_NOT_FOUND));
 
-        // 전문가 매칭 처리
-        request.setExpert(expert.getId());
-        request.setStatus(WorkRequestEntity.Status.IN_PROGRESS); // 상태 변경
+        // 이미 수주된 경우
+        if (request.getExpert() != null) {
+            return "already";
+        }
+
+        // 수주 처리
+        request.setExpert(expertId);
+        request.setStatus(WorkRequestEntity.Status.MATCHED); // 상태 매칭 처리도 추가하면 좋아
         workRequestRepository.save(request);
+
+        return "success";
+    }
+    @Transactional
+    public boolean cancelMatch(Long id) {
+        WorkRequestEntity request = workRequestRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 의뢰가 존재하지 않습니다."));
+
+        if (request.getStatus() != WorkRequestEntity.Status.MATCHED) {
+            return false;
+        }
+
+        request.setStatus(WorkRequestEntity.Status.WAIT); // 여기 고침!
+        request.setExpert(null);
+
+        return true;
     }
 }

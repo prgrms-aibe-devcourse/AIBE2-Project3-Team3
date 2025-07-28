@@ -4,30 +4,13 @@
     <meta charset="UTF-8">
     <title>의뢰 상세 페이지</title>
     <link rel="stylesheet" th:href="@{/css/workrequest/workrequest.css}">
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
     <base href="/" />
-    <script th:src="@{/js/workrequest/workrequest.js}"></script>
 
-    <script th:inline="javascript">
-        if ([[${matchSuccess}]] === true) {
-            alert("수주가 완료되었습니다!");
-        }
-        if ([[${alreadyMatched}]] === true) {
-            alert("이미 수주된 의뢰입니다.");
-        }
-    </script>
-</head>
 <body>
 
-<header>
-    <div class="logo">
-        <img src="/images/logo.png">
-    </div>
-    <div class="menu">
-        <button><img src="/images/chat.png" alt="말풍선"></button>
-        <button><img src="/images/info.png" alt="내정보"></button>
-        <button><img src="/images/menu.png" alt="메뉴"></button>
-    </div>
-</header>
+<div th:replace="~{header :: header}"></div>
 
 <main class="container">
 
@@ -48,7 +31,7 @@
             <form th:action="@{/workrequest/{id}/matched(id=${request?.id})}"
                   method="post"
                   id="matchForm">
-                <button type="submit">수주하기</button>
+                <button id="matchButton" data-id="[[${request.id}]]" onclick="submitMatch(this)">수주하기</button>
             </form>
 
             <!-- 신고하기 버튼 -->
@@ -87,6 +70,9 @@
 
 <!-- Footer -->
 <div th:replace="~{footer :: footer}"></div>
+<script>
+    const REQUEST_ID = [[${request.id}]];
+</script>
 
 <script th:src="@{/js/workrequest/workrequest.js}"></script>
 <script th:src="@{/js/header.js}"></script>

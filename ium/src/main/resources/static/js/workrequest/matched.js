@@ -1,12 +1,15 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const matchForm = document.querySelector("#matchForm");
+document.addEventListener('DOMContentLoaded', function () {
+    const cancelBtn = document.querySelector('.cancel-button');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function () {
+            if (!confirm("정말 취소하시겠습니까?")) return;
 
-    if (matchForm) {
-        matchForm.addEventListener("submit", function (e) {
-            e.preventDefault(); // 기본 제출 막고
-            if (confirm("정말 이 의뢰를 수주하시겠습니까?")) {
-                matchForm.submit(); // 바로 submit만
-            }
+            // form 만들어서 POST로 제출
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/workrequest/${cancelBtn.dataset.id}/cancel`;
+            document.body.appendChild(form);
+            form.submit();
         });
     }
 });
