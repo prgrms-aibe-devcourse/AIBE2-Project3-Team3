@@ -103,42 +103,27 @@ function getSuggestionsByCategory(category) {
         design: [
             'NFT 아트 디자인 의뢰하고 싶어요.',
             '웹사이트 UI 디자인 의뢰하고 싶어요.',
-            '브랜드 로고 디자인을 만들고 싶어요.',
-            '패키지 디자인 전문가를 찾고 있어요.',
-            '명함 디자인 서비스 추천해주세요.',
-            '인쇄물 디자인을 전문으로 하는 디자이너를 찾고 있어요.'
+            '브랜드 로고 디자인을 만들고 싶어요.'
         ],
         programming: [
             '웹사이트 개발을 의뢰하고 싶어요.',
             '모바일 앱 개발이 필요해요.',
-            'API 개발 및 연동이 필요해요.',
-            '데이터베이스 설계를 도와주세요.',
-            '기존 시스템 유지보수가 필요해요.',
-            'E-commerce 사이트를 만들고 싶어요.'
+            'API 개발 및 연동이 필요해요.'
         ],
         video: [
             '유튜브 영상 편집을 맡기고 싶어요.',
             '홍보영상 제작이 필요해요.',
-            '제품 소개 영상을 만들고 싶어요.',
-            '웨딩 영상 편집을 부탁하고 싶어요.',
-            '모션 그래픽 작업이 필요해요.',
-            '라이브 스트리밍 설정을 도와주세요.'
+            '제품 소개 영상을 만들고 싶어요.'
         ],
         legal: [
             '법인 세무 상담이 필요해요.',
             '계약서 검토를 의뢰하고 싶어요.',
-            '근로계약서 작성을 도와주세요.',
-            '사회보험 상담이 필요해요.',
-            '법률 자문을 받고 싶어요.',
-            '상속세 신고 대행을 맡기고 싶어요.'
+            '근로계약서 작성을 도와주세요.'
         ],
         translation: [
             '영어 문서 번역이 필요해요.',
             '비즈니스 회의 통역을 의뢰하고 싶어요.',
-            '웹사이트 현지화 작업이 필요해요.',
-            '학술 논문 번역을 맡기고 싶어요.',
-            '중국어 번역 전문가를 찾고 있어요.',
-            '전시회 통역 서비스가 필요해요.'
+            '웹사이트 현지화 작업이 필요해요.'
         ]
     };
     
@@ -182,6 +167,11 @@ async function sendMessage() {
         
         if (data.success) {
             addMessage(data.message, 'ai');
+            
+            // 전문가 정보가 있으면 전문가 카드 추가
+            if (data.expertInfo) {
+                addExpertCard(data.expertInfo);
+            }
         } else {
             addMessage('죄송합니다. 오류가 발생했습니다. 다시 시도해주세요.', 'ai');
         }
@@ -267,6 +257,64 @@ function updateCharCount() {
         
         sendBtn.disabled = count === 0 || count > 50;
     }
+}
+
+// 전문가 카드 추가
+function addExpertCard(expertInfo) {
+    const chatMessages = document.getElementById('chatMessages');
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'ai-message';
+    
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'message-content expert-card';
+    
+    const cardHTML = `
+        <div class="expert-info">
+            <div class="expert-header">
+                <div class="expert-avatar">
+                    👨‍💼
+                </div>
+                <div class="expert-details">
+                    <h3 class="expert-name">${expertInfo.name}</h3>
+                    <p class="expert-school">${expertInfo.school} • ${expertInfo.major}</p>
+                </div>
+            </div>
+            
+            <div class="expert-description">
+                <p><strong>✨ AI 추천 이유:</strong></p>
+                <p>${expertInfo.recommendation}</p>
+            </div>
+            
+            <div class="expert-stats">
+                <div class="stat-item">
+                    <span class="stat-label">💰 급여</span>
+                    <span class="stat-value">${expertInfo.salary.toLocaleString()}원 ${expertInfo.negoYn ? '(협의가능)' : ''}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">📊 완료 의뢰</span>
+                    <span class="stat-value">${expertInfo.completedRequestCount}건</span>
+                </div>
+            </div>
+            
+            <div class="expert-contact">
+                <p><strong>📧 연락처:</strong> ${expertInfo.email}</p>
+            </div>
+            
+            <div class="expert-actions">
+                <button class="profile-btn" onclick="window.open('${expertInfo.profileUrl}', '_blank')">
+                    🔗 프로필 상세보기
+                </button>
+            </div>
+        </div>
+    `;
+    
+    contentDiv.innerHTML = cardHTML;
+    messageDiv.appendChild(contentDiv);
+    chatMessages.appendChild(messageDiv);
+    
+    // 스크롤을 맨 아래로
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 // 랜덤 문자열 생성 (채팅방 이름용)

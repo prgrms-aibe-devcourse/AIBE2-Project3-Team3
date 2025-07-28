@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -26,7 +28,7 @@ public class ExpertProfile extends BaseEntity {
     private Member member; // 회원 정보
 
     @OneToMany(mappedBy = "expertProfile", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-    private List<ExpertSpecialization> expertSpecialization = new ArrayList<>(); // 전문가 전문 분야
+    private Set<ExpertSpecialization> expertSpecialization = new HashSet<>(); // 전문가 전문 분야
     @OneToMany(mappedBy = "expertProfile", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Attachment> attachments = new ArrayList<>(); // 첨부 파일
 
@@ -51,11 +53,11 @@ public class ExpertProfile extends BaseEntity {
     private CompletedRequestCount completedRequestCount;
 
     @Builder
-    private ExpertProfile(Long memberId, Member member, boolean activated,
+    private ExpertProfile(Member member, boolean activated,
                                  String introduceMessage, String portfolioDescription,
                                  String school, String major,
                                  CareerDate careerDate, Salary salary, NegoYn negoYn, CompletedRequestCount completedRequestCount) {
-        this.memberId = memberId;
+        // @MapsId 사용 시 memberId는 자동 설정되므로 제거
         this.member = member;
         this.activated = activated;
         this.introduceMessage = introduceMessage;
@@ -73,7 +75,7 @@ public class ExpertProfile extends BaseEntity {
                                                     String school, String major,
                                                     LocalDate careerStartDate, int salary, boolean negoYn) {
         return ExpertProfile.builder()
-                .memberId(member.getId())
+                // memberId 설정 제거 - @MapsId가 자동 처리
                 .member(member)
                 .activated(true)
                 .introduceMessage(introduceMessage)

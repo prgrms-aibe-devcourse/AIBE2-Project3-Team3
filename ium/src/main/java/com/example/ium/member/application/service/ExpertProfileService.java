@@ -97,7 +97,12 @@ public class ExpertProfileService {
                 specializationJPARepository.findAllById(specializationIds).stream()
                         .map(s -> new ExpertProfileViewDto.SpecializationSummary(s.getId(), s.getSpecializationName().getValue()))
                         .toList();
+        List<ExpertProfileViewDto.AttachmentInfo> attachmentInfos = expertProfile.getAttachments().stream()
+                .map(attachment -> new ExpertProfileViewDto.AttachmentInfo(attachment.getFileName(), attachment.getFileUrl(), attachment.getFileType()))
+                .toList();
         return new ExpertProfileViewDto(
+                expertProfile.getMemberId(),
+                expertProfile.getMember().getUsername(),
                 expertProfile.getIntroduceMessage(),
                 expertProfile.getPortfolioDescription(),
                 expertProfile.getSchool(),
@@ -106,7 +111,8 @@ public class ExpertProfileService {
                 expertProfile.getSalary().getValue(),
                 expertProfile.getNegoYn().getValue(),
                 expertProfile.getCompletedRequestCount().getValue(),
-                specializationSummaries
+                specializationSummaries,
+                attachmentInfos
         );
     }
 
@@ -119,6 +125,8 @@ public class ExpertProfileService {
     public void activateExpertProfile(Long memberId) {
         ExpertProfile expertProfile = findExpertProfile(memberId);
         expertProfile.activate();
+
+        memberMetaCommandService.cacheMemberMeta(expertProfile.getMember().getEmail().getValue());
     }
 
     /**
@@ -174,7 +182,7 @@ public class ExpertProfileService {
      * @return 전문가 프로필
      */
     private ExpertProfile findExpertProfile(Long memberId) {
-        return expertProfileJPARepository.findById(memberId)
+        return expertProfileJPARepository.findByIdByEagerLoading(memberId)
                 .orElseThrow(() -> new IumApplicationException(ErrorCode.EXPERT_PROFILE_NOT_FOUND));
     }
 
@@ -189,5 +197,9 @@ public class ExpertProfileService {
         return cachedActivationStatus.orElseGet(() -> expertProfileJPARepository.findById(memberId)
                 .map(ExpertProfile::isActivated)
                 .orElse(false));
+    }
+
+    public boolean isExpertProfileExist(Long memberId) {
+        return expertProfileJPARepository.existsById(memberId);
     }
 }

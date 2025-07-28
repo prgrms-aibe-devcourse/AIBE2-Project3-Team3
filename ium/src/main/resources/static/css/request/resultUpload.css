@@ -1,0 +1,45 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0 auto;
+}
+
+.container {
+    max-width: 400px;
+    margin-top: 50px;
+    margin-left: 50px;
+    margin-bottom: 300px;
+}
+
+h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.file-info {
+    margin-bottom: 20px;
+}
+
+.label {
+    font-size: 14px;
+    color: #555;
+    margin-right: 10px;
+}
+
+#fileInput {
+    font-size: 14px;
+}
+
+.button-group button {
+    background-color: #e2f3e2;
+    color: #000;
+    border: none;
+    padding: 5px 10px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.button-group button:hover {
+    background-color: #cfeacc;
+}

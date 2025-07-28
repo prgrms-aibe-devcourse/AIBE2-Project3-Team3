@@ -40,3 +40,7 @@ out/
 
 ### env config ###
 *.env
+
+### FirebaseKey.json ###
+src/main/resources/key/FirebaseKey.json
+.claude/

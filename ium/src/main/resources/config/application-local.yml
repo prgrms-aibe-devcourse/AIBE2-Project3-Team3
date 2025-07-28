@@ -8,7 +8,7 @@ spring:
     password:
   data:
     mongodb:
-      uri: mongodb://root:example@localhost:27017/chat_spring?authSource=admin
+      uri: mongodb://root:example@localhost:27017/spring_chat?authSource=admin
 
   h2:
     console:
@@ -32,3 +32,20 @@ spring:
 kakaopay:
   cId: ${KAKAOPAY_CID}
   secretKey: ${KAKAOPAY_SECRET_KEY}
+
+# GPT API 설정
+gpt:
+  api:
+    base-url: https://api.openai.com/v1
+    api-key: ${GPT_API_KEY:dummy-key-for-mock}
+    model: gpt-4
+    max-tokens: 1000
+    temperature: 0.7
+    timeout-seconds: 30
+    retry-count: 3
+    mock:
+      enabled: true  # 개발 환경에서는 Mock 사용
+
+server:
+  tomcat:
+    max-part-count: -1
