@@ -74,5 +74,13 @@
 
 <div th:replace="~{footer :: footer}"></div>
 <script th:src="@{/js/header.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const errorMsg = [[${param.errorMsg}]];
+    if (errorMsg) {
+        alert(errorMsg);
+    }
+    /*]]>*/
+</script>
 </body>
 </html>
