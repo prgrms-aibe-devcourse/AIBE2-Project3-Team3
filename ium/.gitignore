@@ -44,3 +44,9 @@ out/
 ### FirebaseKey.json ###
 src/main/resources/key/FirebaseKey.json
 .claude/
+
+### mongo ###
+data/mongodb/
+data/**
+*.wt
+*.log
