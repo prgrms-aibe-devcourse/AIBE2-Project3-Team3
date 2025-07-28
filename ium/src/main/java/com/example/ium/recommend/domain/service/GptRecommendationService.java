@@ -358,12 +358,129 @@ public class GptRecommendationService {
      * 전문가에 따른 AI 추천 이유 생성
      */
     private String generateRecommendationReason(ExpertProfile expert, String categoryName) {
+        try {
+            // GPT를 활용해서 전문가 정보를 기반으로 추천사유 생성
+            String gptGeneratedReason = generateRecommendationReasonWithGPT(expert, categoryName);
+            
+            if (gptGeneratedReason != null && !gptGeneratedReason.trim().isEmpty()) {
+                log.debug("GPT 추천사유 생성 성공 - expertId: {}", expert.getMemberId());
+                return gptGeneratedReason;
+            }
+            
+            log.warn("GPT 추천사유 생성 실패, 기본 템플릿 사용 - expertId: {}", expert.getMemberId());
+            
+        } catch (Exception e) {
+            log.error("GPT 추천사유 생성 중 오류 발생 - expertId: {}", expert.getMemberId(), e);
+        }
+        
+        // 폴백: 기본 템플릿 사용
+        return generateDefaultRecommendationReason(expert, categoryName);
+    }
+    
+    /**
+     * GPT를 활용한 추천사유 생성
+     */
+    private String generateRecommendationReasonWithGPT(ExpertProfile expert, String categoryName) {
+        try {
+            // 전문가의 자기소개가 없으면 기본 템플릿 사용
+            if (expert.getIntroduceMessage() == null || expert.getIntroduceMessage().trim().isEmpty()) {
+                log.debug("전문가 자기소개가 비어있어 GPT 추천사유 생성 스킵 - expertId: {}", expert.getMemberId());
+                return null; // 기본 템플릿 사용하도록 폴백
+            }
+            
+            // 전문가 정보를 기반으로 GPT 프롬프트 생성
+            String prompt = buildRecommendationPrompt(expert, categoryName);
+            
+            // GPT API 호출
+            GptRequestDto request = GptRequestDto.createRecommendationRequest(prompt);
+            
+            GptResponseDto response = gptApiClient.sendRecommendationRequest(request);
+            
+            if (response.isSuccessful()) {
+                String generatedReason = response.getOutputText().trim();
+                
+                // 응답이 너무 길면 150자로 제한
+                if (generatedReason.length() > 150) {
+                    generatedReason = generatedReason.substring(0, 147) + "...";
+                }
+                
+                log.debug("GPT 추천사유 생성 성공 - expertId: {}, reason: {}", 
+                        expert.getMemberId(), generatedReason.substring(0, Math.min(50, generatedReason.length())));
+                return generatedReason;
+            } else {
+                log.warn("GPT API 응답 비정상 - expertId: {}", expert.getMemberId());
+            }
+            
+        } catch (GptApiException e) {
+            log.warn("GPT API 호출 실패 - expertId: {}, error: {}", expert.getMemberId(), e.getMessage());
+        } catch (Exception e) {
+            log.error("GPT 추천사유 생성 중 예상치 못한 오류 - expertId: {}", expert.getMemberId(), e);
+        }
+        
+        return null;
+    }
+    
+    /**
+     * 추천사유 생성용 GPT 프롬프트 구성 (자기소개 중심)
+     */
+    private String buildRecommendationPrompt(ExpertProfile expert, String categoryName) {
+        // 전문가의 전문분야 가져오기
+        String specializations = getExpertSpecializationNames(expert).stream()
+                .collect(Collectors.joining(", "));
+        
+        String introduceMessage = expert.getIntroduceMessage() != null ? expert.getIntroduceMessage() : "";
+        
+        return String.format("""
+            당신은 전문가 추천 전문 AI 어시스턴트입니다.
+            전문가의 자기소개를 기반으로 클라이언트에게 매력적이고 신뢰감 있는 추천 사유를 작성해주세요.
+            
+            **전문가 자기소개:**
+            ""%s""
+            
+            **추가 정보:**
+            - 이름: %s
+            - 전문분야: %s (%s 분야 요청)
+            - 학력: %s %s 전공
+            - 경력: 완료 의뢰 %d건
+            - 수준: %d만원 (협상 %s)
+            
+            **작성 가이드라인:**
+            1. 위 자기소개에서 드러나는 전문가의 강점과 역량을 추출하세요.
+            2. 자기소개에 나타난 경험, 성과, 전문성을 %s 분야 요청과 연결지어 설명하세요.
+            3. 자기소개의 톤과 어조를 유지하면서, 클라이언트의 시각에서 왕 이 전문가를 선택할지 설명하세요.
+            4. 80-120자 내에서 자연스럽고 매력적으로 작성하세요.
+            5. "추천드립니다", "전문가입니다" 같은 상투적 표현은 피하세요.
+            
+            **추천사유:**
+            """, 
+            introduceMessage,
+            expert.getMember().getUsername(),
+            specializations,
+            categoryName,
+            expert.getSchool(),
+            expert.getMajor(),
+            expert.getCompletedRequestCount().getValue(),
+            expert.getSalary().getValue(),
+            expert.getNegoYn().isNegotiable() ? "가능" : "불가능",
+            categoryName
+        );
+    }
+    
+    /**
+     * 기본 추천사유 생성 (폴백용)
+     */
+    private String generateDefaultRecommendationReason(ExpertProfile expert, String categoryName) {
         String baseReason = expert.getIntroduceMessage();
-        if (baseReason == null || baseReason.trim().isEmpty()) {
-            return String.format("%s 분야의 전문가로 %s에서 공부하시고 %d건의 의뢰를 성공적으로 완료하셨습니다.", 
+        
+        if (baseReason != null && !baseReason.trim().isEmpty()) {
+            // 자기소개가 있으면 그것을 기반으로 생성
+            return String.format("%s %s 분야에서 %d건의 의뢰를 성공적으로 완료하신 신뢰할 수 있는 전문가입니다.",
+                    baseReason.trim(), categoryName, expert.getCompletedRequestCount().getValue());
+        } else {
+            // 자기소개가 없으면 기본 템플릿 사용
+            return String.format("%s 분야의 전문가로 %s에서 공부하시고 %d건의 의뢰를 성공적으로 완료하신 신뢰할 수 있는 전문가입니다.", 
                     categoryName, expert.getSchool(), expert.getCompletedRequestCount().getValue());
         }
-        return baseReason;
     }
     
     /**
