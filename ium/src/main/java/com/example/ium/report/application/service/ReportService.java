@@ -16,6 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -60,12 +64,21 @@ public class ReportService {
     public List<UserReportViewDto> getUserReportList() {
         List<UserReport> userReports = userReportJpaRepository.findAll();
 
+        Set<Long> memberIds = userReports.stream()
+                .flatMap(report -> Stream.of(report.getReporterId(), report.getReportedId()))
+                .collect(Collectors.toSet());
+
+        Map<Long, Member> memberMap = memberJPARepository.findAllById(memberIds).stream()
+                .collect(Collectors.toMap(Member::getId, m -> m));
+
         return userReports.stream()
                 .map(report -> {
-                    Member reporter = memberJPARepository.findById(report.getReporterId())
-                            .orElseThrow(() -> new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND));
-                    Member reported = memberJPARepository.findById(report.getReportedId())
-                            .orElseThrow(() -> new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND));
+                    Member reporter = memberMap.get(report.getReporterId());
+                    Member reported = memberMap.get(report.getReportedId());
+
+                    if (reporter == null || reported == null) {
+                        throw new IumApplicationException(ErrorCode.MEMBER_NOT_FOUND);
+                    }
 
                     return new UserReportViewDto(
                             report.getId(),

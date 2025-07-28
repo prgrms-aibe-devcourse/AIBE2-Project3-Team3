@@ -65,7 +65,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="report : ${reportList}">
+        <tr th:each="report : ${userReportList}">
             <td th:text="${report.reportId}">1</td>
             <td th:text="${report.reporterEmail}">reporter@example.com</td>
             <td th:text="${report.reportedEmail}">reported@example.com</td>
