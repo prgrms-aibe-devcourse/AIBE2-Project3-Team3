@@ -13,6 +13,10 @@ java {
     }
 }
 
+compileJava {
+    options.compilerArgs += ["-parameters"]
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -72,6 +76,9 @@ dependencies {
 
     // Firebase
     implementation group: 'com.google.firebase', name: 'firebase-admin', version: '8.1.0'
+    
+    // HTTP 클라이언트 (GPT API 연동용)
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
 }
 
 tasks.named('test') {
