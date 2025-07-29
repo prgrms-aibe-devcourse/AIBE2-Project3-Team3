@@ -426,7 +426,7 @@ public class DummyDataInitializer {
                 expertProfiles.add(savedExpertProfile);
                 
                 // 전문분야 할당 (각 전문가마다 1-2개의 전문분야)
-                assignSpecializations(savedExpertProfile, specializations, dataIndex);
+                assignSpecializations(savedExpertProfile, specializations, i); // dataIndex 대신 i 사용
                 
                 log.info("✅ 전문가 프로필 생성 성공: {} (ID: {})", 
                         managedExpert.getUsername(), savedExpertProfile.getMemberId());
@@ -441,44 +441,46 @@ public class DummyDataInitializer {
     }
     
     // 전문분야 할당 메소드
-    private void assignSpecializations(ExpertProfile expertProfile, List<Specialization> specializations, int dataIndex) {
-        // 인덱스에 따라 전문분야 결정
+    private void assignSpecializations(ExpertProfile expertProfile, List<Specialization> specializations, int expertIndex) {
+        // 각 분야별 6명씩 정확한 매핑
         Long primarySpecializationId;
         Long secondarySpecializationId = null;
         
-        // 전문분야 매핑 (인덱스 % 5로 순환)
-        switch (dataIndex % 5) {
-            case 0: // 프로그래밍
-                primarySpecializationId = findSpecializationIdByName(specializations, "프로그래밍");
-                if (random.nextBoolean()) {
-                    secondarySpecializationId = findSpecializationIdByName(specializations, "디자인");
-                }
-                break;
-            case 1: // 디자인
-                primarySpecializationId = findSpecializationIdByName(specializations, "디자인");
-                if (random.nextBoolean()) {
-                    secondarySpecializationId = findSpecializationIdByName(specializations, "영상편집");
-                }
-                break;
-            case 2: // 영상편집
-                primarySpecializationId = findSpecializationIdByName(specializations, "영상편집");
-                if (random.nextBoolean()) {
-                    secondarySpecializationId = findSpecializationIdByName(specializations, "디자인");
-                }
-                break;
-            case 3: // 세무/법무/노무
-                primarySpecializationId = findSpecializationIdByName(specializations, "세무/법무/노무");
-                if (random.nextBoolean()) {
-                    secondarySpecializationId = findSpecializationIdByName(specializations, "번역/통역");
-                }
-                break;
-            default: // 번역/통역
-                primarySpecializationId = findSpecializationIdByName(specializations, "번역/통역");
-                if (random.nextBoolean()) {
-                    secondarySpecializationId = findSpecializationIdByName(specializations, "세무/법무/노무");
-                }
-                break;
+        // 전문인덱스에 따른 분야 결정 (USERNAME1, USERNAME2 제외하고 시작)
+        // 0-1: 기본 계정, 2-7: 프로그래밍, 8-13: 디자인, 14-19: 영상편집, 20-25: 세무/법무/노무, 26-31: 번역/통역
+        if (expertIndex < 2) {
+            // 기본 계정 - 프로그래밍으로 설정
+            primarySpecializationId = findSpecializationIdByName(specializations, "프로그래밍");
+        } else if (expertIndex >= 2 && expertIndex < 8) {
+            // 프로그래밍 (2-7)
+            primarySpecializationId = findSpecializationIdByName(specializations, "프로그래밍");
+            if (random.nextBoolean()) {
+                secondarySpecializationId = findSpecializationIdByName(specializations, "디자인");
+            }
+        } else if (expertIndex >= 8 && expertIndex < 14) {
+            // 디자인 (8-13)
+            primarySpecializationId = findSpecializationIdByName(specializations, "디자인");
+            if (random.nextBoolean()) {
+                secondarySpecializationId = findSpecializationIdByName(specializations, "영상편집");
+            }
+        } else if (expertIndex >= 14 && expertIndex < 20) {
+            // 영상편집 (14-19)
+            primarySpecializationId = findSpecializationIdByName(specializations, "영상편집");
+            if (random.nextBoolean()) {
+                secondarySpecializationId = findSpecializationIdByName(specializations, "디자인");
+            }
+        } else if (expertIndex >= 20 && expertIndex < 26) {
+            // 세무/법무/노무 (20-25)
+            primarySpecializationId = findSpecializationIdByName(specializations, "세무/법무/노무");
+            // 세무/법무/노무는 단독 전문분야로 설정 (복수 전문분야 없음)
+        } else {
+            // 번역/통역 (26-31)
+            primarySpecializationId = findSpecializationIdByName(specializations, "번역/통역");
+            // 번역/통역도 단독 전문분야로 설정 (복수 전문분야 없음)
         }
+        
+        log.debug("전문가 인덱스 {}: 주전문분야={}, 부전문분야={}", 
+                expertIndex, primarySpecializationId, secondarySpecializationId);
         
         // 중복 체크: primary와 secondary가 같으면 secondary를 null로 설정
         if (primarySpecializationId != null && primarySpecializationId.equals(secondarySpecializationId)) {
