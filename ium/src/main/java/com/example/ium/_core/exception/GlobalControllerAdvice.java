@@ -20,12 +20,30 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 )
 public class GlobalControllerAdvice {
   @ExceptionHandler(IumApplicationException.class)
-  public ResponseEntity<?> handleIumException(IumApplicationException e) {
-    log.error("Error occurs {}", e.toString());
+  public String handleIumException(IumApplicationException e) {
+    log.error("예외 발생: {}", e.getErrorCode());
 
-    return ResponseEntity
-            .status(e.getErrorCode().getStatus())
-            .body(Response.error(e.getErrorCode().name()));
+    ErrorCode code = e.getErrorCode();
+
+    // 403
+    if (code == ErrorCode.MEMBER_NOT_ACTIVE ||
+            code == ErrorCode.MEMBER_NOT_FOUND ||
+            code == ErrorCode.INVALID_REQUEST ) {
+      return "redirect:/error/403";
+    }
+
+    // 404
+    if (code == ErrorCode.EXPERT_PROFILE_NOT_FOUND ||
+            code == ErrorCode.CHAT_ROOM_NOT_FOUND ||
+            code == ErrorCode.MONEY_NOT_FOUND ||
+            code == ErrorCode.WORK_REQUEST_NOT_FOUND ||
+            code == ErrorCode.WORK_REQUEST_DOES_NOT_HAVE_EXPERT ||
+            code == ErrorCode.REPORT_NOT_FOUND) {
+      return "redirect:/error/404";
+    }
+
+    // 기본: 500
+    return "redirect:/error/500";
   }
   
   @ExceptionHandler(RuntimeException.class)
