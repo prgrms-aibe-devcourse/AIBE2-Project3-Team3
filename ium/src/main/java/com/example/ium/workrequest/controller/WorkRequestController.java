@@ -99,11 +99,11 @@ public class WorkRequestController {
     }
 
     @PostMapping("/workrequest/{id}/matched")
-    @ResponseBody
     public String matchRequest(@PathVariable Long id,
                                @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long expertId = userDetails.getMemberId();
-        return workRequestService.matchExpertToWorkRequest(id, expertId); // "success" or "already"
+        workRequestService.matchExpertToWorkRequest(id, expertId);
+        return "/request/workrequest/" + id;// "success" or "already"
     }
     @PostMapping("/workrequest/{id}/cancel")
     public String cancelMatch(@PathVariable Long id, Model model) {
