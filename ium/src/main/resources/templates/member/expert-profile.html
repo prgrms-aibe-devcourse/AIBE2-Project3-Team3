@@ -54,14 +54,20 @@
         .portfolio-preview {
             display: flex;
             gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-start;
         }
 
         .portfolio-preview img,
         .portfolio-preview iframe {
-            width: 200px;
-            height: 130px;
-            object-fit: cover;
-            border: 1px solid #ccc;
+            max-width: 100%;         /* 부모 너비 내에서만 확장 */
+            height: 450px;            /* 세로는 비율 따라 자동 */
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        .portfolio-preview img:hover {
+            transform: scale(1.03);
         }
 
         .action-links {
@@ -77,61 +83,80 @@
             border-radius: 5px;
             margin-right: 10px;
         }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 40px 60px;
+            gap: 40px;
+        }
+
+        .profile-left {
+              flex: 1;
+          }
+
+        .portfolio-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 <body>
 <div th:replace="~{header :: header}"></div>
 
 <div class="container">
+    <div class="profile-left">
+        <div class="profile-header">
+            <img src="/images/default-profile.png" alt="프로필 이미지">
+            <div class="profile-info">
+                <h2 th:text="${expertProfile.username}">이름</h2>
+                <div class="coins">
+                    <span th:text="${moneyInfo.credit + ' 원'}">10,000 원</span> /
+                    <span th:text="${moneyInfo.point + ' P'}">350 P</span>
+                </div>
+            </div>
+        </div>
 
-    <div class="profile-header">
-        <img src="/images/default-profile.png" alt="프로필 이미지">
-        <div class="profile-info">
-            <h2 th:text="${expertProfile.username}">이름</h2>
-            <div class="coins">
-                <span th:text="${moneyInfo.credit + ' 원'}">10,000 원</span> /
-                <span th:text="${moneyInfo.point + ' P'}">350 P</span>
+        <div class="action-links">
+            <a th:href="@{|/expert-profiles/${expertProfile.memberId}/work-requests|}">내 의뢰 목록 보기</a>
+            <form th:action="@{|/expert-profiles/${expertProfile.memberId}/deactivate|}" method="post" style="display:inline;">
+                <input type="hidden" name="_method" value="patch"/>
+                <button type="submit" style="padding: 8px 12px; background-color: #aaa; color: white; border: none; border-radius: 5px;">프로필 비활성화</button>
+            </form>
+        </div>
+
+        <div class="summary-box">
+            <p><strong>자기소개</strong></p>
+            <p th:text="${expertProfile.introduceMessage}">자기소개 내용</p>
+        </div>
+
+        <p><strong>전문 분야:</strong></p>
+        <div class="expertise-tags">
+            <span th:each="spec : ${expertProfile.specializations}" th:text="${spec.name}"></span>
+        </div>
+        <p><strong>학교/전공:</strong>
+            <span th:text="${expertProfile.school + '/' + expertProfile.major}"></span>
+        </p>
+
+        <p><strong>경력 시작일:</strong> <span th:text="${expertProfile.startCareerDate}"></span></p>
+        <p><strong>희망 연봉:</strong> <span th:text="${#numbers.formatInteger(expertProfile.salary * 10000, 3, 'COMMA')}"></span> 원</p>
+        <p><strong>연봉 협상 가능 여부:</strong> <span th:text="${expertProfile.negoYn == 'Y' ? '가능' : '불가능'}"></span></p>
+        <p><strong>완료된 의뢰 수:</strong> <span th:text="${expertProfile.completedRequestCount}"></span></p>
+    </div>
+
+    <div class="portfolio-right">
+        <p><strong>포트폴리오</strong></p>
+        <div class="portfolio-preview">
+            <div th:each="attachment : ${expertProfile.attachments}">
+                <a th:href="${attachment.fileUrl}" target="_blank">
+                    <img th:if="${attachment.fileType.startsWith('image')}" th:src="${attachment.fileUrl}" alt="포트폴리오 이미지">
+                    <iframe th:if="${attachment.fileType == 'application/pdf'}" th:src="${attachment.fileUrl}"></iframe>
+                </a>
             </div>
         </div>
     </div>
-
-    <div class="action-links">
-        <a th:href="@{|/expert-profiles/${expertProfile.memberId}/work-requests|}">내 의뢰 목록 보기</a>
-        <form th:action="@{|/expert-profiles/${expertProfile.memberId}/deactivate|}" method="post" style="display:inline;">
-            <input type="hidden" name="_method" value="patch"/>
-            <button type="submit" style="padding: 8px 12px; background-color: #aaa; color: white; border: none; border-radius: 5px;">프로필 비활성화</button>
-        </form>
-    </div>
-
-    <div class="summary-box">
-        <p><strong>자기소개</strong></p>
-        <p th:text="${expertProfile.introduceMessage}">자기소개 내용</p>
-    </div>
-
-    <p><strong>전문 분야:</strong></p>
-    <div class="expertise-tags">
-        <span th:each="spec : ${expertProfile.specializations}" th:text="${spec.name}"></span>
-    </div>
-
-    <p><strong>포트폴리오</strong></p>
-    <div class="portfolio-preview">
-        <div th:each="attachment : ${expertProfile.attachments}">
-            <a th:href="${attachment.fileUrl}" target="_blank">
-                <img th:if="${attachment.fileType.startsWith('image')}" th:src="${attachment.fileUrl}" alt="포트폴리오 이미지">
-                <iframe th:if="${attachment.fileType == 'application/pdf'}" th:src="${attachment.fileUrl}"></iframe>
-            </a>
-        </div>
-    </div>
-
-    <p><strong>학교/전공:</strong>
-        <span th:text="${expertProfile.school + '/' + expertProfile.major}"></span>
-    </p>
-
-    <p><strong>경력 시작일:</strong> <span th:text="${expertProfile.startCareerDate}"></span></p>
-    <p><strong>희망 연봉:</strong> <span th:text="${#numbers.formatInteger(expertProfile.salary * 10000, 3, 'COMMA')}"></span> 원</p>
-    <p><strong>연봉 협상 가능 여부:</strong> <span th:text="${expertProfile.negoYn == 'Y' ? '가능' : '불가능'}"></span></p>
-    <p><strong>완료된 의뢰 수:</strong> <span th:text="${expertProfile.completedRequestCount}"></span></p>
-
 </div>
 
 <div th:replace="~{footer :: footer}"></div>
