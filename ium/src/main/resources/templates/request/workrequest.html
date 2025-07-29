@@ -50,22 +50,6 @@
         </div>
     </section>
 
-
-
-    <section class="ai-recommend">
-        <h2>AI 추천</h2>
-        <div class="experts">
-            <div class="expert-card" th:each="expert : ${aiExperts}">
-                <a th:href="@{'/expert/' + ${expert.name}}">
-                    <img th:src="@{/images/{img}(img=${expert.image})}" alt="전문가 이미지">
-                </a>
-                <p th:text="${expert.name}">전문가 이름</p>
-                <p th:text="${expert.category}">카테고리</p>
-                <p th:text="'₩' + ${expert.price}">가격</p>
-            </div>
-        </div>
-    </section>
-
 </main>
 
 <!-- Footer -->
