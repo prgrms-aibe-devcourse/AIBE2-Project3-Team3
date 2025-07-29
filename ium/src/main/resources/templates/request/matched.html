@@ -29,7 +29,7 @@
 
         <div class="right">
             <button class="work-request-chat-icon" th:data-target-user="${targetUser}">문의하기</button>
-            <button>결과전달</button>
+            <button th:onclick="'location.href=\'/workrequest/' + ${request.id} + '/resultUpload\''">결과전달</button>
             <button class="cancel-button" th:data-id="${request.id}">취소하기</button>
             <a th:href="@{|/reports/form-data?workRequestId=${request.id}}"
                class="report-button"
